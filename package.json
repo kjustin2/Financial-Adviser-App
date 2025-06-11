@@ -1,0 +1,46 @@
+{
+  "name": "financial-adviser-app",
+  "version": "1.0.0",
+  "description": "Financial Health Assessment Tool",
+  "main": "app.js",
+  "scripts": {
+    "start": "webpack serve --mode development",
+    "dev": "webpack serve --mode development",
+    "build": "webpack --mode production",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "compile": "tsc",
+    "legacy:start": "http-server . -p 3000 -o -c-1",
+    "legacy:test": "node --test tests/**/*.test.js",
+    "clean": "echo 'Clearing browser cache... Use Ctrl+F5 to hard refresh your browser.'"
+  },
+  "keywords": [
+    "finance",
+    "planning",
+    "calculator",
+    "budgeting"
+  ],
+  "author": "Financial Planner Team",
+  "license": "MIT",
+  "devDependencies": {
+    "@testing-library/jest-dom": "^6.6.3",
+    "@types/jest": "^29.5.14",
+    "@types/node": "^24.0.0",
+    "c8": "^8.0.1",
+    "css-loader": "^7.1.2",
+    "html-webpack-plugin": "^5.6.3",
+    "http-server": "^14.1.1",
+    "identity-obj-proxy": "^3.0.0",
+    "jest": "^29.7.0",
+    "jest-environment-jsdom": "^30.0.0",
+    "jsdom": "^26.1.0",
+    "style-loader": "^4.0.0",
+    "ts-jest": "^29.3.4",
+    "ts-loader": "^9.5.2",
+    "typescript": "^5.8.3",
+    "webpack": "^5.99.9",
+    "webpack-cli": "^6.0.1",
+    "webpack-dev-server": "^5.2.2"
+  }
+}
