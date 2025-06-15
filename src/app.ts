@@ -101,14 +101,18 @@ class FinancialAnalyzer {
                     }
                 });
                 
-                // Toggle current tooltip
+                // Toggle current tooltip and position it
                 icon.classList.toggle('active');
+                if (icon.classList.contains('active')) {
+                    this.positionTooltip(icon);
+                }
             });
 
             // Handle mouse events for desktop
             icon.addEventListener('mouseenter', () => {
                 if (window.innerWidth > 768) { // Desktop only
                     icon.classList.add('active');
+                    this.positionTooltip(icon);
                 }
             });
 
@@ -133,6 +137,88 @@ class FinancialAnalyzer {
                 });
             }
         });
+        
+        // Reposition tooltips on scroll/resize
+        window.addEventListener('scroll', () => {
+            const activeIcon = document.querySelector('.info-icon.active');
+            if (activeIcon) {
+                this.positionTooltip(activeIcon);
+            }
+        });
+        
+        window.addEventListener('resize', () => {
+            const activeIcon = document.querySelector('.info-icon.active');
+            if (activeIcon) {
+                this.positionTooltip(activeIcon);
+            }
+        });
+    }
+
+    /**
+     * Position tooltip dynamically to prevent cutoff
+     */
+    private positionTooltip(icon: Element): void {
+        const tooltip = icon.querySelector('.tooltip') as HTMLElement;
+        if (!tooltip) return;
+
+        const iconRect = icon.getBoundingClientRect();
+        const tooltipRect = tooltip.getBoundingClientRect();
+        const viewportWidth = window.innerWidth;
+        const viewportHeight = window.innerHeight;
+
+        // Reset styles first
+        tooltip.style.position = 'fixed';
+        tooltip.style.left = '50%';
+        tooltip.style.transform = 'translateX(-50%)';
+
+        // Calculate ideal position above icon
+        let top = iconRect.top - tooltipRect.height - 10;
+        let showAbove = true;
+
+        // Check if tooltip would be cut off at top
+        if (top < 10) {
+            // Position below icon instead
+            top = iconRect.bottom + 10;
+            showAbove = false;
+        }
+
+        // Check if tooltip would be cut off at bottom
+        if (top + tooltipRect.height > viewportHeight - 10) {
+            // Force above if possible, or center vertically
+            if (iconRect.top > tooltipRect.height + 20) {
+                top = iconRect.top - tooltipRect.height - 10;
+                showAbove = true;
+            } else {
+                top = Math.max(10, (viewportHeight - tooltipRect.height) / 2);
+                showAbove = false;
+            }
+        }
+
+        // Calculate horizontal position
+        let left = iconRect.left + iconRect.width / 2;
+
+        // Check for horizontal cutoff
+        const tooltipWidth = 280; // max-width
+        if (left - tooltipWidth / 2 < 10) {
+            left = tooltipWidth / 2 + 10;
+        } else if (left + tooltipWidth / 2 > viewportWidth - 10) {
+            left = viewportWidth - tooltipWidth / 2 - 10;
+        }
+
+        // Apply positioning
+        tooltip.style.top = `${top}px`;
+        tooltip.style.left = `${left}px`;
+        tooltip.style.transform = 'translateX(-50%)';
+
+        // Update arrow position if needed
+        const arrow = tooltip.querySelector('::after') as HTMLElement;
+        if (arrow) {
+            if (showAbove) {
+                tooltip.style.setProperty('--arrow-position', 'bottom');
+            } else {
+                tooltip.style.setProperty('--arrow-position', 'top');
+            }
+        }
     }
 
     /**
@@ -1238,47 +1324,61 @@ class FinancialAnalyzer {
     }
 
     /**
-     * Safely destroy existing charts
+     * Safely destroy existing charts with complete cleanup
      */
     private destroyExistingCharts(): void {
-        if (this.wealthChart) {
-            try {
-                this.wealthChart.destroy();
-            } catch (error) {
-                console.warn('Error destroying wealth chart:', error);
+        try {
+            // Destroy Chart.js instances first
+            if (this.wealthChart) {
+                try {
+                    this.wealthChart.destroy();
+                } catch (error) {
+                    console.warn('Error destroying wealth chart:', error);
+                }
+                this.wealthChart = null;
             }
-            this.wealthChart = null;
-        }
-        
-        if (this.healthChart) {
-            try {
-                this.healthChart.destroy();
-            } catch (error) {
-                console.warn('Error destroying health chart:', error);
+            
+            if (this.healthChart) {
+                try {
+                    this.healthChart.destroy();
+                } catch (error) {
+                    console.warn('Error destroying health chart:', error);
+                }
+                this.healthChart = null;
             }
-            this.healthChart = null;
-        }
 
-        // Clear canvas contexts to prevent reuse errors
-        const wealthCanvas = document.getElementById('wealthChart') as HTMLCanvasElement;
-        const healthCanvas = document.getElementById('healthChart') as HTMLCanvasElement;
-        
-        if (wealthCanvas) {
-            const ctx = wealthCanvas.getContext('2d');
-            if (ctx) {
-                ctx.clearRect(0, 0, wealthCanvas.width, wealthCanvas.height);
-                // Reset any transformations
-                ctx.setTransform(1, 0, 0, 1, 0, 0);
-            }
+            // Force cleanup of canvas elements by replacing them
+            this.replaceCanvas('wealthChart');
+            this.replaceCanvas('healthChart');
+            
+        } catch (error) {
+            console.error('Error in destroyExistingCharts:', error);
         }
-        
-        if (healthCanvas) {
-            const ctx = healthCanvas.getContext('2d');
-            if (ctx) {
-                ctx.clearRect(0, 0, healthCanvas.width, healthCanvas.height);
-                // Reset any transformations
-                ctx.setTransform(1, 0, 0, 1, 0, 0);
+    }
+
+    /**
+     * Replace canvas element to ensure clean state
+     */
+    private replaceCanvas(canvasId: string): void {
+        try {
+            const oldCanvas = document.getElementById(canvasId) as HTMLCanvasElement;
+            if (oldCanvas && oldCanvas.parentNode) {
+                const newCanvas = document.createElement('canvas');
+                newCanvas.id = canvasId;
+                newCanvas.style.cssText = oldCanvas.style.cssText;
+                
+                // Copy any data attributes
+                Array.from(oldCanvas.attributes).forEach(attr => {
+                    if (attr.name.startsWith('data-') && attr.name !== 'data-chartjs-chart') {
+                        newCanvas.setAttribute(attr.name, attr.value);
+                    }
+                });
+                
+                oldCanvas.parentNode.replaceChild(newCanvas, oldCanvas);
+                console.log(`Canvas ${canvasId} replaced successfully`);
             }
+        } catch (error) {
+            console.warn(`Error replacing canvas ${canvasId}:`, error);
         }
     }
 
