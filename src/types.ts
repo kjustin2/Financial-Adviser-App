@@ -15,6 +15,12 @@ export interface UserFinancialData {
   currentInvestments?: number;
   monthlyInvestmentContribution?: number;
   emergencyFundGoal: number;
+  
+  // Major Purchase Planning (Optional)
+  plannedPurchaseType?: string;
+  purchaseCost?: number;
+  purchaseTimeframe?: number;
+  downPaymentPercent?: number;
 }
 
 /**
@@ -22,6 +28,7 @@ export interface UserFinancialData {
  */
 export interface AnalysisResult {
   score: number;
+  scoreBreakdown: ScoreBreakdown;
   cashFlow: number;
   recommendation: string;
   emergencyFundMonths: number;
@@ -33,6 +40,22 @@ export interface AnalysisResult {
   wealthProjections?: WealthProjections;
   financialMilestones?: FinancialMilestone[];
   riskAssessment: RiskAssessment;
+}
+
+/**
+ * Detailed breakdown of financial health score
+ */
+export interface ScoreBreakdown {
+  cashFlowScore: number;
+  emergencyFundScore: number;
+  debtManagementScore: number;
+  savingsRateScore: number;
+  explanations: {
+    cashFlow: string;
+    emergencyFund: string;
+    debtManagement: string;
+    savingsRate: string;
+  };
 }
 
 /**

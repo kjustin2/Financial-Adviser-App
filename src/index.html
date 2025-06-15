@@ -154,21 +154,30 @@
         }
 
         .info-icon {
-            width: 18px;
-            height: 18px;
-            background: var(--gray-400);
+            width: 20px;
+            height: 20px;
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
             color: white;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 12px;
-            font-weight: 600;
+            font-weight: 700;
             cursor: help;
             position: relative;
+            border: 2px solid white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: all 0.2s ease;
         }
 
-        .info-icon:hover .tooltip {
+        .info-icon:hover {
+            transform: scale(1.1);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        .info-icon:hover .tooltip,
+        .info-icon.active .tooltip {
             opacity: 1;
             visibility: visible;
             transform: translateX(-50%) translateY(-10px);
@@ -181,17 +190,18 @@
             transform: translateX(-50%) translateY(-5px);
             background: var(--gray-900);
             color: white;
-            padding: 8px 12px;
-            border-radius: 6px;
+            padding: 12px 16px;
+            border-radius: 8px;
             font-size: 0.875rem;
-            white-space: nowrap;
-            max-width: 250px;
-            white-space: normal;
+            line-height: 1.4;
+            max-width: 280px;
+            min-width: 200px;
             z-index: 1000;
             opacity: 0;
             visibility: hidden;
-            transition: all 0.2s;
-            box-shadow: var(--shadow);
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+            border: 1px solid rgba(255,255,255,0.1);
         }
 
         .tooltip::after {
@@ -225,11 +235,12 @@
         .input-prefix {
             position: absolute;
             left: 16px;
-            top: 50%;
+            top: calc(50% + 16px);
             transform: translateY(-50%);
             color: var(--gray-500);
             font-weight: 500;
             pointer-events: none;
+            z-index: 1;
         }
 
         .input-group input.has-prefix {
@@ -295,6 +306,32 @@
             font-size: 3rem;
             font-weight: 700;
             margin-bottom: 8px;
+            transition: color 0.3s ease;
+        }
+
+        .health-score.excellent {
+            color: #10b981;
+            text-shadow: 0 0 20px rgba(16, 185, 129, 0.3);
+        }
+
+        .health-score.good {
+            color: #3b82f6;
+            text-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
+        }
+
+        .health-score.fair {
+            color: #f59e0b;
+            text-shadow: 0 0 20px rgba(245, 158, 11, 0.3);
+        }
+
+        .health-score.limited {
+            color: #f97316;
+            text-shadow: 0 0 20px rgba(249, 115, 22, 0.3);
+        }
+
+        .health-score.critical {
+            color: #ef4444;
+            text-shadow: 0 0 20px rgba(239, 68, 68, 0.3);
         }
 
         .score-label {
@@ -376,6 +413,102 @@
 
         .hidden {
             display: none !important;
+        }
+
+        /* Score Breakdown Styles */
+        .score-breakdown {
+            display: grid;
+            gap: 16px;
+            margin: 16px 0;
+        }
+
+        .score-item {
+            background: white;
+            border-radius: 8px;
+            border: 1px solid var(--gray-200);
+            overflow: hidden;
+        }
+
+        .score-item-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px;
+            background: var(--gray-50);
+            border-bottom: 1px solid var(--gray-200);
+        }
+
+        .score-item-title {
+            font-weight: 600;
+            color: var(--gray-800);
+        }
+
+        .score-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: white;
+        }
+
+        .score-badge.excellent {
+            background: linear-gradient(135deg, #10b981, #059669);
+        }
+
+        .score-badge.good {
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+        }
+
+        .score-badge.fair {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+        }
+
+        .score-badge.limited {
+            background: linear-gradient(135deg, #f97316, #ea580c);
+        }
+
+        .score-badge.critical {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+        }
+
+        .score-item-explanation {
+            padding: 16px;
+            color: var(--gray-700);
+            line-height: 1.5;
+        }
+
+        .score-progress {
+            height: 8px;
+            background: var(--gray-200);
+            border-radius: 4px;
+            margin: 12px 16px;
+            overflow: hidden;
+        }
+
+        .score-progress-fill {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 0.8s ease;
+        }
+
+        .score-progress-fill.excellent {
+            background: linear-gradient(90deg, #10b981, #059669);
+        }
+
+        .score-progress-fill.good {
+            background: linear-gradient(90deg, #3b82f6, #1d4ed8);
+        }
+
+        .score-progress-fill.fair {
+            background: linear-gradient(90deg, #f59e0b, #d97706);
+        }
+
+        .score-progress-fill.limited {
+            background: linear-gradient(90deg, #f97316, #ea580c);
+        }
+
+        .score-progress-fill.critical {
+            background: linear-gradient(90deg, #ef4444, #dc2626);
         }
 
         /* Responsive design */
@@ -539,6 +672,58 @@
                                 <input type="number" id="emergencyFundGoal" min="1" max="12" step="1" value="6">
                             </div>
                         </div>
+                        
+                        <h4 style="margin: 24px 0 16px; color: var(--gray-700); font-size: 1.1rem;">Major Purchases Planning</h4>
+                        <div class="form-grid">
+                            <div class="input-group">
+                                <label for="plannedPurchaseType">
+                                    Upcoming Major Purchase
+                                    <div class="info-icon">i
+                                        <div class="tooltip">Select a major purchase you're planning within the next 5 years</div>
+                                    </div>
+                                </label>
+                                <select id="plannedPurchaseType">
+                                    <option value="">No major purchase planned</option>
+                                    <option value="house">House/Real Estate</option>
+                                    <option value="car">Vehicle</option>
+                                    <option value="education">Education/Training</option>
+                                    <option value="wedding">Wedding</option>
+                                    <option value="vacation">Major Vacation</option>
+                                    <option value="other">Other</option>
+                                </select>
+                            </div>
+
+                            <div class="input-group">
+                                <label for="purchaseCost">
+                                    Purchase Cost
+                                    <div class="info-icon">i
+                                        <div class="tooltip">Total estimated cost of your planned purchase</div>
+                                    </div>
+                                </label>
+                                <div class="input-prefix">$</div>
+                                <input type="number" id="purchaseCost" class="has-prefix" min="0" step="1000">
+                            </div>
+
+                            <div class="input-group">
+                                <label for="purchaseTimeframe">
+                                    Purchase Timeframe (Years)
+                                    <div class="info-icon">i
+                                        <div class="tooltip">How many years from now you plan to make this purchase</div>
+                                    </div>
+                                </label>
+                                <input type="number" id="purchaseTimeframe" min="0.5" max="10" step="0.5">
+                            </div>
+
+                            <div class="input-group">
+                                <label for="downPaymentPercent">
+                                    Down Payment %
+                                    <div class="info-icon">i
+                                        <div class="tooltip">Percentage you plan to pay upfront (0-100%, where 100% means paying in full)</div>
+                                    </div>
+                                </label>
+                                <input type="number" id="downPaymentPercent" min="0" max="100" step="5" value="20">
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -575,10 +760,18 @@
 
                 <div class="detailed-results">
                     <div class="section-header" onclick="toggleSection('charts')">
-                        <h3><span class="section-icon">📈</span> Financial Health Over Time</h3>
+                        <h3><span class="section-icon">📈</span> Financial Health Over Time Details</h3>
                         <span class="expand-icon" id="charts-icon">▼</span>
                     </div>
                     <div class="section-content collapsed" id="charts-content">
+                        <!-- Score Breakdown Section -->
+                        <div class="chart-container">
+                            <div class="chart-title">Financial Health Score Breakdown</div>
+                            <div id="scoreBreakdown" class="score-breakdown">
+                                <!-- Score breakdown will be populated here -->
+                            </div>
+                        </div>
+                        
                         <div class="chart-container">
                             <div class="chart-title">Wealth Growth Projection</div>
                             <div class="chart-wrapper">

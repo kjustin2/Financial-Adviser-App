@@ -81,25 +81,50 @@ class FinancialAnalyzer {
      */
     private initializeInfoBoxes(): void {
         const infoIcons = document.querySelectorAll('.info-icon');
+        
         infoIcons.forEach(icon => {
+            // Handle click events (mobile and desktop)
             icon.addEventListener('click', (e) => {
                 e.stopPropagation();
-                const tooltip = icon.querySelector('.tooltip') as HTMLElement;
-                if (tooltip) {
-                    // Toggle tooltip visibility on click for mobile
-                    tooltip.style.opacity = tooltip.style.opacity === '1' ? '0' : '1';
-                    tooltip.style.visibility = tooltip.style.visibility === 'visible' ? 'hidden' : 'visible';
+                
+                // Close all other tooltips first
+                infoIcons.forEach(otherIcon => {
+                    if (otherIcon !== icon) {
+                        otherIcon.classList.remove('active');
+                    }
+                });
+                
+                // Toggle current tooltip
+                icon.classList.toggle('active');
+            });
+
+            // Handle mouse events for desktop
+            icon.addEventListener('mouseenter', () => {
+                if (window.innerWidth > 768) { // Desktop only
+                    icon.classList.add('active');
+                }
+            });
+
+            icon.addEventListener('mouseleave', () => {
+                if (window.innerWidth > 768) { // Desktop only
+                    // Delay hiding to allow users to interact with tooltip
+                    setTimeout(() => {
+                        if (!icon.matches(':hover')) {
+                            icon.classList.remove('active');
+                        }
+                    }, 200);
                 }
             });
         });
 
         // Close tooltips when clicking elsewhere
-        document.addEventListener('click', () => {
-            const tooltips = document.querySelectorAll('.tooltip') as NodeListOf<HTMLElement>;
-            tooltips.forEach(tooltip => {
-                tooltip.style.opacity = '0';
-                tooltip.style.visibility = 'hidden';
-            });
+        document.addEventListener('click', (e) => {
+            const target = e.target as Element;
+            if (!target.closest('.info-icon')) {
+                infoIcons.forEach(icon => {
+                    icon.classList.remove('active');
+                });
+            }
         });
     }
 
@@ -120,7 +145,13 @@ class FinancialAnalyzer {
             riskTolerance: this.getSelectValue('riskTolerance') as 'conservative' | 'moderate' | 'aggressive',
             currentInvestments: this.getNumericValue('currentInvestments') || undefined,
             monthlyInvestmentContribution: this.getNumericValue('monthlyInvestmentContribution') || undefined,
-            emergencyFundGoal: this.getNumericValue('emergencyFundGoal') || 6
+            emergencyFundGoal: this.getNumericValue('emergencyFundGoal') || 6,
+            
+            // Major purchase planning
+            plannedPurchaseType: this.getSelectValue('plannedPurchaseType') || undefined,
+            purchaseCost: this.getNumericValue('purchaseCost') || undefined,
+            purchaseTimeframe: this.getNumericValue('purchaseTimeframe') || undefined,
+            downPaymentPercent: this.getNumericValue('downPaymentPercent') || undefined
         };
     }
 
@@ -145,7 +176,12 @@ class FinancialAnalyzer {
      */
     private performAnalysis(): void {
         try {
+            // Clear any previous errors
+            this.clearError();
+            
+            // Get and validate user data
             const userData = this.getUserData();
+            console.log('User data collected:', userData);
             
             const validation = this.validateUserData(userData);
             if (!validation.isValid) {
@@ -153,13 +189,24 @@ class FinancialAnalyzer {
                 return;
             }
 
+            // Perform calculations
             const analysis = this.calculateAnalysis(userData);
+            console.log('Analysis completed:', analysis);
+            
+            // Display results
             this.displayResults(analysis, userData);
             
         } catch (error) {
-            console.error('Analysis failed:', error);
-            this.showError('Analysis failed. Please check your input data.');
+            console.error('Analysis failed with error:', error);
+            this.showError(`Analysis encountered an error: ${error instanceof Error ? error.message : 'Unknown error'}`);
         }
+    }
+
+    /**
+     * Clear any error messages
+     */
+    private clearError(): void {
+        // Implementation can be added if needed for a dedicated error display area
     }
 
     /**
@@ -195,8 +242,10 @@ class FinancialAnalyzer {
         const debtToIncomeRatio = data.debt / (data.monthlyIncome * 12);
         const savingsRate = data.monthlyIncome > 0 ? (cashFlow / data.monthlyIncome) * 100 : 0;
 
-        // Calculate financial health score
-        const score = this.calculateHealthScore(data, cashFlow, emergencyFundMonths, debtToIncomeRatio, savingsRate);
+        // Calculate financial health score with breakdown
+        const scoreResult = this.calculateHealthScore(data, cashFlow, emergencyFundMonths, debtToIncomeRatio, savingsRate);
+        const score = scoreResult.score;
+        const scoreBreakdown = scoreResult.breakdown;
 
         // Calculate risk assessment
         const riskAssessment = this.calculateRiskAssessment(data, cashFlow, emergencyFundMonths, debtToIncomeRatio);
@@ -206,6 +255,7 @@ class FinancialAnalyzer {
 
         const analysis: AnalysisResult = {
             score,
+            scoreBreakdown,
             cashFlow,
             recommendation,
             emergencyFundMonths,
@@ -225,7 +275,8 @@ class FinancialAnalyzer {
     }
 
     /**
-     * Calculate financial health score (0-100)
+     * Calculate financial health score with detailed breakdown (0-100)
+     * Based on expert financial advice and academic research
      */
     private calculateHealthScore(
         data: UserFinancialData,
@@ -233,34 +284,102 @@ class FinancialAnalyzer {
         emergencyMonths: number,
         debtRatio: number,
         savingsRate: number
-    ): number {
-        let score = 0;
+    ): { score: number; breakdown: any } {
+        const breakdown = {
+            cashFlowScore: 0,
+            emergencyFundScore: 0,
+            debtManagementScore: 0,
+            savingsRateScore: 0,
+            explanations: {
+                cashFlow: '',
+                emergencyFund: '',
+                debtManagement: '',
+                savingsRate: ''
+            }
+        };
 
-        // Cash flow (25 points)
+        // Cash Flow Analysis (25 points) - Based on 50/30/20 rule
         if (cashFlow > 0) {
-            const flowRatio = Math.min(cashFlow / data.monthlyIncome, 0.5); // Cap at 50%
-            score += flowRatio * 50; // Up to 25 points
+            const flowRatio = cashFlow / data.monthlyIncome;
+            if (flowRatio >= 0.2) {
+                breakdown.cashFlowScore = 25;
+                breakdown.explanations.cashFlow = 'Excellent: 20%+ surplus enables wealth building (exceeds financial expert recommendations)';
+            } else if (flowRatio >= 0.15) {
+                breakdown.cashFlowScore = 20;
+                breakdown.explanations.cashFlow = 'Good: 15%+ surplus supports financial goals (meets expert guidelines)';
+            } else if (flowRatio >= 0.1) {
+                breakdown.cashFlowScore = 15;
+                breakdown.explanations.cashFlow = 'Fair: 10%+ surplus provides basic financial security';
+            } else {
+                breakdown.cashFlowScore = Math.round(flowRatio * 100);
+                breakdown.explanations.cashFlow = 'Limited surplus restricts financial growth opportunities';
+            }
+        } else {
+            breakdown.cashFlowScore = 0;
+            breakdown.explanations.cashFlow = 'Critical: Negative cash flow threatens financial stability';
         }
 
-        // Emergency fund (25 points)
-        const emergencyScore = Math.min(25, (emergencyMonths / data.emergencyFundGoal) * 25);
-        score += emergencyScore;
+        // Emergency Fund Assessment (25 points) - Based on financial advisor standards
+        if (emergencyMonths >= 6) {
+            breakdown.emergencyFundScore = 25;
+            breakdown.explanations.emergencyFund = 'Excellent: 6+ months expenses (exceeds financial advisor recommendations)';
+        } else if (emergencyMonths >= 3) {
+            breakdown.emergencyFundScore = Math.round((emergencyMonths / 6) * 25);
+            breakdown.explanations.emergencyFund = 'Good: 3+ months expenses (meets minimum advisor standards)';
+        } else if (emergencyMonths >= 1) {
+            breakdown.emergencyFundScore = Math.round((emergencyMonths / 3) * 15);
+            breakdown.explanations.emergencyFund = 'Fair: Some emergency coverage, build to 3-6 months';
+        } else {
+            breakdown.emergencyFundScore = 0;
+            breakdown.explanations.emergencyFund = 'Critical: No emergency fund - immediate priority per all financial experts';
+        }
 
-        // Debt management (25 points)
-        if (debtRatio < 0.1) score += 25;
-        else if (debtRatio < 0.2) score += 20;
-        else if (debtRatio < 0.3) score += 15;
-        else if (debtRatio < 0.4) score += 10;
-        else score += 5;
+        // Debt Management (25 points) - Based on debt-to-income industry standards
+        if (debtRatio <= 0.1) {
+            breakdown.debtManagementScore = 25;
+            breakdown.explanations.debtManagement = 'Excellent: <10% debt ratio (optimal per credit industry standards)';
+        } else if (debtRatio <= 0.2) {
+            breakdown.debtManagementScore = 20;
+            breakdown.explanations.debtManagement = 'Good: 10-20% debt ratio (manageable per lending standards)';
+        } else if (debtRatio <= 0.3) {
+            breakdown.debtManagementScore = 15;
+            breakdown.explanations.debtManagement = 'Fair: 20-30% debt ratio (approaching recommended limits)';
+        } else if (debtRatio <= 0.4) {
+            breakdown.debtManagementScore = 10;
+            breakdown.explanations.debtManagement = 'Concerning: 30-40% debt ratio (exceeds recommended limits)';
+        } else {
+            breakdown.debtManagementScore = 5;
+            breakdown.explanations.debtManagement = 'Critical: 40%+ debt ratio (requires immediate debt reduction)';
+        }
 
-        // Savings rate (25 points)
-        if (savingsRate >= 20) score += 25;
-        else if (savingsRate >= 15) score += 20;
-        else if (savingsRate >= 10) score += 15;
-        else if (savingsRate >= 5) score += 10;
-        else if (savingsRate > 0) score += 5;
+        // Savings Rate (25 points) - Based on wealth-building research
+        if (savingsRate >= 20) {
+            breakdown.savingsRateScore = 25;
+            breakdown.explanations.savingsRate = 'Excellent: 20%+ savings rate (enables early retirement per FIRE principles)';
+        } else if (savingsRate >= 15) {
+            breakdown.savingsRateScore = 20;
+            breakdown.explanations.savingsRate = 'Good: 15%+ savings rate (exceeds retirement planning minimums)';
+        } else if (savingsRate >= 10) {
+            breakdown.savingsRateScore = 15;
+            breakdown.explanations.savingsRate = 'Fair: 10%+ savings rate (meets basic retirement planning guidelines)';
+        } else if (savingsRate >= 5) {
+            breakdown.savingsRateScore = 10;
+            breakdown.explanations.savingsRate = 'Limited: 5%+ savings rate (below recommended retirement planning targets)';
+        } else if (savingsRate > 0) {
+            breakdown.savingsRateScore = 5;
+            breakdown.explanations.savingsRate = 'Minimal: Some savings but insufficient for long-term goals';
+        } else {
+            breakdown.savingsRateScore = 0;
+            breakdown.explanations.savingsRate = 'Critical: No savings rate threatens financial future';
+        }
 
-        return Math.round(Math.max(0, Math.min(100, score)));
+        const totalScore = breakdown.cashFlowScore + breakdown.emergencyFundScore + 
+                          breakdown.debtManagementScore + breakdown.savingsRateScore;
+
+        return {
+            score: Math.round(Math.max(0, Math.min(100, totalScore))),
+            breakdown
+        };
     }
 
     /**
@@ -534,13 +653,17 @@ class FinancialAnalyzer {
      * Display comprehensive results
      */
     private displayResults(analysis: AnalysisResult, userData: UserFinancialData): void {
-        // Update basic metrics
+        // Update basic metrics with color coding
         this.elements.healthScore.textContent = analysis.score.toString();
+        this.elements.healthScore.className = `health-score ${this.getScoreClass(analysis.score * 0.25)}`;
         this.elements.cashFlowValue.textContent = this.formatCurrency(analysis.cashFlow);
         this.elements.emergencyFundValue.textContent = `${analysis.emergencyFundMonths.toFixed(1)} months`;
         this.elements.debtRatioValue.textContent = `${(analysis.debtToIncomeRatio * 100).toFixed(1)}%`;
         this.elements.savingsRateValue.textContent = `${Math.max(0, analysis.savingsRate).toFixed(1)}%`;
         this.elements.recommendationText.textContent = analysis.recommendation;
+
+        // Display score breakdown
+        this.displayScoreBreakdown(analysis.scoreBreakdown);
 
         // Create charts if advanced data is available
         if (analysis.wealthProjections && userData.age) {
@@ -553,22 +676,77 @@ class FinancialAnalyzer {
     }
 
     /**
+     * Display detailed score breakdown with color coding
+     */
+    private displayScoreBreakdown(breakdown: any): void {
+        const scoreBreakdownDiv = document.getElementById('scoreBreakdown');
+        if (!scoreBreakdownDiv) return;
+
+        const categories = [
+            { key: 'cashFlow', title: 'Cash Flow Management', score: breakdown.cashFlowScore },
+            { key: 'emergencyFund', title: 'Emergency Fund', score: breakdown.emergencyFundScore },
+            { key: 'debtManagement', title: 'Debt Management', score: breakdown.debtManagementScore },
+            { key: 'savingsRate', title: 'Savings Rate', score: breakdown.savingsRateScore }
+        ];
+
+        const html = categories.map(category => {
+            const scoreClass = this.getScoreClass(category.score);
+            const percentage = (category.score / 25) * 100;
+            
+            return `
+                <div class="score-item">
+                    <div class="score-item-header">
+                        <div class="score-item-title">${category.title}</div>
+                        <div class="score-badge ${scoreClass}">${category.score}/25</div>
+                    </div>
+                    <div class="score-progress">
+                        <div class="score-progress-fill ${scoreClass}" style="width: ${percentage}%"></div>
+                    </div>
+                    <div class="score-item-explanation">
+                        ${breakdown.explanations[category.key]}
+                    </div>
+                </div>
+            `;
+        }).join('');
+
+        scoreBreakdownDiv.innerHTML = html;
+    }
+
+    /**
+     * Get CSS class based on score for color coding
+     */
+    private getScoreClass(score: number): string {
+        if (score >= 22) return 'excellent';
+        if (score >= 18) return 'good';
+        if (score >= 12) return 'fair';
+        if (score >= 6) return 'limited';
+        return 'critical';
+    }
+
+    /**
      * Create wealth and health trend charts
      */
     private createCharts(analysis: AnalysisResult, userData: UserFinancialData): void {
-        // Destroy existing charts
+        // Destroy existing charts safely
         if (this.wealthChart) {
             this.wealthChart.destroy();
+            this.wealthChart = null;
         }
         if (this.healthChart) {
             this.healthChart.destroy();
+            this.healthChart = null;
         }
 
-        // Create wealth projection chart
-        this.createWealthChart(analysis.wealthProjections!, userData);
-        
-        // Create health trend chart
-        this.createHealthTrendChart(analysis, userData);
+        // Small delay to ensure canvas is properly cleared
+        setTimeout(() => {
+            // Create wealth projection chart
+            if (analysis.wealthProjections) {
+                this.createWealthChart(analysis.wealthProjections, userData);
+            }
+            
+            // Create health trend chart
+            this.createHealthTrendChart(analysis, userData);
+        }, 50);
     }
 
     /**
@@ -689,6 +867,15 @@ class FinancialAnalyzer {
             healthScores.push(projectedScore);
         }
 
+        // Create dynamic colors based on score levels
+        const colors = healthScores.map(score => {
+            if (score >= 80) return '#10b981'; // Excellent - Green
+            if (score >= 60) return '#3b82f6'; // Good - Blue
+            if (score >= 40) return '#f59e0b'; // Fair - Orange
+            if (score >= 20) return '#f97316'; // Limited - Orange-Red
+            return '#ef4444'; // Critical - Red
+        });
+
         this.healthChart = new (window as any).Chart(ctx, {
             type: 'line',
             data: {
@@ -696,11 +883,26 @@ class FinancialAnalyzer {
                 datasets: [{
                     label: 'Financial Health Score',
                     data: healthScores,
-                    borderColor: '#f59e0b',
-                    backgroundColor: 'rgba(245, 158, 11, 0.1)',
+                    borderColor: (context: any) => {
+                        const score = context.dataset.data[context.dataIndex];
+                        if (score >= 80) return '#10b981';
+                        if (score >= 60) return '#3b82f6';
+                        if (score >= 40) return '#f59e0b';
+                        if (score >= 20) return '#f97316';
+                        return '#ef4444';
+                    },
+                    backgroundColor: currentScore >= 80 ? 'rgba(16, 185, 129, 0.1)' : 
+                                   currentScore >= 60 ? 'rgba(59, 130, 246, 0.1)' :
+                                   currentScore >= 40 ? 'rgba(245, 158, 11, 0.1)' :
+                                   currentScore >= 20 ? 'rgba(249, 115, 22, 0.1)' :
+                                   'rgba(239, 68, 68, 0.1)',
                     borderWidth: 3,
                     tension: 0.4,
-                    fill: true
+                    fill: true,
+                    pointBackgroundColor: colors,
+                    pointBorderColor: colors,
+                    pointBorderWidth: 2,
+                    pointRadius: 5
                 }]
             },
             options: {
