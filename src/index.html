@@ -169,6 +169,7 @@
             border: 2px solid white;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
             transition: all 0.2s ease;
+            z-index: 1;
         }
 
         .info-icon:hover {
@@ -196,12 +197,13 @@
             line-height: 1.4;
             max-width: 280px;
             min-width: 200px;
-            z-index: 1000;
+            z-index: 9999;
             opacity: 0;
             visibility: hidden;
             transition: all 0.3s ease;
             box-shadow: 0 8px 24px rgba(0,0,0,0.2);
             border: 1px solid rgba(255,255,255,0.1);
+            pointer-events: none;
         }
 
         .tooltip::after {
@@ -309,29 +311,34 @@
             transition: color 0.3s ease;
         }
 
-        .health-score.excellent {
-            color: #10b981;
-            text-shadow: 0 0 20px rgba(16, 185, 129, 0.3);
+        .health-score.score-bg-excellent {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
         }
 
-        .health-score.good {
-            color: #3b82f6;
-            text-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
+        .health-score.score-bg-good {
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            color: white;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
         }
 
-        .health-score.fair {
-            color: #f59e0b;
-            text-shadow: 0 0 20px rgba(245, 158, 11, 0.3);
+        .health-score.score-bg-fair {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            color: white;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
         }
 
-        .health-score.limited {
-            color: #f97316;
-            text-shadow: 0 0 20px rgba(249, 115, 22, 0.3);
+        .health-score.score-bg-limited {
+            background: linear-gradient(135deg, #f97316, #ea580c);
+            color: white;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
         }
 
-        .health-score.critical {
-            color: #ef4444;
-            text-shadow: 0 0 20px rgba(239, 68, 68, 0.3);
+        .health-score.score-bg-critical {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: white;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
         }
 
         .score-label {
@@ -509,6 +516,30 @@
 
         .score-progress-fill.critical {
             background: linear-gradient(90deg, #ef4444, #dc2626);
+        }
+
+        /* Score Breakdown Section */
+        .score-breakdown-section {
+            background: white;
+            border-radius: var(--border-radius);
+            border: 1px solid var(--gray-200);
+            padding: 24px;
+            margin: 24px 0;
+        }
+
+        .score-breakdown-section h3 {
+            color: var(--gray-800);
+            margin-bottom: 12px;
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+
+        .health-score {
+            border-radius: var(--border-radius);
+            padding: 8px 16px;
+            display: inline-block;
+            min-width: 60px;
+            text-align: center;
         }
 
         /* Responsive design */
@@ -758,20 +789,21 @@
                     </div>
                 </div>
 
+                <!-- Financial Health Score Breakdown -->
+                <div class="score-breakdown-section">
+                    <h3>📊 Financial Health Score Breakdown</h3>
+                    <p style="color: var(--gray-600); margin-bottom: 20px;">Your financial health score is calculated based on four key components using expert financial advisor standards:</p>
+                    <div id="scoreBreakdown" class="score-breakdown">
+                        <!-- Score breakdown will be populated here -->
+                    </div>
+                </div>
+
                 <div class="detailed-results">
                     <div class="section-header" onclick="toggleSection('charts')">
                         <h3><span class="section-icon">📈</span> Financial Health Over Time Details</h3>
                         <span class="expand-icon" id="charts-icon">▼</span>
                     </div>
                     <div class="section-content collapsed" id="charts-content">
-                        <!-- Score Breakdown Section -->
-                        <div class="chart-container">
-                            <div class="chart-title">Financial Health Score Breakdown</div>
-                            <div id="scoreBreakdown" class="score-breakdown">
-                                <!-- Score breakdown will be populated here -->
-                            </div>
-                        </div>
-                        
                         <div class="chart-container">
                             <div class="chart-title">Wealth Growth Projection</div>
                             <div class="chart-wrapper">

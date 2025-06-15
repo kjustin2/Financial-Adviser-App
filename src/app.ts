@@ -655,14 +655,14 @@ class FinancialAnalyzer {
     private displayResults(analysis: AnalysisResult, userData: UserFinancialData): void {
         // Update basic metrics with color coding
         this.elements.healthScore.textContent = analysis.score.toString();
-        this.elements.healthScore.className = `health-score ${this.getScoreClass(analysis.score * 0.25)}`;
+        this.elements.healthScore.className = `health-score score-bg-${this.getScoreClass(analysis.score)}`;
         this.elements.cashFlowValue.textContent = this.formatCurrency(analysis.cashFlow);
         this.elements.emergencyFundValue.textContent = `${analysis.emergencyFundMonths.toFixed(1)} months`;
         this.elements.debtRatioValue.textContent = `${(analysis.debtToIncomeRatio * 100).toFixed(1)}%`;
         this.elements.savingsRateValue.textContent = `${Math.max(0, analysis.savingsRate).toFixed(1)}%`;
         this.elements.recommendationText.textContent = analysis.recommendation;
 
-        // Display score breakdown
+        // Display score breakdown in main section
         this.displayScoreBreakdown(analysis.scoreBreakdown);
 
         // Create charts if advanced data is available
@@ -727,17 +727,45 @@ class FinancialAnalyzer {
      * Create wealth and health trend charts
      */
     private createCharts(analysis: AnalysisResult, userData: UserFinancialData): void {
-        // Destroy existing charts safely
+        // Destroy existing charts safely with proper cleanup
         if (this.wealthChart) {
-            this.wealthChart.destroy();
+            try {
+                this.wealthChart.destroy();
+            } catch (error) {
+                console.warn('Error destroying wealth chart:', error);
+            }
             this.wealthChart = null;
         }
         if (this.healthChart) {
-            this.healthChart.destroy();
+            try {
+                this.healthChart.destroy();
+            } catch (error) {
+                console.warn('Error destroying health chart:', error);
+            }
             this.healthChart = null;
         }
 
-        // Small delay to ensure canvas is properly cleared
+        // Clear canvas contexts to prevent reuse errors
+        const wealthCanvas = document.getElementById('wealthChart') as HTMLCanvasElement;
+        const healthCanvas = document.getElementById('healthChart') as HTMLCanvasElement;
+        
+        if (wealthCanvas) {
+            const ctx = wealthCanvas.getContext('2d');
+            if (ctx) {
+                ctx.clearRect(0, 0, wealthCanvas.width, wealthCanvas.height);
+                ctx.restore();
+            }
+        }
+        
+        if (healthCanvas) {
+            const ctx = healthCanvas.getContext('2d');
+            if (ctx) {
+                ctx.clearRect(0, 0, healthCanvas.width, healthCanvas.height);
+                ctx.restore();
+            }
+        }
+
+        // Longer delay to ensure proper cleanup
         setTimeout(() => {
             // Create wealth projection chart
             if (analysis.wealthProjections) {
@@ -746,7 +774,7 @@ class FinancialAnalyzer {
             
             // Create health trend chart
             this.createHealthTrendChart(analysis, userData);
-        }, 50);
+        }, 100);
     }
 
     /**
