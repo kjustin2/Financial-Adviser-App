@@ -40,6 +40,14 @@ export interface AnalysisResult {
   wealthProjections?: WealthProjections;
   financialMilestones?: FinancialMilestone[];
   riskAssessment: RiskAssessment;
+  
+  // Advanced Analytics (only if age provided)
+  advancedMetrics?: any; // AdvancedMetrics from calculations.ts
+  scenarioAnalysis?: {
+    monteCarlo?: any; // MonteCarloResult
+    stressTest?: any; // StressTestResult
+    contributionScenarios?: any[];
+  };
 }
 
 /**

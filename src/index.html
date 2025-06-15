@@ -169,7 +169,7 @@
             border: 2px solid white;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
             transition: all 0.2s ease;
-            z-index: 1;
+            z-index: 10;
         }
 
         .info-icon:hover {
@@ -188,7 +188,7 @@
             position: absolute;
             bottom: 100%;
             left: 50%;
-            transform: translateX(-50%) translateY(-5px);
+            transform: translateX(-50%) translateY(-5px) translate3d(0,0,0);
             background: var(--gray-900);
             color: white;
             padding: 12px 16px;
@@ -197,13 +197,15 @@
             line-height: 1.4;
             max-width: 280px;
             min-width: 200px;
-            z-index: 9999;
+            z-index: 10000;
             opacity: 0;
             visibility: hidden;
             transition: all 0.3s ease;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.2);
-            border: 1px solid rgba(255,255,255,0.1);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+            border: 1px solid rgba(255,255,255,0.2);
             pointer-events: none;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
         }
 
         .tooltip::after {
@@ -377,7 +379,7 @@
             background: var(--gray-50);
             border-radius: var(--border-radius);
             border: 1px solid var(--gray-200);
-            overflow: hidden;
+            overflow: visible;
         }
 
         .chart-container {
@@ -433,7 +435,8 @@
             background: white;
             border-radius: 8px;
             border: 1px solid var(--gray-200);
-            overflow: hidden;
+            overflow: visible;
+            position: relative;
         }
 
         .score-item-header {
@@ -540,6 +543,357 @@
             display: inline-block;
             min-width: 60px;
             text-align: center;
+        }
+
+        /* Enhanced Financial Health Breakdown */
+        .financial-health-overview {
+            background: linear-gradient(135deg, #f8fafc, #e2e8f0);
+            border-radius: var(--border-radius);
+            padding: 20px;
+            margin-bottom: 24px;
+            border-left: 4px solid var(--primary-color);
+        }
+
+        .financial-health-overview h3 {
+            margin: 0 0 8px 0;
+            color: var(--gray-800);
+            font-size: 1.3rem;
+        }
+
+        .health-summary {
+            margin: 0;
+            color: var(--gray-600);
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+
+        .core-metrics {
+            margin-bottom: 32px;
+        }
+
+        .metric-icon {
+            font-size: 1.2rem;
+            margin-right: 8px;
+        }
+
+        .benchmark-info {
+            margin-top: 8px;
+            padding: 8px 12px;
+            background: var(--gray-50);
+            border-radius: 6px;
+            border-left: 3px solid var(--gray-300);
+        }
+
+        .benchmark-info small {
+            color: var(--gray-600);
+            font-size: 0.85rem;
+        }
+
+        /* Additional Insights Section */
+        .additional-insights {
+            margin: 32px 0;
+        }
+
+        .additional-insights h4 {
+            color: var(--gray-800);
+            margin-bottom: 16px;
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .insights-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .insight-card {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 16px;
+            border: 1px solid var(--gray-200);
+            transition: all 0.2s ease;
+        }
+
+        .insight-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .insight-card.excellent {
+            border-left: 4px solid #10b981;
+            background: linear-gradient(135deg, #ffffff, #f0fdf4);
+        }
+
+        .insight-card.good {
+            border-left: 4px solid #3b82f6;
+            background: linear-gradient(135deg, #ffffff, #eff6ff);
+        }
+
+        .insight-card.fair {
+            border-left: 4px solid #f59e0b;
+            background: linear-gradient(135deg, #ffffff, #fffbeb);
+        }
+
+        .insight-card.limited {
+            border-left: 4px solid #f97316;
+            background: linear-gradient(135deg, #ffffff, #fff7ed);
+        }
+
+        .insight-card.critical {
+            border-left: 4px solid #ef4444;
+            background: linear-gradient(135deg, #ffffff, #fef2f2);
+        }
+
+        .insight-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .insight-icon {
+            font-size: 1.3rem;
+            margin-right: 8px;
+        }
+
+        .insight-title {
+            font-weight: 600;
+            color: var(--gray-800);
+            font-size: 0.95rem;
+        }
+
+        .insight-value {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--gray-900);
+            margin-bottom: 6px;
+        }
+
+        .insight-description {
+            font-size: 0.85rem;
+            color: var(--gray-600);
+            line-height: 1.4;
+        }
+
+        /* Financial Wellness Tips */
+        .financial-wellness-tips {
+            margin-top: 32px;
+        }
+
+        .financial-wellness-tips h4 {
+            color: var(--gray-800);
+            margin-bottom: 16px;
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .tips-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .tip-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 12px 16px;
+            background: white;
+            border-radius: var(--border-radius);
+            border: 1px solid var(--gray-200);
+        }
+
+        .tip-priority {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            min-width: 60px;
+            text-align: center;
+        }
+
+        .tip-priority.high {
+            background: #fef2f2;
+            color: #dc2626;
+            border: 1px solid #fecaca;
+        }
+
+        .tip-priority.medium {
+            background: #fffbeb;
+            color: #d97706;
+            border: 1px solid #fed7aa;
+        }
+
+        .tip-priority.low {
+            background: #f0fdf4;
+            color: #16a34a;
+            border: 1px solid #bbf7d0;
+        }
+
+        .tip-text {
+            flex: 1;
+            color: var(--gray-700);
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        /* Advanced Analytics Styles */
+        .advanced-metrics-container {
+            margin-bottom: 32px;
+        }
+
+        .advanced-metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 24px;
+        }
+
+        .advanced-metric-card {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 20px;
+            border: 1px solid var(--gray-200);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            transition: all 0.2s ease;
+        }
+
+        .advanced-metric-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .metric-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+
+        .metric-name {
+            font-weight: 600;
+            color: var(--gray-800);
+            font-size: 1rem;
+        }
+
+        .metric-score {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: white;
+        }
+
+        .metric-score.excellent {
+            background: linear-gradient(135deg, #10b981, #059669);
+        }
+
+        .metric-score.good {
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+        }
+
+        .metric-score.fair {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+        }
+
+        .metric-score.poor {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+        }
+
+        .metric-description {
+            color: var(--gray-600);
+            font-size: 0.875rem;
+            line-height: 1.4;
+            margin-bottom: 8px;
+        }
+
+        .metric-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+
+        /* Scenario Analysis Styles */
+        .scenario-analysis-container {
+            margin-top: 32px;
+        }
+
+        .scenario-section {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 24px;
+            margin-bottom: 24px;
+            border: 1px solid var(--gray-200);
+        }
+
+        .scenario-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--gray-800);
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .scenario-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 16px;
+        }
+
+        .scenario-item {
+            background: var(--gray-50);
+            border-radius: 8px;
+            padding: 16px;
+            border-left: 4px solid var(--primary-color);
+        }
+
+        .scenario-item.stress-test {
+            border-left-color: var(--danger-color);
+        }
+
+        .scenario-item.monte-carlo {
+            border-left-color: var(--secondary-color);
+        }
+
+        .scenario-label {
+            font-weight: 600;
+            color: var(--gray-700);
+            font-size: 0.9rem;
+            margin-bottom: 4px;
+        }
+
+        .scenario-value {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--gray-900);
+        }
+
+        .scenario-description {
+            font-size: 0.8rem;
+            color: var(--gray-600);
+            margin-top: 4px;
+            line-height: 1.3;
+        }
+
+        .probability-bar {
+            width: 100%;
+            height: 8px;
+            background: var(--gray-200);
+            border-radius: 4px;
+            margin: 8px 0;
+            overflow: hidden;
+        }
+
+        .probability-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--danger-color), var(--accent-color), var(--secondary-color));
+            border-radius: 4px;
+            transition: width 0.8s ease;
         }
 
         /* Responsive design */
@@ -795,6 +1149,22 @@
                     <p style="color: var(--gray-600); margin-bottom: 20px;">Your financial health score is calculated based on four key components using expert financial advisor standards:</p>
                     <div id="scoreBreakdown" class="score-breakdown">
                         <!-- Score breakdown will be populated here -->
+                    </div>
+                </div>
+
+                <!-- Advanced Analytics Section -->
+                <div class="detailed-results">
+                    <div class="section-header" onclick="toggleSection('advanced-analytics')">
+                        <h3><span class="section-icon">🔬</span> Advanced Financial Analytics</h3>
+                        <span class="expand-icon" id="advanced-analytics-icon">▼</span>
+                    </div>
+                    <div class="section-content collapsed" id="advanced-analytics-content">
+                        <div id="advancedMetrics" class="advanced-metrics-container">
+                            <!-- Advanced metrics will be populated here -->
+                        </div>
+                        <div id="scenarioAnalysis" class="scenario-analysis-container">
+                            <!-- Scenario analysis will be populated here -->
+                        </div>
                     </div>
                 </div>
 
