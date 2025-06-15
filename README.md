@@ -1,233 +1,232 @@
-# 💰 Financial Health Planner
+# 💰 Financial Health Analyzer
 
-A comprehensive, frontend-only financial health analyzer and planner that runs entirely in your browser. Get detailed financial analysis, personalized recommendations, and retirement projections without any server dependencies.
+A modern, TypeScript-based financial health analyzer that runs entirely in your browser. Get comprehensive financial analysis, personalized recommendations, and projections without any server dependencies.
 
-## 🚀 Quick Start (Windows)
+## 🚀 Quick Start
 
 1. **Clone the repository**
-   ```cmd
+   ```bash
    git clone https://github.com/yourusername/Financial-Adviser-App.git
    cd Financial-Adviser-App
    ```
 
-2. **Start the application**
-   ```cmd
+2. **Install dependencies and start**
+   ```bash
    npm install
    npm start
    ```
    
-   Or use the optional Windows helper script:
+   Or use the Windows helper script:
    ```cmd
    start.cmd
    ```
 
 3. **Open your browser** to `http://localhost:3000` and start analyzing your finances!
 
-## ✨ Features
+## ✨ Key Features
 
-### Core Financial Analysis
-- **📊 Financial Health Score**: 0-100 comprehensive rating with detailed breakdown
-- **💰 Savings Rate Analysis**: Track progress toward 10-20% savings goals
-- **🛡️ Emergency Fund Calculator**: Optimize 3-6 months expense coverage
-- **📈 Real-time Calculations**: Instant debt ratios, cash flow, and net worth
-- **🎯 Personalized Recommendations**: Priority-based actionable advice
+### 🎯 Smart Two-Tier Analysis
+- **Basic Mode**: Requires only essential information (income, expenses, savings, debt)
+- **Advanced Mode**: Optional detailed planning with age-based retirement projections
+- **Conditional Features**: Advanced charts and projections only appear when relevant data is provided
 
-### Investment & Planning Tools
-- **💼 Investment Allocation Tracking**: 8+ category portfolio breakdown
-- **🏠 Large Purchase Planning**: Homes, cars, education financing analysis
-- **🏖️ Retirement Projections**: Income replacement and growth calculations
-- **📊 Interactive Charts**: Visual wealth growth and allocation displays
-- **💡 Smart Tooltips**: Contextual help for every input field
+### 📊 Core Financial Metrics
+- **Financial Health Score**: 0-100 comprehensive rating with detailed breakdown
+- **Cash Flow Analysis**: Real-time monthly surplus/deficit calculations
+- **Emergency Fund Assessment**: Tracks progress toward 3-6 months expense coverage
+- **Debt-to-Income Ratio**: Professional-grade debt analysis
+- **Savings Rate Optimization**: Progress toward 10-20% savings goals
 
-### Technical Highlights
-- **🌐 Frontend-Only**: No server required - runs entirely in browser
-- **🔒 Complete Privacy**: All data stays local, no external transmission
-- **📱 Mobile Responsive**: Works perfectly on phones, tablets, and desktop
-- **⚡ Lightning Fast**: Instant calculations with no loading delays
-- **🎨 Modern UI/UX**: Clean, professional interface with visual feedback
+### 📈 Advanced Planning Tools (Age-Based)
+- **Retirement Projections**: Income replacement and growth calculations using historical data
+- **Wealth Growth Charts**: Visual projections with inflation-adjusted purchasing power
+- **Investment Scenarios**: Conservative, moderate, and aggressive growth models
+- **Financial Health Trends**: 12-month forward-looking score projections
+
+### 🎨 Modern User Experience
+- **Clean, Professional Interface**: Modern CSS with custom properties and animations
+- **Mobile-First Design**: Fully responsive across all device sizes
+- **Interactive Help System**: Info boxes with explanations for every input field
+- **Expandable Sections**: Collapsible Basic/Advanced inputs and chart sections
+- **Real-Time Validation**: Instant feedback on input data
 
 ## 🏗️ Technology Stack
 
-- **Frontend**: HTML5, CSS3, Vanilla JavaScript (ES6+)
-- **Charts**: Chart.js for interactive visualizations
-- **Development**: Node.js + http-server for local development
-- **Deployment**: GitHub Pages (free hosting)
-- **No Dependencies**: Zero backend, database, or server requirements
+- **Frontend**: TypeScript, HTML5, CSS3 (modern standards)
+- **Build System**: Webpack 5 with TypeScript compilation
+- **Charts**: Chart.js for interactive financial visualizations
+- **Testing**: Jest with TypeScript support and comprehensive test coverage
+- **Deployment**: GitHub Pages with automated CI/CD workflow
 
 ## 📖 How to Use
 
-### Step 1: Enter Your Financial Information
-Fill out the comprehensive financial snapshot form:
-- **Income & Expenses**: Monthly after-tax income and spending
-- **Savings & Investments**: Monthly savings and current asset values
-- **Emergency Fund**: Amount and storage location details
-- **Personal Details**: Age, retirement goals, and risk tolerance
+### Step 1: Basic Financial Information (Required)
+- **Monthly Income**: Your take-home income after taxes
+- **Monthly Expenses**: Essential expenses (housing, food, utilities, transport)
+- **Current Savings**: Total in savings and checking accounts
+- **Total Debt**: Credit cards, loans, etc. (excluding mortgage)
 
-### Step 2: Investment Allocation (Optional)
-Break down your monthly savings across categories:
-- High Yield Savings (recommended for emergency fund)
-- 401(k)/403(b) retirement accounts
-- Traditional and Roth IRAs
-- Taxable investment accounts
-- Real estate investments
-- Cryptocurrency (if applicable)
+### Step 2: Advanced Details (Optional)
+Expand the "Advanced Details" section for enhanced analysis:
+- **Age & Retirement Planning**: Enables retirement projections and timeline
+- **Investment Information**: Current portfolio and monthly contributions
+- **Risk Tolerance**: Conservative, moderate, or aggressive investment strategy
+- **Emergency Fund Goal**: Customize target months of expense coverage
 
-### Step 3: Large Purchase Planning (Optional)
-Plan for major expenses:
-- House/Real Estate purchases
-- Vehicle financing
-- Wedding expenses
-- Education costs
-- Business investments
-
-### Step 4: Get Comprehensive Analysis
+### Step 3: Get Comprehensive Analysis
 Receive detailed insights including:
-- Financial health score with color-coded rating
-- Key metrics: savings rate, emergency fund coverage, cash flow
-- Priority-based recommendations with specific action items
-- 10-year wealth growth projections
-- Retirement income planning with Social Security estimates
+- **Financial Health Score**: Color-coded rating with breakdown
+- **Key Metrics Dashboard**: Cash flow, emergency fund, debt ratios, savings rate
+- **Personalized Recommendations**: Priority-based actionable advice
+- **Interactive Charts** (if age provided): Wealth projections and health trends
 
-## 🎯 Financial Principles Used
+## 🎯 Financial Principles
 
-Based on proven financial fundamentals from academic research:
+Based on proven financial fundamentals:
 
-### The 10% Savings Rule
-- Save at least 10% of income for long-term wealth building
-- Ideal target: 20% for accelerated financial independence
+### Historical Inflation Adjustment
+- **Automatic Calculation**: Uses 3.5% historical inflation rate (no manual input needed)
+- **Real Purchasing Power**: Shows both nominal and inflation-adjusted projections
+- **Long-term Planning**: Accounts for cost of living increases over time
 
-### Emergency Fund Guidelines
-- Minimum: 3 months of expenses for basic protection
-- Recommended: 6 months for optimal financial security
-- Store in high-yield savings accounts for liquidity + growth
-
-### Investment Allocation by Age
-- Conservative (Age 50+): 40-60% stocks, 40-60% bonds
-- Moderate (Age 30-50): 60-80% stocks, 20-40% bonds  
-- Aggressive (Age <30): 80-100% stocks, 0-20% bonds
-
-### Retirement Planning
-- 4% safe withdrawal rule for retirement income
-- Social Security replaces ~40% of pre-retirement income
-- Target 10-12x annual expenses in retirement savings
+### Savings & Investment Guidelines
+- **10-20% Savings Rule**: Tracks progress toward wealth building targets
+- **Emergency Fund**: 3-6 months expenses for financial security
+- **Age-Based Risk Tolerance**: Investment allocation recommendations
+- **4% Withdrawal Rule**: Retirement income sustainability calculations
 
 ## 💻 Development
 
 ### Prerequisites
-- Node.js 14+ (for local development server)
+- Node.js 16+ (for TypeScript compilation and development)
 - Modern web browser (Chrome, Firefox, Safari, Edge)
 
-### Local Development
-```cmd
-REM Install dependencies
+### Development Workflow
+```bash
+# Install dependencies
 npm install
 
-REM Start with cache disabled (see changes immediately)
+# Start development server with hot reload
 npm start
 
-REM Or use the Windows helper script
-start.cmd
-```
-
-**Note**: `npm start` now runs with cache disabled (`-c-1` flag) so you'll see changes immediately. If you modify code and don't see changes, press `Ctrl+F5` for a hard refresh.
-
-### Building for Production
-```cmd
-REM Static files are ready for deployment
+# Build for production
 npm run build
 
-REM Deploy to GitHub Pages
-npm run deploy
+# Run test suite
+npm test
+
+# Run tests in watch mode
+npm run test:watch
+
+# Generate test coverage report
+npm run test:coverage
+```
+
+### Project Structure
+```
+Financial-Adviser-App/
+├── src/
+│   ├── app.ts          # Main application logic
+│   ├── types.ts        # TypeScript interfaces
+│   └── index.html      # UI with modern CSS
+├── tests-ts/           # Jest test suites
+├── dist/               # Production build output
+└── webpack.config.js   # Build configuration
 ```
 
 ## 🌐 Deployment
 
-### GitHub Pages (Recommended)
-1. Push to GitHub repository
-2. Enable GitHub Pages in repository settings
-3. Choose source: GitHub Actions
-4. The included workflow will automatically deploy on push to main
+### GitHub Pages (Automated)
+1. Push changes to the `main` branch
+2. GitHub Actions automatically builds and deploys
+3. Live site available at: `https://yourusername.github.io/Financial-Adviser-App`
 
-### Alternative Hosting
-The application is a static site that can be hosted anywhere:
-- Netlify: Drag and drop the folder
-- Vercel: Connect GitHub repository
-- AWS S3: Upload static files
-- Any web server: Copy files to public directory
+### Manual Deployment
+```bash
+# Build production version
+npm run build
+
+# Deploy dist/ folder to any static hosting service
+# (Netlify, Vercel, AWS S3, etc.)
+```
 
 ## 🔒 Privacy & Security
 
-- **No Data Collection**: Zero tracking, analytics, or data transmission
-- **Local Processing**: All calculations performed in your browser
-- **No Sign-up Required**: Use immediately without accounts
-- **Open Source**: Review all code for transparency
-- **No Cookies**: No persistent data storage beyond browser session
+- **No Data Transmission**: All calculations performed locally in your browser
+- **No Sign-up Required**: Use immediately without accounts or registration
+- **No Tracking**: Zero analytics, cookies, or data collection
+- **Open Source**: Complete code transparency for security review
 
-## 🤝 Contributing
+## 🧪 Testing
 
-Contributions welcome! Please:
+Comprehensive test coverage includes:
+- **Unit Tests**: Core calculation functions and financial algorithms
+- **Integration Tests**: DOM manipulation and user interaction flows
+- **Scenario Testing**: Edge cases and various financial situations
+- **Performance Tests**: Chart rendering and calculation efficiency
 
-1. Fork the repository
-2. Create a feature branch: `git checkout -b feature-name`
-3. Make your changes and test thoroughly
-4. Commit with clear messages: `git commit -m "Add feature description"`
-5. Push to your fork: `git push origin feature-name`
-6. Open a Pull Request with detailed description
+Run tests with:
+```bash
+npm test                    # Run all tests
+npm run test:watch         # Watch mode for development
+npm run test:coverage      # Generate coverage report
+```
 
 ## 📊 Sample Analysis
 
 Try the calculator with sample data:
 - **Monthly Income**: $6,000
 - **Monthly Expenses**: $4,500
-- **Monthly Savings**: $1,000
-- **Emergency Fund**: $15,000
-- **Other Assets**: $25,000
-- **Age**: 30, **Retirement Age**: 65
+- **Current Savings**: $15,000
+- **Total Debt**: $8,000
+- **Age**: 30 (enables advanced features)
 
 Expected Results:
-- **Health Score**: 75-85 (Good to Excellent)
-- **Savings Rate**: 16.7% (Above 15% target)
-- **Emergency Fund**: 3.3 months (Build to 6 months)
-- **Projected Retirement Savings**: $1.2M+ by age 65
+- **Health Score**: 70-80 (Good range)
+- **Cash Flow**: +$1,500/month
+- **Savings Rate**: 25% (Excellent)
+- **Recommendations**: Continue current trajectory, optimize investments
+
+## 🔄 Recent Major Updates
+
+### Version 2.0 - Modern TypeScript Implementation
+- **Simplified User Interface**: Two-tier Basic/Advanced input structure
+- **Removed Manual Inflation Input**: Now uses 3.5% historical average automatically
+- **Enhanced Chart Integration**: Chart.js with proper TypeScript support
+- **Improved Mobile Experience**: Better responsive design and touch interactions
+- **Conditional Feature Display**: Advanced features only shown when relevant
+- **Comprehensive Test Coverage**: 13 test scenarios covering all major functionality
 
 ## ❓ FAQ
 
-**Q: Do I need to create an account?**
-A: No! Use the calculator immediately without any sign-up.
-
-**Q: Is my financial data secure?**
-A: Yes, all calculations happen in your browser. No data is sent to servers.
-
-**Q: Can I save my analysis?**
-A: Currently data is session-based. We're considering adding local storage options.
+**Q: Do I need to provide all information?**
+A: No! Only basic financial information is required. Advanced features (like retirement projections) only appear if you provide your age.
 
 **Q: How accurate are the projections?**
-A: Projections use historical market averages and proven financial formulas, but actual results may vary.
+A: Projections use standard financial formulas and historical market data (7% average return, 3.5% inflation). Actual results may vary.
+
+**Q: Can I save my analysis?**
+A: Currently, data is session-based. We recommend taking screenshots of your results for record-keeping.
+
+**Q: What about privacy?**
+A: All calculations happen in your browser. No data is sent to servers or stored externally.
 
 **Q: Can I use this for business finances?**
-A: This tool is designed for personal/family financial planning.
+A: This tool is designed for personal/family financial planning. Business finances have different requirements.
 
-## 🚀 Future Improvements
+## 🚀 Future Enhancements
 
-### Enhanced Features
-- **📄 PDF Export**: Save analysis reports for record-keeping
-- **💾 Data Import/Export**: JSON backup and restore functionality
-- **📊 Advanced Charts**: More detailed visualization options
-- **🎯 Goal Tracking**: Set and monitor financial milestones
-- **📱 PWA Support**: Install as mobile app with offline functionality
-
-### Additional Calculators
-- **🏠 Mortgage Calculator**: Detailed home buying analysis
-- **🚗 Auto Loan Optimizer**: Vehicle financing comparisons
-- **🎓 Education Savings**: 529 plan and education cost planning
-- **💼 Business Finance**: Self-employment and small business tools
-- **🌍 International**: Multi-currency and tax system support
+### Planned Features
+- **Data Export**: PDF reports and JSON backup/restore
+- **Goal Tracking**: Set and monitor financial milestones
+- **Scenario Planning**: "What-if" analysis tools
+- **Advanced Charts**: More detailed visualization options
+- **PWA Support**: Install as mobile app with offline functionality
 
 ### Educational Content
-- **📚 Financial Literacy**: Interactive learning modules
-- **🎥 Video Tutorials**: Step-by-step planning guides
-- **📖 Best Practices**: Detailed financial planning strategies
-- **🔍 Scenario Planning**: "What-if" analysis tools
+- **Financial Literacy Modules**: Interactive learning content
+- **Best Practices Guide**: Detailed financial planning strategies
+- **Video Tutorials**: Step-by-step planning guides
 
 ## 📜 License
 
@@ -235,9 +234,10 @@ MIT License - see [LICENSE](LICENSE) file for details.
 
 ## 🙏 Acknowledgments
 
-- Financial fundamentals based on academic research from BYU School of Family Life
-- Built with modern web standards for accessibility and performance
-- Inspired by the need for free, privacy-focused financial planning tools
+- Built with modern TypeScript and web standards for performance and accessibility
+- Chart.js integration for professional-quality financial visualizations
+- Financial calculations based on academic research and industry best practices
+- Designed for privacy-focused users who want local-only financial analysis
 
 ---
 

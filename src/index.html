@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Financial Health Analyzer</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --primary-color: #3b82f6;
+            --primary-dark: #1d4ed8;
+            --secondary-color: #10b981;
+            --accent-color: #f59e0b;
+            --danger-color: #ef4444;
+            --gray-50: #f9fafb;
+            --gray-100: #f3f4f6;
+            --gray-200: #e5e7eb;
+            --gray-300: #d1d5db;
+            --gray-400: #9ca3af;
+            --gray-500: #6b7280;
+            --gray-600: #4b5563;
+            --gray-700: #374151;
+            --gray-800: #1f2937;
+            --gray-900: #111827;
+            --border-radius: 12px;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: var(--gray-800);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .header {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            color: white;
+            padding: 40px 40px 60px;
+            text-align: center;
+            position: relative;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .main-content {
+            padding: 40px;
+            background: white;
+            margin-top: -40px;
+            border-radius: var(--border-radius) var(--border-radius) 0 0;
+            position: relative;
+            z-index: 1;
+        }
+
+        .form-section {
+            margin-bottom: 32px;
+            background: var(--gray-50);
+            border-radius: var(--border-radius);
+            border: 1px solid var(--gray-200);
+            overflow: hidden;
+        }
+
+        .section-header {
+            background: var(--gray-100);
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--gray-200);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .section-header:hover {
+            background: var(--gray-200);
+        }
+
+        .section-header h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--gray-800);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .section-icon {
+            font-size: 1.25rem;
+        }
+
+        .expand-icon {
+            font-size: 1.2rem;
+            color: var(--gray-500);
+            transition: transform 0.2s;
+        }
+
+        .section-content {
+            padding: 24px;
+        }
+
+        .section-content.collapsed {
+            display: none;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+        }
+
+        .input-group {
+            position: relative;
+        }
+
+        .input-group label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 500;
+            margin-bottom: 8px;
+            color: var(--gray-700);
+        }
+
+        .required-indicator {
+            color: var(--danger-color);
+            font-weight: 600;
+        }
+
+        .info-icon {
+            width: 18px;
+            height: 18px;
+            background: var(--gray-400);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: help;
+            position: relative;
+        }
+
+        .info-icon:hover .tooltip {
+            opacity: 1;
+            visibility: visible;
+            transform: translateX(-50%) translateY(-10px);
+        }
+
+        .tooltip {
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%) translateY(-5px);
+            background: var(--gray-900);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 0.875rem;
+            white-space: nowrap;
+            max-width: 250px;
+            white-space: normal;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.2s;
+            box-shadow: var(--shadow);
+        }
+
+        .tooltip::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            border: 5px solid transparent;
+            border-top-color: var(--gray-900);
+        }
+
+        .input-group input,
+        .input-group select {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid var(--gray-300);
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: all 0.2s;
+            background: white;
+        }
+
+        .input-group input:focus,
+        .input-group select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        .input-prefix {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--gray-500);
+            font-weight: 500;
+            pointer-events: none;
+        }
+
+        .input-group input.has-prefix {
+            padding-left: 32px;
+        }
+
+        .analyze-button {
+            width: 100%;
+            padding: 16px 24px;
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            color: white;
+            border: none;
+            border-radius: var(--border-radius);
+            font-size: 1.125rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin: 32px 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .analyze-button:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .analyze-button:active {
+            transform: translateY(0);
+        }
+
+        .results-container {
+            margin-top: 40px;
+            display: none;
+        }
+
+        .results-container.visible {
+            display: block;
+            animation: fadeInUp 0.5s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .results-summary {
+            background: linear-gradient(135deg, var(--secondary-color), #059669);
+            color: white;
+            padding: 32px;
+            border-radius: var(--border-radius);
+            margin-bottom: 24px;
+            text-align: center;
+        }
+
+        .health-score {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .score-label {
+            font-size: 1.25rem;
+            opacity: 0.9;
+        }
+
+        .quick-metrics {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin: 24px 0;
+        }
+
+        .metric-card {
+            background: white;
+            padding: 20px;
+            border-radius: var(--border-radius);
+            border: 1px solid var(--gray-200);
+            text-align: center;
+        }
+
+        .metric-value {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--primary-color);
+            margin-bottom: 4px;
+        }
+
+        .metric-label {
+            font-size: 0.875rem;
+            color: var(--gray-600);
+        }
+
+        .detailed-results {
+            background: var(--gray-50);
+            border-radius: var(--border-radius);
+            border: 1px solid var(--gray-200);
+            overflow: hidden;
+        }
+
+        .chart-container {
+            background: white;
+            padding: 24px;
+            border-radius: var(--border-radius);
+            border: 1px solid var(--gray-200);
+            margin-bottom: 24px;
+        }
+
+        .chart-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            margin-bottom: 16px;
+            color: var(--gray-800);
+        }
+
+        .chart-wrapper {
+            position: relative;
+            height: 300px;
+        }
+
+        .recommendation-section {
+            background: white;
+            padding: 24px;
+            border-radius: var(--border-radius);
+            border: 1px solid var(--gray-200);
+        }
+
+        .recommendation-section h3 {
+            color: var(--gray-800);
+            margin-bottom: 16px;
+            font-size: 1.25rem;
+        }
+
+        .recommendation-text {
+            color: var(--gray-700);
+            line-height: 1.7;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .container {
+                margin: 10px;
+            }
+            
+            .header {
+                padding: 32px 24px 48px;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .main-content {
+                padding: 24px;
+            }
+            
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>💰 Financial Health Analyzer</h1>
+            <p>Get personalized insights into your financial wellness</p>
+        </div>
+
+        <div class="main-content">
+            <form id="financialForm">
+                <!-- Basic Information Section -->
+                <div class="form-section">
+                    <div class="section-header">
+                        <h3><span class="section-icon">📊</span> Basic Financial Information</h3>
+                    </div>
+                    <div class="section-content">
+                        <div class="form-grid">
+                            <div class="input-group">
+                                <label for="monthlyIncome">
+                                    Monthly Income <span class="required-indicator">*</span>
+                                    <div class="info-icon">i
+                                        <div class="tooltip">Your total monthly take-home income after taxes from all sources</div>
+                                    </div>
+                                </label>
+                                <div class="input-prefix">$</div>
+                                <input type="number" id="monthlyIncome" class="has-prefix" min="0" step="100" required>
+                            </div>
+
+                            <div class="input-group">
+                                <label for="monthlyExpenses">
+                                    Monthly Expenses <span class="required-indicator">*</span>
+                                    <div class="info-icon">i
+                                        <div class="tooltip">Your total monthly essential expenses (housing, food, utilities, transportation, etc.)</div>
+                                    </div>
+                                </label>
+                                <div class="input-prefix">$</div>
+                                <input type="number" id="monthlyExpenses" class="has-prefix" min="0" step="100" required>
+                            </div>
+
+                            <div class="input-group">
+                                <label for="savings">
+                                    Current Savings
+                                    <div class="info-icon">i
+                                        <div class="tooltip">Total amount in your savings accounts, checking accounts, and emergency fund</div>
+                                    </div>
+                                </label>
+                                <div class="input-prefix">$</div>
+                                <input type="number" id="savings" class="has-prefix" min="0" step="500">
+                            </div>
+
+                            <div class="input-group">
+                                <label for="debt">
+                                    Total Debt
+                                    <div class="info-icon">i
+                                        <div class="tooltip">Combined total of credit cards, student loans, car loans, and other debt (excluding mortgage)</div>
+                                    </div>
+                                </label>
+                                <div class="input-prefix">$</div>
+                                <input type="number" id="debt" class="has-prefix" min="0" step="500">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Advanced Information Section -->
+                <div class="form-section">
+                    <div class="section-header" onclick="toggleSection('advanced')">
+                        <h3><span class="section-icon">⚙️</span> Advanced Details (Optional)</h3>
+                        <span class="expand-icon" id="advanced-icon">▼</span>
+                    </div>
+                    <div class="section-content collapsed" id="advanced-content">
+                        <div class="form-grid">
+                            <div class="input-group">
+                                <label for="age">
+                                    Age
+                                    <div class="info-icon">i
+                                        <div class="tooltip">Your current age, used for retirement planning calculations</div>
+                                    </div>
+                                </label>
+                                <input type="number" id="age" min="18" max="100" step="1">
+                            </div>
+
+                            <div class="input-group">
+                                <label for="retirementAge">
+                                    Target Retirement Age
+                                    <div class="info-icon">i
+                                        <div class="tooltip">The age you plan to retire (typically 62-67)</div>
+                                    </div>
+                                </label>
+                                <input type="number" id="retirementAge" min="50" max="80" step="1">
+                            </div>
+
+                            <div class="input-group">
+                                <label for="riskTolerance">
+                                    Investment Risk Tolerance
+                                    <div class="info-icon">i
+                                        <div class="tooltip">Conservative: Lower risk/return, Moderate: Balanced, Aggressive: Higher risk/return potential</div>
+                                    </div>
+                                </label>
+                                <select id="riskTolerance">
+                                    <option value="conservative">Conservative</option>
+                                    <option value="moderate" selected>Moderate</option>
+                                    <option value="aggressive">Aggressive</option>
+                                </select>
+                            </div>
+
+                            <div class="input-group">
+                                <label for="currentInvestments">
+                                    Current Investments
+                                    <div class="info-icon">i
+                                        <div class="tooltip">Total value of 401(k), IRA, stocks, bonds, and other investment accounts</div>
+                                    </div>
+                                </label>
+                                <div class="input-prefix">$</div>
+                                <input type="number" id="currentInvestments" class="has-prefix" min="0" step="1000">
+                            </div>
+
+                            <div class="input-group">
+                                <label for="monthlyInvestmentContribution">
+                                    Monthly Investment Contribution
+                                    <div class="info-icon">i
+                                        <div class="tooltip">Amount you contribute monthly to retirement accounts and investments</div>
+                                    </div>
+                                </label>
+                                <div class="input-prefix">$</div>
+                                <input type="number" id="monthlyInvestmentContribution" class="has-prefix" min="0" step="50">
+                            </div>
+
+                            <div class="input-group">
+                                <label for="emergencyFundGoal">
+                                    Emergency Fund Goal (Months)
+                                    <div class="info-icon">i
+                                        <div class="tooltip">How many months of expenses you want to save (recommended: 3-6 months)</div>
+                                    </div>
+                                </label>
+                                <input type="number" id="emergencyFundGoal" min="1" max="12" step="1" value="6">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <button type="button" class="analyze-button" id="analyzeBtn">
+                    Analyze My Financial Health
+                </button>
+            </form>
+
+            <!-- Results Section -->
+            <div class="results-container" id="results">
+                <div class="results-summary">
+                    <div class="health-score" id="healthScore">--</div>
+                    <div class="score-label">Financial Health Score</div>
+                </div>
+
+                <div class="quick-metrics">
+                    <div class="metric-card">
+                        <div class="metric-value" id="cashFlowValue">$--</div>
+                        <div class="metric-label">Monthly Cash Flow</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value" id="emergencyFundValue">-- months</div>
+                        <div class="metric-label">Emergency Fund</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value" id="debtRatioValue">--%</div>
+                        <div class="metric-label">Debt-to-Income Ratio</div>
+                    </div>
+                    <div class="metric-card">
+                        <div class="metric-value" id="savingsRateValue">--%</div>
+                        <div class="metric-label">Savings Rate</div>
+                    </div>
+                </div>
+
+                <div class="detailed-results">
+                    <div class="section-header" onclick="toggleSection('charts')">
+                        <h3><span class="section-icon">📈</span> Financial Health Over Time</h3>
+                        <span class="expand-icon" id="charts-icon">▼</span>
+                    </div>
+                    <div class="section-content collapsed" id="charts-content">
+                        <div class="chart-container">
+                            <div class="chart-title">Wealth Growth Projection</div>
+                            <div class="chart-wrapper">
+                                <canvas id="wealthChart"></canvas>
+                            </div>
+                        </div>
+                        <div class="chart-container">
+                            <div class="chart-title">Monthly Financial Health Trend</div>
+                            <div class="chart-wrapper">
+                                <canvas id="healthChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="recommendation-section">
+                    <h3>🎯 Personalized Recommendations</h3>
+                    <div class="recommendation-text" id="recommendationText">
+                        Complete your financial information to get personalized recommendations.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function toggleSection(sectionId) {
+            const content = document.getElementById(sectionId + '-content');
+            const icon = document.getElementById(sectionId + '-icon');
+            
+            if (content.classList.contains('collapsed')) {
+                content.classList.remove('collapsed');
+                icon.textContent = '▲';
+            } else {
+                content.classList.add('collapsed');
+                icon.textContent = '▼';
+            }
+        }
+    </script>
+</body>
+</html> 

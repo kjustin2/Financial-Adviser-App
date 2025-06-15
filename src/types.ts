@@ -1,49 +1,24 @@
 /**
- * User input data from the form - Enhanced for detailed analysis
+ * User input data from the form - Simplified for better UX
  */
 export interface UserFinancialData {
-  // Basic Financial Information
+  // Basic Financial Information (Required)
   monthlyIncome: number;
   monthlyExpenses: number;
   savings: number;
   debt: number;
   
-  // Personal Information
-  age: number;
-  retirementAge: number;
-  
-  // Investment & Risk Information
+  // Advanced Information (Optional)
+  age?: number;
+  retirementAge?: number;
   riskTolerance: 'conservative' | 'moderate' | 'aggressive';
-  currentInvestments: number;
-  monthlyInvestmentContribution: number;
-  
-  // Goals & Planning
+  currentInvestments?: number;
+  monthlyInvestmentContribution?: number;
   emergencyFundGoal: number;
-  retirementIncomeGoal: number;
-  
-  // Additional Income Sources (optional)
-  bonusIncome: number;
-  passiveIncome: number;
-  
-  // Planned Large Purchases
-  plannedPurchases: PlannedPurchase[];
-  expectedInflationRate: number;
 }
 
 /**
- * Planned large purchase details
- */
-export interface PlannedPurchase {
-  name: string;
-  cost: number;
-  timeframeYears: number;
-  priority: 'high' | 'medium' | 'low';
-  financed: boolean; // If true, only down payment affects cash flow
-  downPaymentPercent?: number; // For financed purchases
-}
-
-/**
- * Result of financial analysis - Enhanced with predictions
+ * Result of financial analysis
  */
 export interface AnalysisResult {
   score: number;
@@ -51,15 +26,13 @@ export interface AnalysisResult {
   recommendation: string;
   emergencyFundMonths: number;
   debtToIncomeRatio: number;
+  savingsRate: number;
   
-  // Long-term Predictions
-  retirementProjections: RetirementProjections;
-  wealthProjections: WealthProjections;
-  financialMilestones: FinancialMilestone[];
+  // Long-term Predictions (only if age provided)
+  retirementProjections?: RetirementProjections;
+  wealthProjections?: WealthProjections;
+  financialMilestones?: FinancialMilestone[];
   riskAssessment: RiskAssessment;
-  
-  // Inflation-adjusted projections
-  inflationAdjustedProjections: InflationAdjustedProjections;
 }
 
 /**
@@ -73,15 +46,10 @@ export interface RetirementProjections {
   projectedMonthlyRetirementIncome: number;
   socialSecurityEstimate: number;
   shortfallOrSurplus: number;
-  
-  // Inflation-adjusted retirement values
-  realRetirementWealth: number;
-  realRetirementIncome: number;
-  inflationImpact: number;
 }
 
 /**
- * Wealth growth projections
+ * Wealth growth projections with historical inflation adjustment
  */
 export interface WealthProjections {
   fiveYearProjection: number;
@@ -91,38 +59,10 @@ export interface WealthProjections {
   totalContributions: number;
   investmentGrowth: number;
   
-  // Large purchase impact
-  fiveYearAfterPurchases: number;
-  tenYearAfterPurchases: number;
-  retirementAfterPurchases: number;
-  totalPlannedPurchases: number;
-}
-
-/**
- * Inflation-adjusted projections showing real purchasing power
- */
-export interface InflationAdjustedProjections {
+  // Real purchasing power (adjusted for 3.5% historical inflation)
   fiveYearReal: number;
   tenYearReal: number;
   retirementReal: number;
-  
-  // After planned purchases (inflation-adjusted)
-  fiveYearRealAfterPurchases: number;
-  tenYearRealAfterPurchases: number;
-  retirementRealAfterPurchases: number;
-  
-  // Inflation impact metrics
-  inflationRate: number;
-  fiveYearInflationImpact: number;
-  tenYearInflationImpact: number;
-  retirementInflationImpact: number;
-  
-  // Purchasing power comparison
-  todaysPurchasingPower: {
-    fiveYear: number;
-    tenYear: number;
-    retirement: number;
-  };
 }
 
 /**
@@ -135,10 +75,6 @@ export interface FinancialMilestone {
   monthlyContributionNeeded: number;
   priority: 'high' | 'medium' | 'low';
   achievable: boolean;
-  
-  // Inflation-adjusted values
-  realTargetAmount?: number;
-  inflationAdjustedContribution?: number;
 }
 
 /**
@@ -150,11 +86,23 @@ export interface RiskAssessment {
   recommendations: string[];
   emergencyFundAdequacy: boolean;
   diversificationScore: number;
-  
-  // Large purchase risks
-  purchaseAffordability: 'excellent' | 'good' | 'concerning' | 'unaffordable';
-  liquidityRisk: boolean;
-  inflationRisk: 'low' | 'medium' | 'high';
+}
+
+/**
+ * Chart data for visualizations
+ */
+export interface ChartData {
+  labels: string[];
+  datasets: ChartDataset[];
+}
+
+export interface ChartDataset {
+  label: string;
+  data: number[];
+  backgroundColor?: string | string[];
+  borderColor?: string | string[];
+  borderWidth?: number;
+  tension?: number;
 }
 
 /**
@@ -162,9 +110,12 @@ export interface RiskAssessment {
  */
 export interface DOMElements {
   form: HTMLFormElement;
-  resultsDiv: HTMLElement;
-  scoreElement: HTMLElement;
-  cashFlowElement: HTMLElement;
-  recommendationElement: HTMLElement;
+  resultsContainer: HTMLElement;
+  healthScore: HTMLElement;
+  cashFlowValue: HTMLElement;
+  emergencyFundValue: HTMLElement;
+  debtRatioValue: HTMLElement;
+  savingsRateValue: HTMLElement;
+  recommendationText: HTMLElement;
   analyzeBtn: HTMLButtonElement;
 } 

@@ -98,7 +98,6 @@ secrets.json
 bundle.js
 bundle.js.map
 
-# Legacy files (if any remain)
-app.js
-index.html
-styles.css 
+# Documentation (keep only README.md)
+*.md
+!README.md 
