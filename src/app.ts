@@ -14,22 +14,32 @@ import {
     performStressTest, 
     calculateContributionScenarios
 } from './utils/scenarioAnalysis';
+import { ChartManager } from './ui/ChartManager';
+import { InfoBoxManager } from './ui/InfoBoxManager';
+import { FinancialAnalyzer } from './utils/FinancialAnalyzer';
 
 /**
  * Modern Financial Health Analyzer
  * Clean, user-friendly analysis with conditional advanced features
  */
-class FinancialAnalyzer {
+class FinancialHealthApp {
     private elements!: DOMElements;
-    private wealthChart: any = null;
-    private healthChart: any = null;
+    private chartManager: ChartManager;
+    private infoBoxManager: InfoBoxManager;
     private readonly HISTORICAL_INFLATION_RATE = 0.035; // 3.5% historical average
 
     constructor() {
         console.log('🚀 Starting Financial Health Analyzer...');
         this.initializeDOM();
+        this.chartManager = new ChartManager();
+        this.infoBoxManager = new InfoBoxManager();
         this.attachEventListeners();
         console.log('✅ Initialization complete');
+        
+        // Initialize info box manager (prevents unused variable warning)
+        if (this.infoBoxManager) {
+            console.log('Info box manager initialized');
+        }
     }
 
     /**
@@ -78,147 +88,6 @@ class FinancialAnalyzer {
             event.preventDefault();
             this.performAnalysis();
         });
-
-        // Add info icon click handlers
-        this.initializeInfoBoxes();
-    }
-
-    /**
-     * Initialize info box functionality
-     */
-    private initializeInfoBoxes(): void {
-        const infoIcons = document.querySelectorAll('.info-icon');
-        
-        infoIcons.forEach(icon => {
-            // Handle click events (mobile and desktop)
-            icon.addEventListener('click', (e) => {
-                e.stopPropagation();
-                
-                // Close all other tooltips first
-                infoIcons.forEach(otherIcon => {
-                    if (otherIcon !== icon) {
-                        otherIcon.classList.remove('active');
-                    }
-                });
-                
-                // Toggle current tooltip and position it
-                icon.classList.toggle('active');
-                if (icon.classList.contains('active')) {
-                    this.positionTooltip(icon);
-                }
-            });
-
-            // Handle mouse events for desktop
-            icon.addEventListener('mouseenter', () => {
-                if (window.innerWidth > 768) { // Desktop only
-                    icon.classList.add('active');
-                    this.positionTooltip(icon);
-                }
-            });
-
-            icon.addEventListener('mouseleave', () => {
-                if (window.innerWidth > 768) { // Desktop only
-                    // Delay hiding to allow users to interact with tooltip
-                    setTimeout(() => {
-                        if (!icon.matches(':hover')) {
-                            icon.classList.remove('active');
-                        }
-                    }, 200);
-                }
-            });
-        });
-
-        // Close tooltips when clicking elsewhere
-        document.addEventListener('click', (e) => {
-            const target = e.target as Element;
-            if (!target.closest('.info-icon')) {
-                infoIcons.forEach(icon => {
-                    icon.classList.remove('active');
-                });
-            }
-        });
-        
-        // Reposition tooltips on scroll/resize
-        window.addEventListener('scroll', () => {
-            const activeIcon = document.querySelector('.info-icon.active');
-            if (activeIcon) {
-                this.positionTooltip(activeIcon);
-            }
-        });
-        
-        window.addEventListener('resize', () => {
-            const activeIcon = document.querySelector('.info-icon.active');
-            if (activeIcon) {
-                this.positionTooltip(activeIcon);
-            }
-        });
-    }
-
-    /**
-     * Position tooltip dynamically to prevent cutoff
-     */
-    private positionTooltip(icon: Element): void {
-        const tooltip = icon.querySelector('.tooltip') as HTMLElement;
-        if (!tooltip) return;
-
-        const iconRect = icon.getBoundingClientRect();
-        const tooltipRect = tooltip.getBoundingClientRect();
-        const viewportWidth = window.innerWidth;
-        const viewportHeight = window.innerHeight;
-
-        // Reset styles first
-        tooltip.style.position = 'fixed';
-        tooltip.style.left = '50%';
-        tooltip.style.transform = 'translateX(-50%)';
-
-        // Calculate ideal position above icon
-        let top = iconRect.top - tooltipRect.height - 10;
-        let showAbove = true;
-
-        // Check if tooltip would be cut off at top
-        if (top < 10) {
-            // Position below icon instead
-            top = iconRect.bottom + 10;
-            showAbove = false;
-        }
-
-        // Check if tooltip would be cut off at bottom
-        if (top + tooltipRect.height > viewportHeight - 10) {
-            // Force above if possible, or center vertically
-            if (iconRect.top > tooltipRect.height + 20) {
-                top = iconRect.top - tooltipRect.height - 10;
-                showAbove = true;
-            } else {
-                top = Math.max(10, (viewportHeight - tooltipRect.height) / 2);
-                showAbove = false;
-            }
-        }
-
-        // Calculate horizontal position
-        let left = iconRect.left + iconRect.width / 2;
-
-        // Check for horizontal cutoff
-        const tooltipWidth = 280; // max-width
-        if (left - tooltipWidth / 2 < 10) {
-            left = tooltipWidth / 2 + 10;
-        } else if (left + tooltipWidth / 2 > viewportWidth - 10) {
-            left = viewportWidth - tooltipWidth / 2 - 10;
-        }
-
-        // Apply positioning
-        tooltip.style.top = `${top}px`;
-        tooltip.style.left = `${left}px`;
-        tooltip.style.transform = 'translateX(-50%)';
-
-        // Update arrow position if needed
-        const arrow = tooltip.querySelector('::after') as HTMLElement;
-        if (arrow) {
-            if (showAbove) {
-                tooltip.style.setProperty('--arrow-position', 'bottom');
-            } else {
-                tooltip.style.setProperty('--arrow-position', 'top');
-            }
-        }
     }
 
     /**
@@ -282,8 +151,11 @@ class FinancialAnalyzer {
                 return;
             }
 
-            // Perform calculations
-            const analysis = this.calculateAnalysis(userData);
+            // Create financial analyzer instance
+            const analyzer = new FinancialAnalyzer(userData);
+            
+            // Perform calculations using the analyzer
+            const analysis = this.calculateAnalysis(userData, analyzer);
             console.log('Analysis completed:', analysis);
             
             // Display results
@@ -326,34 +198,31 @@ class FinancialAnalyzer {
     }
 
     /**
-     * Calculate comprehensive financial analysis
+     * Calculate comprehensive financial analysis using the analyzer
      */
-    private calculateAnalysis(data: UserFinancialData): AnalysisResult {
-        // Basic calculations
-        const cashFlow = data.monthlyIncome - data.monthlyExpenses;
-        const emergencyFundMonths = data.monthlyExpenses > 0 ? data.savings / data.monthlyExpenses : 0;
-        const debtToIncomeRatio = data.debt / (data.monthlyIncome * 12);
-        const savingsRate = data.monthlyIncome > 0 ? (cashFlow / data.monthlyIncome) * 100 : 0;
-
+    private calculateAnalysis(data: UserFinancialData, analyzer: FinancialAnalyzer): AnalysisResult {
+        // Get basic metrics from analyzer
+        const basicMetrics = analyzer.calculateBasicMetrics();
+        
         // Calculate financial health score with breakdown
-        const scoreResult = this.calculateHealthScore(data, cashFlow, emergencyFundMonths, debtToIncomeRatio, savingsRate);
+        const scoreResult = this.calculateHealthScore(data, basicMetrics.cashFlow, basicMetrics.emergencyFundMonths, basicMetrics.debtToIncomeRatio, basicMetrics.savingsRate);
         const score = scoreResult.score;
         const scoreBreakdown = scoreResult.breakdown;
 
         // Calculate risk assessment
-        const riskAssessment = this.calculateRiskAssessment(data, cashFlow, emergencyFundMonths, debtToIncomeRatio);
+        const riskAssessment = this.calculateRiskAssessment(data, basicMetrics.cashFlow, basicMetrics.emergencyFundMonths, basicMetrics.debtToIncomeRatio);
 
-        // Generate recommendation
-        const recommendation = this.generateRecommendation(data, cashFlow, emergencyFundMonths, debtToIncomeRatio, score);
+        // Generate recommendation using analyzer
+        const recommendation = analyzer.generateRecommendations();
 
         const analysis: AnalysisResult = {
             score,
             scoreBreakdown,
-            cashFlow,
+            cashFlow: basicMetrics.cashFlow,
             recommendation,
-            emergencyFundMonths,
-            debtToIncomeRatio,
-            savingsRate,
+            emergencyFundMonths: basicMetrics.emergencyFundMonths,
+            debtToIncomeRatio: basicMetrics.debtToIncomeRatio,
+            savingsRate: basicMetrics.savingsRate,
             riskAssessment
         };
 
@@ -361,7 +230,7 @@ class FinancialAnalyzer {
         if (data.age) {
             analysis.retirementProjections = this.calculateRetirementProjections(data);
             analysis.wealthProjections = this.calculateWealthProjections(data);
-            analysis.financialMilestones = this.calculateFinancialMilestones(data, cashFlow);
+            analysis.financialMilestones = this.calculateFinancialMilestones(data, basicMetrics.cashFlow);
             
             // Calculate advanced metrics
             analysis.advancedMetrics = calculateAdvancedMetrics(
@@ -752,43 +621,6 @@ class FinancialAnalyzer {
             aggressive: 0.09     // 9%
         };
         return returns[riskTolerance as keyof typeof returns] || 0.07;
-    }
-
-    /**
-     * Generate comprehensive recommendation
-     */
-    private generateRecommendation(
-        data: UserFinancialData,
-        cashFlow: number,
-        emergencyMonths: number,
-        debtRatio: number,
-        score: number
-    ): string {
-        if (cashFlow <= 0) {
-            return `🚨 Priority: You're spending ${this.formatCurrency(Math.abs(cashFlow))} more than you earn monthly. Create a budget to reduce expenses or increase income immediately.`;
-        }
-
-        if (emergencyMonths < 1) {
-            return `🏦 Emergency Fund: Start building an emergency fund with your ${this.formatCurrency(cashFlow)} monthly surplus. Aim for ${this.formatCurrency(data.monthlyExpenses * 3)} (3 months of expenses) as your first milestone.`;
-        }
-
-        if (debtRatio > 0.3) {
-            return `💳 Debt Reduction: Your debt-to-income ratio is ${(debtRatio * 100).toFixed(1)}%. Use your ${this.formatCurrency(cashFlow)} monthly surplus to aggressively pay down high-interest debt first.`;
-        }
-
-        if (emergencyMonths < data.emergencyFundGoal) {
-            return `💰 Emergency Fund: You have ${emergencyMonths.toFixed(1)} months of expenses saved. Continue building to ${data.emergencyFundGoal} months (${this.formatCurrency(data.monthlyExpenses * data.emergencyFundGoal)}).`;
-        }
-
-        if (score >= 80) {
-            return `🌟 Excellent! Your financial health is strong. Consider maximizing retirement contributions and exploring additional investment opportunities with your ${this.formatCurrency(cashFlow)} monthly surplus.`;
-        }
-
-        if (score >= 60) {
-            return `📈 Good progress! Focus on increasing your investment contributions and continue building wealth. Consider automating investments to maintain momentum.`;
-        }
-
-        return `⚡ Improvement needed: Focus on increasing your savings rate and building emergency reserves. Every dollar saved today helps secure your financial future.`;
     }
 
     /**
@@ -1268,7 +1100,7 @@ class FinancialAnalyzer {
     private createCharts(analysis: AnalysisResult, userData: UserFinancialData): void {
         try {
             // Destroy existing charts safely with proper cleanup
-            this.destroyExistingCharts();
+            this.chartManager.destroyExistingCharts();
 
             // Verify Chart.js is loaded
             if (typeof (window as any).Chart === 'undefined') {
@@ -1324,80 +1156,16 @@ class FinancialAnalyzer {
     }
 
     /**
-     * Safely destroy existing charts with complete cleanup
-     */
-    private destroyExistingCharts(): void {
-        try {
-            // Destroy Chart.js instances first
-            if (this.wealthChart) {
-                try {
-                    this.wealthChart.destroy();
-                } catch (error) {
-                    console.warn('Error destroying wealth chart:', error);
-                }
-                this.wealthChart = null;
-            }
-            
-            if (this.healthChart) {
-                try {
-                    this.healthChart.destroy();
-                } catch (error) {
-                    console.warn('Error destroying health chart:', error);
-                }
-                this.healthChart = null;
-            }
-
-            // Force cleanup of canvas elements by replacing them
-            this.replaceCanvas('wealthChart');
-            this.replaceCanvas('healthChart');
-            
-        } catch (error) {
-            console.error('Error in destroyExistingCharts:', error);
-        }
-    }
-
-    /**
-     * Replace canvas element to ensure clean state
-     */
-    private replaceCanvas(canvasId: string): void {
-        try {
-            const oldCanvas = document.getElementById(canvasId) as HTMLCanvasElement;
-            if (oldCanvas && oldCanvas.parentNode) {
-                const newCanvas = document.createElement('canvas');
-                newCanvas.id = canvasId;
-                newCanvas.style.cssText = oldCanvas.style.cssText;
-                
-                // Copy any data attributes
-                Array.from(oldCanvas.attributes).forEach(attr => {
-                    if (attr.name.startsWith('data-') && attr.name !== 'data-chartjs-chart') {
-                        newCanvas.setAttribute(attr.name, attr.value);
-                    }
-                });
-                
-                oldCanvas.parentNode.replaceChild(newCanvas, oldCanvas);
-                console.log(`Canvas ${canvasId} replaced successfully`);
-            }
-        } catch (error) {
-            console.warn(`Error replacing canvas ${canvasId}:`, error);
-        }
-    }
-
-    /**
-     * Create wealth projection chart
+     * Create wealth projection chart using ChartManager
      */
     private createWealthChart(projections: WealthProjections, userData: UserFinancialData): void {
-        const canvas = document.getElementById('wealthChart') as HTMLCanvasElement;
-        if (!canvas) return;
-
-        const ctx = canvas.getContext('2d')!;
-        
         const currentWealth = (userData.savings || 0) + (userData.currentInvestments || 0);
         const years = userData.age ? [
-            userData.age,
-            userData.age + 5,
-            userData.age + 10,
-            userData.retirementAge || 67
-        ] : [0, 5, 10, 30];
+            `Age ${userData.age}`,
+            `Age ${userData.age + 5}`,
+            `Age ${userData.age + 10}`,
+            `Age ${userData.retirementAge || 67}`
+        ] : ['Year 0', 'Year 5', 'Year 10', 'Year 30'];
         
         const nominalData = [
             currentWealth,
@@ -1413,75 +1181,20 @@ class FinancialAnalyzer {
             projections.retirementReal
         ];
 
-        this.wealthChart = new (window as any).Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: years.map(year => `Age ${year}`),
-                datasets: [
-                    {
-                        label: 'Projected Wealth',
-                        data: nominalData,
-                        borderColor: '#3b82f6',
-                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
-                        borderWidth: 3,
-                        tension: 0.4,
-                        fill: false
-                    },
-                    {
-                        label: 'Real Purchasing Power',
-                        data: realData,
-                        borderColor: '#10b981',
-                        backgroundColor: 'rgba(16, 185, 129, 0.1)',
-                        borderWidth: 2,
-                        borderDash: [5, 5],
-                        tension: 0.4,
-                        fill: false
-                    }
-                ]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        position: 'top'
-                    },
-                    tooltip: {
-                        mode: 'index',
-                        intersect: false,
-                        callbacks: {
-                            label: (context: any) => {
-                                return `${context.dataset.label}: ${this.formatCurrency(context.parsed.y)}`;
-                            }
-                        }
-                    }
-                },
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        ticks: {
-                            callback: (value: any) => this.formatCurrency(value as number)
-                        }
-                    }
-                },
-                interaction: {
-                    mode: 'nearest',
-                    axis: 'x',
-                    intersect: false
-                }
-            }
-        });
+        // Prepare data for ChartManager
+        const wealthChartData = {
+            years,
+            values: nominalData,
+            realValues: realData
+        };
+
+        this.chartManager.createWealthChart(wealthChartData);
     }
 
     /**
-     * Create financial health trend chart
+     * Create financial health trend chart using ChartManager
      */
     private createHealthTrendChart(analysis: AnalysisResult, _userData: UserFinancialData): void {
-        const canvas = document.getElementById('healthChart') as HTMLCanvasElement;
-        if (!canvas) return;
-
-        const ctx = canvas.getContext('2d')!;
-        
         // Simulate monthly health score progression (this could be enhanced with real historical data)
         const months = [];
         const healthScores = [];
@@ -1500,70 +1213,13 @@ class FinancialAnalyzer {
             healthScores.push(projectedScore);
         }
 
-        // Create dynamic colors based on score levels
-        const colors = healthScores.map(score => {
-            if (score >= 80) return '#10b981'; // Excellent - Green
-            if (score >= 60) return '#3b82f6'; // Good - Blue
-            if (score >= 40) return '#f59e0b'; // Fair - Orange
-            if (score >= 20) return '#f97316'; // Limited - Orange-Red
-            return '#ef4444'; // Critical - Red
-        });
+        // Prepare data for ChartManager
+        const healthChartData = {
+            months,
+            scores: healthScores
+        };
 
-        this.healthChart = new (window as any).Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: months,
-                datasets: [{
-                    label: 'Financial Health Score',
-                    data: healthScores,
-                    borderColor: (context: any) => {
-                        const score = context.dataset.data[context.dataIndex];
-                        if (score >= 80) return '#10b981';
-                        if (score >= 60) return '#3b82f6';
-                        if (score >= 40) return '#f59e0b';
-                        if (score >= 20) return '#f97316';
-                        return '#ef4444';
-                    },
-                    backgroundColor: currentScore >= 80 ? 'rgba(16, 185, 129, 0.1)' : 
-                                   currentScore >= 60 ? 'rgba(59, 130, 246, 0.1)' :
-                                   currentScore >= 40 ? 'rgba(245, 158, 11, 0.1)' :
-                                   currentScore >= 20 ? 'rgba(249, 115, 22, 0.1)' :
-                                   'rgba(239, 68, 68, 0.1)',
-                    borderWidth: 3,
-                    tension: 0.4,
-                    fill: true,
-                    pointBackgroundColor: colors,
-                    pointBorderColor: colors,
-                    pointBorderWidth: 2,
-                    pointRadius: 5
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        position: 'top'
-                    },
-                    tooltip: {
-                        callbacks: {
-                            label: (context: any) => {
-                                return `Health Score: ${context.parsed.y}/100`;
-                            }
-                        }
-                    }
-                },
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        max: 100,
-                        ticks: {
-                            callback: (value: any) => `${value}/100`
-                        }
-                    }
-                }
-            }
-        });
+        this.chartManager.createHealthChart(healthChartData);
     }
 
     /**
@@ -1588,7 +1244,7 @@ class FinancialAnalyzer {
 
 // Initialize the application when DOM is ready
 document.addEventListener('DOMContentLoaded', () => {
-    new FinancialAnalyzer();
+    new FinancialHealthApp();
 });
 
 // Fallback for different loading scenarios
@@ -1596,7 +1252,7 @@ if (document.readyState === 'loading') {
     // Wait for DOMContentLoaded
 } else {
     try {
-        new FinancialAnalyzer();
+        new FinancialHealthApp();
     } catch (error) {
         console.error('Critical Error: Failed to start application:', error);
     }
