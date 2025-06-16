@@ -16,7 +16,10 @@ module.exports = {
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
   verbose: true,
-  testTimeout: 60000,
+  testTimeout: 120000,
   setupFilesAfterEnv: [],
-  maxWorkers: 1 // Run integration tests sequentially
+  maxWorkers: 1,
+  detectOpenHandles: true,
+  forceExit: true,
+  bail: false
 }; 

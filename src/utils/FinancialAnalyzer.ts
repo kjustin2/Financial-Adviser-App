@@ -239,6 +239,17 @@ export class FinancialAnalyzer {
             }
         }
 
+        // High earner optimization recommendations
+        if (recommendations.length === 0 && this.data.monthlyIncome > 8000) {
+            recommendations.push("🌟 Excellent financial position! Consider tax optimization strategies and diversified investments.");
+            recommendations.push("🎯 Explore advanced wealth-building strategies like real estate or business investments.");
+        }
+
+        // Ensure we always have at least one recommendation
+        if (recommendations.length === 0) {
+            recommendations.push("✅ Your financial health looks good! Continue monitoring and adjusting your strategy.");
+        }
+
         return recommendations.slice(0, 5); // Limit to top 5 recommendations
     }
 
