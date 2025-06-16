@@ -359,6 +359,9 @@ describe('UI Functionality Tests', () => {
                 monthlyExpenses: 2900,
                 savings: 500,
                 debt: 15000,
+                age: 28,
+                currentInvestments: 2000,
+                monthlyInvestmentContribution: 100,
                 riskTolerance: 'conservative' as const,
                 emergencyFundGoal: 6
             };
@@ -388,6 +391,9 @@ describe('UI Functionality Tests', () => {
                 monthlyExpenses: 4000,
                 savings: 30000,
                 debt: 8000,
+                age: 35,
+                currentInvestments: 15000,
+                monthlyInvestmentContribution: 600,
                 riskTolerance: 'moderate' as const,
                 emergencyFundGoal: 6
             };

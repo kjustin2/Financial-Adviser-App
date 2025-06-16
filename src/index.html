@@ -744,6 +744,28 @@
             line-height: 1.5;
         }
 
+        /* Advanced Features Notice */
+        .advanced-features-notice {
+            background: linear-gradient(135deg, #eff6ff, #dbeafe);
+            border: 1px solid #3b82f6;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 24px;
+            border-left: 4px solid var(--primary-color);
+        }
+
+        .advanced-features-notice p {
+            margin: 0;
+            color: var(--gray-700);
+            font-size: 0.95rem;
+            line-height: 1.5;
+        }
+
+        .advanced-features-notice strong {
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+
         /* Advanced Analytics Styles */
         .advanced-metrics-container {
             margin-bottom: 32px;
@@ -987,34 +1009,69 @@
                     </div>
                 </div>
 
-                <!-- Advanced Information Section -->
+                <!-- Required for Advanced Features Section -->
                 <div class="form-section">
-                    <div class="section-header" onclick="toggleSection('advanced')">
-                        <h3><span class="section-icon">⚙️</span> Advanced Details (Optional)</h3>
-                        <span class="expand-icon" id="advanced-icon">▼</span>
+                    <div class="section-header">
+                        <h3><span class="section-icon">🚀</span> Required for Advanced Analytics & Charts</h3>
                     </div>
-                    <div class="section-content collapsed" id="advanced-content">
+                    <div class="section-content">
+                        <div class="advanced-features-notice">
+                            <p><strong>📈 Unlock Advanced Features:</strong> Fill out these fields to access detailed financial analytics, wealth projections, retirement planning, and interactive charts.</p>
+                        </div>
                         <div class="form-grid">
                             <div class="input-group">
                                 <label for="age">
-                                    Age
+                                    Age <span class="required-indicator">*</span>
                                     <div class="info-icon">i
-                                        <div class="tooltip">Your current age, used for retirement planning calculations</div>
+                                        <div class="tooltip">Required for retirement planning, wealth projections, and advanced financial analytics</div>
                                     </div>
                                 </label>
-                                <input type="number" id="age" min="18" max="100" step="1">
+                                <input type="number" id="age" min="18" max="100" step="1" required>
+                            </div>
+
+                            <div class="input-group">
+                                <label for="currentInvestments">
+                                    Current Investments <span class="required-indicator">*</span>
+                                    <div class="info-icon">i
+                                        <div class="tooltip">Total value of 401(k), IRA, stocks, bonds, and other investment accounts. Enter 0 if none.</div>
+                                    </div>
+                                </label>
+                                <div class="input-prefix">$</div>
+                                <input type="number" id="currentInvestments" class="has-prefix" min="0" step="1000" required>
+                            </div>
+
+                            <div class="input-group">
+                                <label for="monthlyInvestmentContribution">
+                                    Monthly Investment Contribution <span class="required-indicator">*</span>
+                                    <div class="info-icon">i
+                                        <div class="tooltip">Amount you contribute monthly to retirement accounts and investments. Enter 0 if none.</div>
+                                    </div>
+                                </label>
+                                <div class="input-prefix">$</div>
+                                <input type="number" id="monthlyInvestmentContribution" class="has-prefix" min="0" step="50" required>
                             </div>
 
                             <div class="input-group">
                                 <label for="retirementAge">
                                     Target Retirement Age
                                     <div class="info-icon">i
-                                        <div class="tooltip">The age you plan to retire (typically 62-67)</div>
+                                        <div class="tooltip">The age you plan to retire (typically 62-67). Defaults to 67 if not specified.</div>
                                     </div>
                                 </label>
-                                <input type="number" id="retirementAge" min="50" max="80" step="1">
+                                <input type="number" id="retirementAge" min="50" max="80" step="1" value="67">
                             </div>
+                        </div>
+                    </div>
+                </div>
 
+                <!-- Optional Advanced Information Section -->
+                <div class="form-section">
+                    <div class="section-header" onclick="toggleSection('advanced')">
+                        <h3><span class="section-icon">⚙️</span> Additional Options (Optional)</h3>
+                        <span class="expand-icon" id="advanced-icon">▼</span>
+                    </div>
+                    <div class="section-content collapsed" id="advanced-content">
+                        <div class="form-grid">
                             <div class="input-group">
                                 <label for="riskTolerance">
                                     Investment Risk Tolerance
@@ -1027,28 +1084,6 @@
                                     <option value="moderate" selected>Moderate</option>
                                     <option value="aggressive">Aggressive</option>
                                 </select>
-                            </div>
-
-                            <div class="input-group">
-                                <label for="currentInvestments">
-                                    Current Investments
-                                    <div class="info-icon">i
-                                        <div class="tooltip">Total value of 401(k), IRA, stocks, bonds, and other investment accounts</div>
-                                    </div>
-                                </label>
-                                <div class="input-prefix">$</div>
-                                <input type="number" id="currentInvestments" class="has-prefix" min="0" step="1000">
-                            </div>
-
-                            <div class="input-group">
-                                <label for="monthlyInvestmentContribution">
-                                    Monthly Investment Contribution
-                                    <div class="info-icon">i
-                                        <div class="tooltip">Amount you contribute monthly to retirement accounts and investments</div>
-                                    </div>
-                                </label>
-                                <div class="input-prefix">$</div>
-                                <input type="number" id="monthlyInvestmentContribution" class="has-prefix" min="0" step="50">
                             </div>
 
                             <div class="input-group">

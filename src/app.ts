@@ -101,12 +101,14 @@ class FinancialHealthApp {
             savings: this.getNumericValue('savings'),
             debt: this.getNumericValue('debt'),
             
+            // Required for advanced features
+            age: this.getNumericValue('age'),
+            currentInvestments: this.getNumericValue('currentInvestments'),
+            monthlyInvestmentContribution: this.getNumericValue('monthlyInvestmentContribution'),
+            
             // Optional advanced information
-            age: this.getNumericValue('age') || undefined,
             retirementAge: this.getNumericValue('retirementAge') || undefined,
             riskTolerance: this.getSelectValue('riskTolerance') as 'conservative' | 'moderate' | 'aggressive',
-            currentInvestments: this.getNumericValue('currentInvestments') || undefined,
-            monthlyInvestmentContribution: this.getNumericValue('monthlyInvestmentContribution') || undefined,
             emergencyFundGoal: this.getNumericValue('emergencyFundGoal') || 6,
             
             // Major purchase planning
@@ -186,11 +188,19 @@ class FinancialHealthApp {
             return { isValid: false, error: 'Monthly expenses cannot be negative' };
         }
 
-        if (data.age && (data.age < 18 || data.age > 100)) {
-            return { isValid: false, error: 'Age must be between 18 and 100' };
+        if (!data.age || data.age < 18 || data.age > 100) {
+            return { isValid: false, error: 'Age is required and must be between 18 and 100' };
         }
 
-        if (data.age && data.retirementAge && data.retirementAge <= data.age) {
+        if (data.currentInvestments < 0) {
+            return { isValid: false, error: 'Current investments cannot be negative (enter 0 if none)' };
+        }
+
+        if (data.monthlyInvestmentContribution < 0) {
+            return { isValid: false, error: 'Monthly investment contribution cannot be negative (enter 0 if none)' };
+        }
+
+        if (data.retirementAge && data.retirementAge <= data.age) {
             return { isValid: false, error: 'Retirement age must be greater than current age' };
         }
 
@@ -226,60 +236,57 @@ class FinancialHealthApp {
             riskAssessment
         };
 
-        // Add advanced features only if age is provided
-        if (data.age) {
-            analysis.retirementProjections = this.calculateRetirementProjections(data);
-            analysis.wealthProjections = this.calculateWealthProjections(data);
-            analysis.financialMilestones = this.calculateFinancialMilestones(data, basicMetrics.cashFlow);
-            
-            // Calculate advanced metrics
-            analysis.advancedMetrics = calculateAdvancedMetrics(
-                data.monthlyIncome,
-                data.monthlyExpenses,
-                data.savings,
-                data.debt,
+        // Calculate advanced features (age is now required)
+        analysis.retirementProjections = this.calculateRetirementProjections(data);
+        analysis.wealthProjections = this.calculateWealthProjections(data);
+        analysis.financialMilestones = this.calculateFinancialMilestones(data, basicMetrics.cashFlow);
+        
+        // Calculate advanced metrics
+        analysis.advancedMetrics = calculateAdvancedMetrics(
+            data.monthlyIncome,
+            data.monthlyExpenses,
+            data.savings,
+            data.debt,
+            data.age,
+            data.riskTolerance,
+            data.currentInvestments,
+            data.monthlyInvestmentContribution
+        );
+        
+        // Perform scenario analysis for comprehensive planning
+        const retirementAge = data.retirementAge || 67;
+        const currentWealth = data.savings + data.currentInvestments;
+        const monthlyContribution = data.monthlyInvestmentContribution;
+        const targetWealth = data.monthlyIncome * 12 * 10; // 10x annual income target
+        
+        analysis.scenarioAnalysis = {
+            stressTest: performStressTest(
                 data.age,
+                retirementAge,
+                currentWealth,
+                monthlyContribution,
+                data.riskTolerance
+            ),
+            contributionScenarios: calculateContributionScenarios(
+                data.age,
+                retirementAge,
+                currentWealth,
+                monthlyContribution,
+                data.riskTolerance
+            )
+        };
+        
+        // Run Monte Carlo simulation for retirement planning (simplified)
+        if (retirementAge - data.age > 5) {
+            analysis.scenarioAnalysis.monteCarlo = runMonteCarloSimulation(
+                data.age,
+                retirementAge,
+                currentWealth,
+                monthlyContribution,
                 data.riskTolerance,
-                data.currentInvestments || 0,
-                data.monthlyInvestmentContribution || 0
+                targetWealth,
+                100 // Reduced iterations for performance
             );
-            
-            // Perform scenario analysis for comprehensive planning
-            if (data.retirementAge && data.currentInvestments !== undefined) {
-                const currentWealth = data.savings + (data.currentInvestments || 0);
-                const monthlyContribution = data.monthlyInvestmentContribution || 0;
-                const targetWealth = data.monthlyIncome * 12 * 10; // 10x annual income target
-                
-                analysis.scenarioAnalysis = {
-                    stressTest: performStressTest(
-                        data.age,
-                        data.retirementAge,
-                        currentWealth,
-                        monthlyContribution,
-                        data.riskTolerance
-                    ),
-                    contributionScenarios: calculateContributionScenarios(
-                        data.age,
-                        data.retirementAge,
-                        currentWealth,
-                        monthlyContribution,
-                        data.riskTolerance
-                    )
-                };
-                
-                // Run Monte Carlo simulation for retirement planning (simplified)
-                if (data.retirementAge - data.age > 5) {
-                    analysis.scenarioAnalysis.monteCarlo = runMonteCarloSimulation(
-                        data.age,
-                        data.retirementAge,
-                        currentWealth,
-                        monthlyContribution,
-                        data.riskTolerance,
-                        targetWealth,
-                        100 // Reduced iterations for performance
-                    );
-                }
-            }
         }
 
         return analysis;
@@ -288,18 +295,17 @@ class FinancialHealthApp {
 
 
     /**
-     * Calculate retirement projections (only if age provided)
+     * Calculate retirement projections
      */
-    private calculateRetirementProjections(data: UserFinancialData): RetirementProjections | undefined {
-        if (!data.age) return undefined;
+    private calculateRetirementProjections(data: UserFinancialData): RetirementProjections {
 
         const retirementAge = data.retirementAge || 67;
         const yearsToRetirement = retirementAge - data.age;
         const expectedReturn = this.getExpectedReturn(data.riskTolerance);
         
         // Current retirement wealth
-        const currentRetirementWealth = data.currentInvestments || 0;
-        const monthlyContribution = data.monthlyInvestmentContribution || 0;
+        const currentRetirementWealth = data.currentInvestments;
+        const monthlyContribution = data.monthlyInvestmentContribution;
         
         // Future value calculations
         const futureValueCurrent = currentRetirementWealth * Math.pow(1 + expectedReturn, yearsToRetirement);
@@ -341,12 +347,11 @@ class FinancialHealthApp {
     /**
      * Calculate wealth projections with inflation adjustment
      */
-    private calculateWealthProjections(data: UserFinancialData): WealthProjections | undefined {
-        if (!data.age) return undefined;
+    private calculateWealthProjections(data: UserFinancialData): WealthProjections {
 
         const expectedReturn = this.getExpectedReturn(data.riskTolerance);
-        const currentWealth = (data.savings || 0) + (data.currentInvestments || 0);
-        const monthlyContribution = data.monthlyInvestmentContribution || 0;
+        const currentWealth = data.savings + data.currentInvestments;
+        const monthlyContribution = data.monthlyInvestmentContribution;
         const monthlyReturn = expectedReturn / 12;
         
         // Calculate projections
@@ -533,28 +538,24 @@ class FinancialHealthApp {
         // Display score breakdown in main section
         this.displayScoreBreakdown(analysis.scoreBreakdown);
 
-        // Display advanced analytics if available
-        if (analysis.advancedMetrics && userData.age) {
-            this.displayAdvancedAnalytics(analysis);
-            // Show the advanced analytics section
-            const advancedSection = document.getElementById('advanced-analytics-content');
-            if (advancedSection) {
-                advancedSection.classList.remove('collapsed');
-                const icon = document.getElementById('advanced-analytics-icon');
-                if (icon) icon.textContent = '▲';
-            }
+        // Display advanced analytics (always available now)
+        this.displayAdvancedAnalytics(analysis);
+        // Show the advanced analytics section
+        const advancedSection = document.getElementById('advanced-analytics-content');
+        if (advancedSection) {
+            advancedSection.classList.remove('collapsed');
+            const icon = document.getElementById('advanced-analytics-icon');
+            if (icon) icon.textContent = '▲';
         }
 
-        // Create charts if advanced data is available
-        if (analysis.wealthProjections && userData.age) {
-            this.createCharts(analysis, userData);
-            // Show the charts section
-            const chartsSection = document.getElementById('charts-content');
-            if (chartsSection) {
-                chartsSection.classList.remove('collapsed');
-                const icon = document.getElementById('charts-icon');
-                if (icon) icon.textContent = '▲';
-            }
+        // Create charts (always available now)
+        this.createCharts(analysis, userData);
+        // Show the charts section
+        const chartsSection = document.getElementById('charts-content');
+        if (chartsSection) {
+            chartsSection.classList.remove('collapsed');
+            const icon = document.getElementById('charts-icon');
+            if (icon) icon.textContent = '▲';
         }
 
         // Show results with animation
@@ -1087,13 +1088,13 @@ class FinancialHealthApp {
      * Create wealth projection chart using ChartManager
      */
     private async createWealthChart(projections: WealthProjections, userData: UserFinancialData): Promise<void> {
-        const currentWealth = (userData.savings || 0) + (userData.currentInvestments || 0);
-        const years = userData.age ? [
+        const currentWealth = userData.savings + userData.currentInvestments;
+        const years = [
             `Age ${userData.age}`,
             `Age ${userData.age + 5}`,
             `Age ${userData.age + 10}`,
             `Age ${userData.retirementAge || 67}`
-        ] : ['Year 0', 'Year 5', 'Year 10', 'Year 30'];
+        ];
         
         const nominalData = [
             currentWealth,

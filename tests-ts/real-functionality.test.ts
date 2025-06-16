@@ -304,6 +304,9 @@ describe('Real Functionality Issues Tests', () => {
                 monthlyExpenses: 1900,
                 savings: 100,
                 debt: 0,
+                age: 25,
+                currentInvestments: 500,
+                monthlyInvestmentContribution: 50,
                 riskTolerance: 'conservative' as const,
                 emergencyFundGoal: 6
             };

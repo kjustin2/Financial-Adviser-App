@@ -8,12 +8,14 @@ export interface UserFinancialData {
   savings: number;
   debt: number;
   
-  // Advanced Information (Optional)
-  age?: number;
+  // Required for Advanced Features
+  age: number;
+  currentInvestments: number;
+  monthlyInvestmentContribution: number;
+  
+  // Optional Advanced Information
   retirementAge?: number;
   riskTolerance: 'conservative' | 'moderate' | 'aggressive';
-  currentInvestments?: number;
-  monthlyInvestmentContribution?: number;
   emergencyFundGoal: number;
   
   // Major Purchase Planning (Optional)
