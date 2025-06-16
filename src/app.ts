@@ -204,16 +204,16 @@ class FinancialHealthApp {
         // Get basic metrics from analyzer
         const basicMetrics = analyzer.calculateBasicMetrics();
         
-        // Calculate financial health score with breakdown
-        const scoreResult = this.calculateHealthScore(data, basicMetrics.cashFlow, basicMetrics.emergencyFundMonths, basicMetrics.debtToIncomeRatio, basicMetrics.savingsRate);
-        const score = scoreResult.score;
-        const scoreBreakdown = scoreResult.breakdown;
+        // Calculate financial health score with breakdown using analyzer
+        const score = analyzer.calculateHealthScore();
+        const scoreBreakdown = analyzer.getScoreBreakdown();
 
         // Calculate risk assessment
         const riskAssessment = this.calculateRiskAssessment(data, basicMetrics.cashFlow, basicMetrics.emergencyFundMonths, basicMetrics.debtToIncomeRatio);
 
         // Generate recommendation using analyzer
-        const recommendation = analyzer.generateRecommendations();
+        const recommendations = analyzer.generateRecommendations();
+        const recommendation = recommendations.join(' ');
 
         const analysis: AnalysisResult = {
             score,
@@ -285,113 +285,7 @@ class FinancialHealthApp {
         return analysis;
     }
 
-    /**
-     * Calculate financial health score with detailed breakdown (0-100)
-     * Based on expert financial advice and academic research
-     */
-    private calculateHealthScore(
-        data: UserFinancialData,
-        cashFlow: number,
-        emergencyMonths: number,
-        debtRatio: number,
-        savingsRate: number
-    ): { score: number; breakdown: any } {
-        const breakdown = {
-            cashFlowScore: 0,
-            emergencyFundScore: 0,
-            debtManagementScore: 0,
-            savingsRateScore: 0,
-            explanations: {
-                cashFlow: '',
-                emergencyFund: '',
-                debtManagement: '',
-                savingsRate: ''
-            }
-        };
 
-        // Cash Flow Analysis (25 points) - Based on 50/30/20 rule
-        if (cashFlow > 0) {
-            const flowRatio = cashFlow / data.monthlyIncome;
-            if (flowRatio >= 0.2) {
-                breakdown.cashFlowScore = 25;
-                breakdown.explanations.cashFlow = 'Excellent: 20%+ surplus enables wealth building (exceeds financial expert recommendations)';
-            } else if (flowRatio >= 0.15) {
-                breakdown.cashFlowScore = 20;
-                breakdown.explanations.cashFlow = 'Good: 15%+ surplus supports financial goals (meets expert guidelines)';
-            } else if (flowRatio >= 0.1) {
-                breakdown.cashFlowScore = 15;
-                breakdown.explanations.cashFlow = 'Fair: 10%+ surplus provides basic financial security';
-            } else {
-                breakdown.cashFlowScore = Math.round(flowRatio * 100);
-                breakdown.explanations.cashFlow = 'Limited surplus restricts financial growth opportunities';
-            }
-        } else {
-            breakdown.cashFlowScore = 0;
-            breakdown.explanations.cashFlow = 'Critical: Negative cash flow threatens financial stability';
-        }
-
-        // Emergency Fund Assessment (25 points) - Based on financial advisor standards
-        if (emergencyMonths >= 6) {
-            breakdown.emergencyFundScore = 25;
-            breakdown.explanations.emergencyFund = 'Excellent: 6+ months expenses (exceeds financial advisor recommendations)';
-        } else if (emergencyMonths >= 3) {
-            breakdown.emergencyFundScore = Math.round((emergencyMonths / 6) * 25);
-            breakdown.explanations.emergencyFund = 'Good: 3+ months expenses (meets minimum advisor standards)';
-        } else if (emergencyMonths >= 1) {
-            breakdown.emergencyFundScore = Math.round((emergencyMonths / 3) * 15);
-            breakdown.explanations.emergencyFund = 'Fair: Some emergency coverage, build to 3-6 months';
-        } else {
-            breakdown.emergencyFundScore = 0;
-            breakdown.explanations.emergencyFund = 'Critical: No emergency fund - immediate priority per all financial experts';
-        }
-
-        // Debt Management (25 points) - Based on debt-to-income industry standards
-        if (debtRatio <= 0.1) {
-            breakdown.debtManagementScore = 25;
-            breakdown.explanations.debtManagement = 'Excellent: <10% debt ratio (optimal per credit industry standards)';
-        } else if (debtRatio <= 0.2) {
-            breakdown.debtManagementScore = 20;
-            breakdown.explanations.debtManagement = 'Good: 10-20% debt ratio (manageable per lending standards)';
-        } else if (debtRatio <= 0.3) {
-            breakdown.debtManagementScore = 15;
-            breakdown.explanations.debtManagement = 'Fair: 20-30% debt ratio (approaching recommended limits)';
-        } else if (debtRatio <= 0.4) {
-            breakdown.debtManagementScore = 10;
-            breakdown.explanations.debtManagement = 'Concerning: 30-40% debt ratio (exceeds recommended limits)';
-        } else {
-            breakdown.debtManagementScore = 5;
-            breakdown.explanations.debtManagement = 'Critical: 40%+ debt ratio (requires immediate debt reduction)';
-        }
-
-        // Savings Rate (25 points) - Based on wealth-building research
-        if (savingsRate >= 20) {
-            breakdown.savingsRateScore = 25;
-            breakdown.explanations.savingsRate = 'Excellent: 20%+ savings rate (enables early retirement per FIRE principles)';
-        } else if (savingsRate >= 15) {
-            breakdown.savingsRateScore = 20;
-            breakdown.explanations.savingsRate = 'Good: 15%+ savings rate (exceeds retirement planning minimums)';
-        } else if (savingsRate >= 10) {
-            breakdown.savingsRateScore = 15;
-            breakdown.explanations.savingsRate = 'Fair: 10%+ savings rate (meets basic retirement planning guidelines)';
-        } else if (savingsRate >= 5) {
-            breakdown.savingsRateScore = 10;
-            breakdown.explanations.savingsRate = 'Limited: 5%+ savings rate (below recommended retirement planning targets)';
-        } else if (savingsRate > 0) {
-            breakdown.savingsRateScore = 5;
-            breakdown.explanations.savingsRate = 'Minimal: Some savings but insufficient for long-term goals';
-        } else {
-            breakdown.savingsRateScore = 0;
-            breakdown.explanations.savingsRate = 'Critical: No savings rate threatens financial future';
-        }
-
-        const totalScore = breakdown.cashFlowScore + breakdown.emergencyFundScore + 
-                          breakdown.debtManagementScore + breakdown.savingsRateScore;
-
-        return {
-            score: Math.round(Math.max(0, Math.min(100, totalScore))),
-            breakdown
-        };
-    }
 
     /**
      * Calculate retirement projections (only if age provided)
@@ -869,30 +763,42 @@ class FinancialHealthApp {
             { 
                 key: 'cashFlow', 
                 title: 'Cash Flow Management', 
-                score: breakdown.cashFlowScore,
-                icon: '💰',
-                benchmark: 'Positive cash flow indicates healthy spending habits'
+                score: breakdown.cashFlow?.score || 0,
+                maxScore: breakdown.cashFlow?.maxScore || 25,
+                value: breakdown.cashFlow?.value || 0,
+                status: breakdown.cashFlow?.status || 'Unknown',
+                benchmark: breakdown.cashFlow?.benchmark || 'Positive cash flow indicates healthy spending habits',
+                icon: '💰'
             },
             { 
                 key: 'emergencyFund', 
                 title: 'Emergency Fund Adequacy', 
-                score: breakdown.emergencyFundScore,
-                icon: '🛡️',
-                benchmark: '6+ months of expenses recommended by financial advisors'
+                score: breakdown.emergencyFund?.score || 0,
+                maxScore: breakdown.emergencyFund?.maxScore || 25,
+                value: breakdown.emergencyFund?.value || 0,
+                status: breakdown.emergencyFund?.status || 'Unknown',
+                benchmark: breakdown.emergencyFund?.benchmark || '6+ months of expenses recommended by financial advisors',
+                icon: '🛡️'
             },
             { 
                 key: 'debtManagement', 
                 title: 'Debt Management', 
-                score: breakdown.debtManagementScore,
-                icon: '📊',
-                benchmark: 'Total debt-to-income ratio should be below 36%'
+                score: breakdown.debtManagement?.score || 0,
+                maxScore: breakdown.debtManagement?.maxScore || 25,
+                value: breakdown.debtManagement?.value || 0,
+                status: breakdown.debtManagement?.status || 'Unknown',
+                benchmark: breakdown.debtManagement?.benchmark || 'Total debt-to-income ratio should be below 36%',
+                icon: '📊'
             },
             { 
                 key: 'savingsRate', 
                 title: 'Savings & Investment Rate', 
-                score: breakdown.savingsRateScore,
-                icon: '📈',
-                benchmark: '20%+ savings rate enables wealth building (FIRE principles)'
+                score: breakdown.savingsRate?.score || 0,
+                maxScore: breakdown.savingsRate?.maxScore || 25,
+                value: breakdown.savingsRate?.value || 0,
+                status: breakdown.savingsRate?.status || 'Unknown',
+                benchmark: breakdown.savingsRate?.benchmark || '20%+ savings rate enables wealth building (FIRE principles)',
+                icon: '📈'
             }
         ];
 
@@ -907,8 +813,20 @@ class FinancialHealthApp {
             
             <div class="core-metrics">
                 ${categories.map(category => {
-                    const scoreClass = this.getScoreClass(category.score);
-                    const percentage = category.score;
+                    const scoreClass = this.getScoreClass((category.score / category.maxScore) * 100);
+                    const percentage = (category.score / category.maxScore) * 100;
+                    
+                    // Format value display based on category
+                    let valueDisplay = '';
+                    if (category.key === 'cashFlow') {
+                        valueDisplay = this.formatCurrency(category.value);
+                    } else if (category.key === 'emergencyFund') {
+                        valueDisplay = `${category.value.toFixed(1)} months`;
+                    } else if (category.key === 'debtManagement') {
+                        valueDisplay = `${category.value.toFixed(1)}%`;
+                    } else if (category.key === 'savingsRate') {
+                        valueDisplay = `${category.value.toFixed(1)}%`;
+                    }
                     
                     return `
                         <div class="score-item">
@@ -917,13 +835,14 @@ class FinancialHealthApp {
                                     <span class="metric-icon">${category.icon}</span>
                                     ${category.title}
                                 </div>
-                                <div class="score-badge ${scoreClass}">${category.score}/100</div>
+                                <div class="score-badge ${scoreClass}">${category.score}/${category.maxScore}</div>
                             </div>
                             <div class="score-progress">
                                 <div class="score-progress-fill ${scoreClass}" style="width: ${percentage}%"></div>
                             </div>
-                            <div class="score-item-explanation">
-                                ${breakdown.explanations[category.key]}
+                            <div class="score-item-details">
+                                <div class="current-value"><strong>Current:</strong> ${valueDisplay}</div>
+                                <div class="status-badge ${scoreClass.toLowerCase()}">${category.status}</div>
                             </div>
                             <div class="benchmark-info">
                                 <small><strong>Industry Benchmark:</strong> ${category.benchmark}</small>
@@ -972,7 +891,9 @@ class FinancialHealthApp {
         const metrics = [];
 
         // Financial Stress Score (based on debt and emergency fund)
-        const stressScore = Math.max(0, 100 - (breakdown.debtManagementScore + breakdown.emergencyFundScore) / 2);
+        const debtScore = breakdown.debtManagement?.score || 0;
+        const emergencyScore = breakdown.emergencyFund?.score || 0;
+        const stressScore = Math.max(0, 100 - (debtScore + emergencyScore) / 2);
         metrics.push({
             title: 'Financial Stress Level',
             value: stressScore < 30 ? 'Low' : stressScore < 60 ? 'Moderate' : 'High',
@@ -984,7 +905,9 @@ class FinancialHealthApp {
         });
 
         // Wealth Building Velocity
-        const wealthVelocity = (breakdown.savingsRateScore + breakdown.cashFlowScore) / 2;
+        const savingsScore = breakdown.savingsRate?.score || 0;
+        const cashFlowScore = breakdown.cashFlow?.score || 0;
+        const wealthVelocity = (savingsScore + cashFlowScore) / 2;
         metrics.push({
             title: 'Wealth Building Velocity',
             value: wealthVelocity >= 80 ? 'Excellent' : wealthVelocity >= 60 ? 'Good' : wealthVelocity >= 40 ? 'Moderate' : 'Slow',
@@ -997,7 +920,7 @@ class FinancialHealthApp {
         });
 
         // Financial Resilience
-        const resilience = (breakdown.emergencyFundScore + breakdown.debtManagementScore) / 2;
+        const resilience = (emergencyScore + debtScore) / 2;
         metrics.push({
             title: 'Financial Resilience',
             value: resilience >= 80 ? 'Very Resilient' : resilience >= 60 ? 'Resilient' : resilience >= 40 ? 'Moderate' : 'Vulnerable',
@@ -1020,10 +943,10 @@ class FinancialHealthApp {
         
         // Prioritize tips based on lowest scores
         const scores = [
-            { key: 'cashFlow', score: breakdown.cashFlowScore, area: 'Cash Flow' },
-            { key: 'emergencyFund', score: breakdown.emergencyFundScore, area: 'Emergency Fund' },
-            { key: 'debtManagement', score: breakdown.debtManagementScore, area: 'Debt Management' },
-            { key: 'savingsRate', score: breakdown.savingsRateScore, area: 'Savings Rate' }
+            { key: 'cashFlow', score: breakdown.cashFlow?.score || 0, area: 'Cash Flow' },
+            { key: 'emergencyFund', score: breakdown.emergencyFund?.score || 0, area: 'Emergency Fund' },
+            { key: 'debtManagement', score: breakdown.debtManagement?.score || 0, area: 'Debt Management' },
+            { key: 'savingsRate', score: breakdown.savingsRate?.score || 0, area: 'Savings Rate' }
         ].sort((a, b) => a.score - b.score);
 
         // High priority tips for lowest scores
@@ -1043,21 +966,21 @@ class FinancialHealthApp {
         }
 
         // Specific actionable tips
-        if (breakdown.emergencyFundScore < 60) {
+        if ((breakdown.emergencyFund?.score || 0) < 15) {
             tips.push({
                 priority: 'high',
                 text: 'Build your emergency fund to 6 months of expenses - start with $1,000 as an initial goal.'
             });
         }
 
-        if (breakdown.debtManagementScore < 60) {
+        if ((breakdown.debtManagement?.score || 0) < 15) {
             tips.push({
                 priority: 'high',
                 text: 'Focus on debt reduction using the debt avalanche method (highest interest first) or debt snowball (smallest balance first).'
             });
         }
 
-        if (breakdown.savingsRateScore < 60) {
+        if ((breakdown.savingsRate?.score || 0) < 15) {
             tips.push({
                 priority: 'medium',
                 text: 'Increase your savings rate gradually - aim for 20% of income for optimal wealth building.'

@@ -4,7 +4,7 @@
  */
 
 // Mock DOM setup for enhanced form with inflation and purchase planning
-function createMockDOM(): void {
+const createMockDOM = (): void => {
     document.body.innerHTML = `
         <div class="container">
             <form id="financialForm">

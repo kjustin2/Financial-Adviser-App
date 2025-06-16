@@ -4,25 +4,32 @@
  */
 
 import puppeteer, { Browser, Page } from 'puppeteer';
+import { testServer, setupIntegrationTests, teardownIntegrationTests } from './integration-setup';
 
 const sleep = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
 describe('Financial Health Analyzer - Comprehensive Integration Tests', () => {
     let browser: Browser;
     let page: Page;
-    const baseUrl = 'http://localhost:8080';
+    let baseUrl: string;
 
     beforeAll(async () => {
+        // Start the test server
+        await setupIntegrationTests();
+        baseUrl = testServer.getBaseUrl();
+        
         browser = await puppeteer.launch({
             headless: true,
             args: ['--no-sandbox', '--disable-setuid-sandbox']
         });
-    });
+    }, 60000); // Increase timeout for server startup
 
     afterAll(async () => {
         if (browser) {
             await browser.close();
         }
+        // Stop the test server
+        await teardownIntegrationTests();
     });
 
     beforeEach(async () => {
