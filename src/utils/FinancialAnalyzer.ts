@@ -339,9 +339,9 @@ export class FinancialAnalyzer {
 
     private calculateDebtToIncomeRatio(debt: number, monthlyIncome: number): number {
         if (monthlyIncome <= 0) return 0;
-        // Assume 3% monthly payment on total debt
-        const monthlyDebtPayment = debt * 0.03;
-        return monthlyDebtPayment / monthlyIncome;
+        // Standard debt-to-income ratio: total debt / annual income
+        const annualIncome = monthlyIncome * 12;
+        return debt / annualIncome;
     }
 
     private calculateSavingsRate(cashFlow: number, monthlyIncome: number): number {

@@ -256,7 +256,11 @@ describe('UI Functionality Tests', () => {
                 realValues: [50000, 90000, 170000, 600000]
             };
 
-            expect(() => chartManager.createWealthChart(wealthData)).not.toThrow();
+            // Chart creation is async, so await it
+            const result = await chartManager.createWealthChart(wealthData);
+            
+            // In test environment without real Chart.js, this will return false but shouldn't throw
+            expect(typeof result).toBe('boolean');
             
             // Verify the chart creation doesn't throw errors and canvas exists
             expect(wealthCanvas).toBeTruthy();
@@ -281,7 +285,11 @@ describe('UI Functionality Tests', () => {
                 scores: [65, 68, 70, 72, 75, 78]
             };
 
-            expect(() => chartManager.createHealthChart(healthData)).not.toThrow();
+            // Chart creation is async, so await it
+            const result = await chartManager.createHealthChart(healthData);
+            
+            // In test environment without real Chart.js, this will return false but shouldn't throw
+            expect(typeof result).toBe('boolean');
             
             // Verify the chart creation doesn't throw errors and canvas exists
             expect(healthCanvas).toBeTruthy();
@@ -295,8 +303,8 @@ describe('UI Functionality Tests', () => {
             
             const chartManager = new ChartManager();
 
-            // Create charts first
-            chartManager.createWealthChart({
+            // Create charts first (async)
+            await chartManager.createWealthChart({
                 years: ['2024', '2025'],
                 values: [1000, 2000]
             });

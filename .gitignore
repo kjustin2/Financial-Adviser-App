@@ -62,9 +62,12 @@ pids/
 
 # Coverage and test outputs
 coverage/
+coverage-integration/
 .nyc_output/
 test-results/
 *.lcov
+junit.xml
+test-report.html
 
 # TypeScript cache
 *.tsbuildinfo
@@ -79,6 +82,10 @@ test-results/
 
 # Yarn
 .yarn-integrity
+yarn.lock
+
+# Package lock files (keep package-lock.json for npm)
+# yarn.lock
 
 # Application specific
 config.json
@@ -98,6 +105,82 @@ secrets.json
 bundle.js
 bundle.js.map
 
-# Documentation (keep only README.md)
+# Documentation (keep only README.md and implementation plans)
 *.md
-!README.md 
+!README.md
+!IMPLEMENTATION_PLAN.md
+!FUTURE_PLANS.md
+
+# Test artifacts
+puppeteer_cache/
+.puppeteer/
+screenshots/
+test-screenshots/
+
+# Performance monitoring
+.lighthouse/
+performance-reports/
+
+# Dependency vulnerability reports
+audit-report.json
+security-report.json
+
+# Editor specific
+.vscode/settings.json
+.vscode/launch.json
+.vscode/extensions.json
+*.code-workspace
+
+# MacOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Linux
+*~
+.fuse_hidden*
+.directory
+.Trash-*
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+*.stackdump
+
+# JetBrains IDEs
+.idea/
+*.iws
+*.iml
+*.ipr
+
+# Visual Studio Code
+.vscode/
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# Sublime Text
+*.sublime-project
+*.sublime-workspace
+
+# Vim
+*.swp
+*.swo
+*~
+
+# Emacs
+*~
+\#*\#
+/.emacs.desktop
+/.emacs.desktop.lock
+*.elc
+auto-save-list
+tramp
+.\#*
+
+# Local development servers
+.dev-server/
+dev-server.log 

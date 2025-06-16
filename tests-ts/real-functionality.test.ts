@@ -153,20 +153,22 @@ describe('Real Functionality Issues Tests', () => {
             expect(wealthCanvas).toBeTruthy();
             expect(healthCanvas).toBeTruthy();
             
-            // Test chart creation doesn't throw errors
+            // Test chart creation doesn't throw errors (async methods)
             const wealthData = {
                 years: ['2024', '2025', '2026'],
                 values: [10000, 20000, 30000]
             };
             
-            expect(() => chartManager.createWealthChart(wealthData)).not.toThrow();
+            const wealthResult = await chartManager.createWealthChart(wealthData);
+            expect(typeof wealthResult).toBe('boolean');
             
             const healthData = {
                 months: ['Jan', 'Feb', 'Mar'],
                 scores: [70, 75, 80]
             };
             
-            expect(() => chartManager.createHealthChart(healthData)).not.toThrow();
+            const healthResult = await chartManager.createHealthChart(healthData);
+            expect(typeof healthResult).toBe('boolean');
         });
 
         test('should verify chart destruction works', async () => {
@@ -174,8 +176,8 @@ describe('Real Functionality Issues Tests', () => {
             
             const chartManager = new ChartManager();
             
-            // Create some charts first
-            chartManager.createWealthChart({
+            // Create some charts first (async)
+            await chartManager.createWealthChart({
                 years: ['2024'],
                 values: [1000]
             });

@@ -536,11 +536,25 @@ class FinancialHealthApp {
         // Display advanced analytics if available
         if (analysis.advancedMetrics && userData.age) {
             this.displayAdvancedAnalytics(analysis);
+            // Show the advanced analytics section
+            const advancedSection = document.getElementById('advanced-analytics-content');
+            if (advancedSection) {
+                advancedSection.classList.remove('collapsed');
+                const icon = document.getElementById('advanced-analytics-icon');
+                if (icon) icon.textContent = '▲';
+            }
         }
 
         // Create charts if advanced data is available
         if (analysis.wealthProjections && userData.age) {
             this.createCharts(analysis, userData);
+            // Show the charts section
+            const chartsSection = document.getElementById('charts-content');
+            if (chartsSection) {
+                chartsSection.classList.remove('collapsed');
+                const icon = document.getElementById('charts-icon');
+                if (icon) icon.textContent = '▲';
+            }
         }
 
         // Show results with animation
@@ -1020,16 +1034,14 @@ class FinancialHealthApp {
     /**
      * Create wealth and health trend charts with comprehensive error handling
      */
-    private createCharts(analysis: AnalysisResult, userData: UserFinancialData): void {
+    private async createCharts(analysis: AnalysisResult, userData: UserFinancialData): Promise<void> {
         try {
             // Destroy existing charts safely with proper cleanup
             this.chartManager.destroyExistingCharts();
 
-            // Verify Chart.js is loaded
-            if (typeof (window as any).Chart === 'undefined') {
-                console.error('Chart.js library not loaded');
-                this.showError('Chart library not available. Please refresh the page.');
-                return;
+            // Wait for Chart.js to be available
+            if (!this.chartManager.isReady()) {
+                console.warn('Chart.js not ready, charts will show as tables');
             }
 
             // Verify canvas elements exist
@@ -1038,12 +1050,11 @@ class FinancialHealthApp {
             
             if (!wealthCanvas || !healthCanvas) {
                 console.error('Chart canvas elements not found');
-                this.showError('Chart display elements not available. Please refresh the page.');
                 return;
             }
 
             // Enhanced delay to ensure proper cleanup and DOM readiness
-            setTimeout(() => {
+            setTimeout(async () => {
                 try {
                     // Double-check canvas availability after timeout
                     const wealthCanvasCheck = document.getElementById('wealthChart') as HTMLCanvasElement;
@@ -1056,32 +1067,28 @@ class FinancialHealthApp {
 
                     // Create wealth projection chart
                     if (analysis.wealthProjections && analysis.wealthProjections.fiveYearProjection !== undefined) {
-                        this.createWealthChart(analysis.wealthProjections, userData);
+                        await this.createWealthChart(analysis.wealthProjections, userData);
                     } else {
                         console.warn('No valid wealth projection data available');
                     }
                     
                     // Create health trend chart
-                    this.createHealthTrendChart(analysis, userData);
+                    await this.createHealthTrendChart(analysis, userData);
                     
                     console.log('Charts created successfully');
                 } catch (error) {
                     console.error('Chart creation failed in timeout:', error);
-                    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-                    this.showError(`Chart rendering failed: ${errorMessage}. Please refresh the page.`);
                 }
             }, 150);
         } catch (error) {
             console.error('Chart initialization failed:', error);
-            const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-            this.showError(`Chart setup failed: ${errorMessage}. Please refresh the page.`);
         }
     }
 
     /**
      * Create wealth projection chart using ChartManager
      */
-    private createWealthChart(projections: WealthProjections, userData: UserFinancialData): void {
+    private async createWealthChart(projections: WealthProjections, userData: UserFinancialData): Promise<void> {
         const currentWealth = (userData.savings || 0) + (userData.currentInvestments || 0);
         const years = userData.age ? [
             `Age ${userData.age}`,
@@ -1111,13 +1118,13 @@ class FinancialHealthApp {
             realValues: realData
         };
 
-        this.chartManager.createWealthChart(wealthChartData);
+        await this.chartManager.createWealthChart(wealthChartData);
     }
 
     /**
      * Create financial health trend chart using ChartManager
      */
-    private createHealthTrendChart(analysis: AnalysisResult, _userData: UserFinancialData): void {
+    private async createHealthTrendChart(analysis: AnalysisResult, _userData: UserFinancialData): Promise<void> {
         // Simulate monthly health score progression (this could be enhanced with real historical data)
         const months = [];
         const healthScores = [];
@@ -1142,7 +1149,7 @@ class FinancialHealthApp {
             scores: healthScores
         };
 
-        this.chartManager.createHealthChart(healthChartData);
+        await this.chartManager.createHealthChart(healthChartData);
     }
 
     /**
