@@ -1039,10 +1039,8 @@ class FinancialHealthApp {
             // Destroy existing charts safely with proper cleanup
             this.chartManager.destroyExistingCharts();
 
-            // Wait for Chart.js to be available
-            if (!this.chartManager.isReady()) {
-                console.warn('Chart.js not ready, charts will show as tables');
-            }
+            // Chart.js availability is now handled internally by ChartManager
+            console.log('Initializing charts...');
 
             // Verify canvas elements exist
             const wealthCanvas = document.getElementById('wealthChart') as HTMLCanvasElement;
