@@ -1,154 +1,76 @@
 /**
- * User input data from the form - Simplified for better UX
+ * Core financial data types for the simplified Financial Health Analyzer
  */
+
 export interface UserFinancialData {
-  // Basic Financial Information (Required)
-  monthlyIncome: number;
-  monthlyExpenses: number;
-  savings: number;
-  debt: number;
-  
-  // Required for Advanced Features
-  age: number;
-  currentInvestments: number;
-  monthlyInvestmentContribution: number;
-  
-  // Optional Advanced Information
-  retirementAge?: number;
-  riskTolerance: 'conservative' | 'moderate' | 'aggressive';
-  emergencyFundGoal: number;
-  
-  // Major Purchase Planning (Optional)
-  plannedPurchaseType?: string;
-  purchaseCost?: number;
-  purchaseTimeframe?: number;
-  downPaymentPercent?: number;
+    // Required Financial Information
+    monthlyIncome: number;
+    monthlyExpenses: number;
+    savings: number;
+    debt: number;
+    age: number;
+    currentInvestments: number;
+    monthlyInvestmentContribution: number;
+    retirementAge: number;
+    riskTolerance: 'conservative' | 'moderate' | 'aggressive';
 }
 
-/**
- * Result of financial analysis
- */
-export interface AnalysisResult {
-  score: number;
-  scoreBreakdown: ScoreBreakdown;
-  cashFlow: number;
-  recommendation: string;
-  emergencyFundMonths: number;
-  debtToIncomeRatio: number;
-  savingsRate: number;
-  
-  // Long-term Predictions (only if age provided)
-  retirementProjections?: RetirementProjections;
-  wealthProjections?: WealthProjections;
-  financialMilestones?: FinancialMilestone[];
-  riskAssessment: RiskAssessment;
-  
-  // Advanced Analytics (only if age provided)
-  advancedMetrics?: any; // AdvancedMetrics from calculations.ts
-  scenarioAnalysis?: {
-    monteCarlo?: any; // MonteCarloResult
-    stressTest?: any; // StressTestResult
-    contributionScenarios?: any[];
-  };
+export interface FinancialMetric {
+    title: string;
+    value: string;
+    description: string;
+    status: 'excellent' | 'good' | 'fair' | 'poor';
+    number?: number; // Raw numeric value for calculations
 }
 
-/**
- * Detailed breakdown of financial health score
- */
-export interface ScoreBreakdown {
-  cashFlowScore: number;
-  emergencyFundScore: number;
-  debtManagementScore: number;
-  savingsRateScore: number;
-  explanations: {
-    cashFlow: string;
-    emergencyFund: string;
-    debtManagement: string;
-    savingsRate: string;
-  };
+export interface Recommendation {
+    priority: 'high' | 'medium' | 'low';
+    text: string;
+    icon: string;
 }
 
-/**
- * Retirement planning projections
- */
-export interface RetirementProjections {
-  yearsToRetirement: number;
-  projectedRetirementWealth: number;
-  requiredMonthlyContribution: number;
-  retirementReadinessScore: number;
-  projectedMonthlyRetirementIncome: number;
-  socialSecurityEstimate: number;
-  shortfallOrSurplus: number;
+export interface FinancialAnalysisResult {
+    // Core Health Score
+    healthScore: number;
+    healthLevel: string;
+    
+    // Quick Metrics
+    monthlyCashFlow: number;
+    emergencyFundMonths: number;
+    debtToIncomeRatio: number;
+    savingsRate: number;
+    
+    // Analysis Sections
+    coreMetrics: FinancialMetric[];
+    liquidityAnalysis: FinancialMetric[];
+    debtAnalysis: FinancialMetric[];
+    investmentAnalysis: FinancialMetric[];
+    wealthProjections: FinancialMetric[];
+    riskAssessment: FinancialMetric[];
+    
+    // Recommendations
+    recommendations: Recommendation[];
 }
 
-/**
- * Wealth growth projections with historical inflation adjustment
- */
-export interface WealthProjections {
-  fiveYearProjection: number;
-  tenYearProjection: number;
-  retirementProjection: number;
-  compoundGrowthRate: number;
-  totalContributions: number;
-  investmentGrowth: number;
-  
-  // Real purchasing power (adjusted for 3.5% historical inflation)
-  fiveYearReal: number;
-  tenYearReal: number;
-  retirementReal: number;
-}
-
-/**
- * Financial milestones and timeline
- */
-export interface FinancialMilestone {
-  milestone: string;
-  targetAmount: number;
-  estimatedTimeToReach: number;
-  monthlyContributionNeeded: number;
-  priority: 'high' | 'medium' | 'low';
-  achievable: boolean;
-}
-
-/**
- * Risk assessment for financial plan
- */
-export interface RiskAssessment {
-  overallRiskLevel: 'low' | 'medium' | 'high';
-  riskFactors: string[];
-  recommendations: string[];
-  emergencyFundAdequacy: boolean;
-  diversificationScore: number;
-}
-
-/**
- * Chart data for visualizations
- */
-export interface ChartData {
-  labels: string[];
-  datasets: ChartDataset[];
-}
-
-export interface ChartDataset {
-  label: string;
-  data: number[];
-  backgroundColor?: string | string[];
-  borderColor?: string | string[];
-  borderWidth?: number;
-  tension?: number;
-}
-
-/**
- * DOM element references
- */
 export interface DOMElements {
-  form: HTMLFormElement;
-  resultsContainer: HTMLElement;
-  healthScore: HTMLElement;
-  cashFlowValue: HTMLElement;
-  emergencyFundValue: HTMLElement;
-  debtRatioValue: HTMLElement;
-  savingsRateValue: HTMLElement;
-  recommendationText: HTMLElement;
-  analyzeBtn: HTMLButtonElement;
+    form: HTMLFormElement;
+    resultsContainer: HTMLElement;
+    healthScoreSummary: HTMLElement;
+    healthScore: HTMLElement;
+    errorMessage: HTMLElement;
+    
+    // Quick Metrics
+    cashFlowValue: HTMLElement;
+    emergencyFundValue: HTMLElement;
+    debtRatioValue: HTMLElement;
+    savingsRateValue: HTMLElement;
+    
+    // Analysis Content Areas
+    coreMetrics: HTMLElement;
+    liquidityAnalysis: HTMLElement;
+    debtAnalysis: HTMLElement;
+    investmentAnalysis: HTMLElement;
+    wealthProjections: HTMLElement;
+    riskAssessment: HTMLElement;
+    recommendationsList: HTMLElement;
 } 
