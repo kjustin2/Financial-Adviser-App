@@ -1,27 +1,66 @@
-# 💰 Financial Health Analyzer
+# 💰 Financial Health Analyzer MVP
 
-A modern, TypeScript-based financial health analyzer that runs entirely in your browser. Get comprehensive financial analysis, personalized recommendations, and projections without any server dependencies.
+A comprehensive, research-based financial health analyzer built with TypeScript. This MVP implements the Financial Health Network 2024 standards with 8 key financial health indicators, Monte Carlo simulations, behavioral finance analysis, and real-time economic scenario modeling.
+
+## 🚀 Live Demo
+
+**🌐 [Try the Financial Health Analyzer](https://kjustin2.github.io/Financial-Adviser-App/)**
+
+## ✨ Current MVP Features
+
+### 🎯 8 Core Financial Health Indicators (Research-Based)
+Based on Financial Health Network 2024 standards:
+1. **Spending vs Income Analysis** - Cash flow and expense ratios
+2. **Bill Payment Reliability** - Payment history and consistency  
+3. **Emergency Savings Adequacy** - 3-6 month expense coverage
+4. **Debt Management Effectiveness** - Debt-to-income ratios
+5. **Credit Score Health** - Credit utilization and optimization
+6. **Insurance Coverage Confidence** - Adequate protection analysis
+7. **Long-term Financial Goal Confidence** - Retirement planning
+8. **Financial Planning Engagement** - Budgeting and planning activities
+
+### 🧠 Advanced Analysis Engines
+- **Monte Carlo Simulation**: 10,000+ scenario portfolio projections
+- **Economic Scenario Testing**: Bull, bear, recession, and recovery models
+- **Behavioral Finance Analysis**: Cognitive bias detection and mitigation
+- **Dynamic Market Data Integration**: Real-time scenario adjustments
+- **Performance Caching System**: Optimized calculations with local storage
+
+### 📊 Interactive Multi-Step Assessment
+- **6-Step Progressive Form**: Guided data collection with validation
+- **Real-time Health Score**: 0-100 comprehensive rating
+- **Behavioral Bias Assessment**: Psychology-based questionnaire
+- **Risk Tolerance Analysis**: Investment strategy recommendations
+- **Personalized Mitigation Plans**: Action items based on detected biases
+
+### 📈 Comprehensive Reporting
+- **Financial Health Dashboard**: Visual indicators with status colors
+- **Behavioral Analysis Charts**: Bias detection radar charts
+- **Impact Analysis**: Quantified effects of cognitive biases
+- **Risk-Adjusted Projections**: Monte Carlo result visualizations
+- **Actionable Recommendations**: Priority-based improvement strategies
 
 ## 🚀 Quick Start
 
+### For Users
+**🌐 [Open the Financial Health Analyzer](https://kjustin2.github.io/Financial-Adviser-App/)** - No installation required!
+
+### For Developers
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/yourusername/Financial-Adviser-App.git
+   git clone https://github.com/kjustin2/Financial-Adviser-App.git
    cd Financial-Adviser-App
    ```
 
-2. **Install dependencies and start**
+2. **Install dependencies and build**
    ```bash
    npm install
-   npm start
+   npm run build
    ```
    
-   Or use the Windows helper script:
-   ```cmd
-   start.cmd
-   ```
+   📚 **Note**: Use `npm run build` for testing (recommended) to avoid server conflicts
 
-3. **Open your browser** to `http://localhost:3000` and start analyzing your finances!
+3. **Open** `dist/index.html` in your browser to test locally
 
 ## ✨ Key Features
 
@@ -50,35 +89,55 @@ A modern, TypeScript-based financial health analyzer that runs entirely in your 
 - **Expandable Sections**: Collapsible Basic/Advanced inputs and chart sections
 - **Real-Time Validation**: Instant feedback on input data
 
-## 🏗️ Technology Stack
+## 🏗️ Technology Stack & Architecture
 
-- **Frontend**: TypeScript, HTML5, CSS3 (modern standards)
-- **Build System**: Webpack 5 with TypeScript compilation
-- **Charts**: Chart.js for interactive financial visualizations
-- **Testing**: Jest with TypeScript support and comprehensive test coverage
-- **Deployment**: GitHub Pages with automated CI/CD workflow
+### Core Technologies
+- **Frontend**: TypeScript, HTML5, CSS3 with modern design patterns
+- **Build System**: Webpack 5 with TypeScript compilation and optimization
+- **Financial Calculations**: Custom engines with research-based algorithms
+- **Data Visualization**: Custom chart implementations for financial data
+- **Testing**: Comprehensive TypeScript test suites
+- **Deployment**: GitHub Pages with automated CI/CD
 
-## 📖 How to Use
+### Advanced Features
+- **Monte Carlo Engine**: Sophisticated portfolio simulation with 10,000+ scenarios
+- **Economic Scenario Modeling**: Dynamic market conditions with regime changes
+- **Behavioral Finance Integration**: Psychology-based bias detection and mitigation
+- **Caching System**: High-performance local storage with compression
+- **Security-First Design**: No external data transmission, privacy-focused
 
-### Step 1: Basic Financial Information (Required)
-- **Monthly Income**: Your take-home income after taxes
-- **Monthly Expenses**: Essential expenses (housing, food, utilities, transport)
-- **Current Savings**: Total in savings and checking accounts
-- **Total Debt**: Credit cards, loans, etc. (excluding mortgage)
+## 📖 How to Use the Analyzer
 
-### Step 2: Advanced Details (Optional)
-Expand the "Advanced Details" section for enhanced analysis:
-- **Age & Retirement Planning**: Enables retirement projections and timeline
-- **Investment Information**: Current portfolio and monthly contributions
-- **Risk Tolerance**: Conservative, moderate, or aggressive investment strategy
-- **Emergency Fund Goal**: Customize target months of expense coverage
+### Step 1: Personal Information
+- Age and location for personalized analysis
+- Employment status and financial goals
 
-### Step 3: Get Comprehensive Analysis
-Receive detailed insights including:
-- **Financial Health Score**: Color-coded rating with breakdown
-- **Key Metrics Dashboard**: Cash flow, emergency fund, debt ratios, savings rate
-- **Personalized Recommendations**: Priority-based actionable advice
-- **Interactive Charts** (if age provided): Wealth projections and health trends
+### Step 2: Income & Cash Flow  
+- Monthly take-home income
+- Regular income sources and stability
+
+### Step 3: Monthly Expenses
+- Housing, transportation, food, and utilities
+- Discretionary spending and lifestyle costs
+
+### Step 4: Assets & Savings
+- Checking and savings account balances
+- Investment portfolios and retirement accounts
+
+### Step 5: Liabilities & Debt
+- Credit card balances and monthly payments
+- Loans, mortgages, and other obligations
+
+### Step 6: Goals & Behavioral Assessment
+- Retirement planning and risk tolerance
+- Behavioral finance questionnaire for bias detection
+
+### Results Dashboard
+- **Comprehensive Health Score**: Research-based 0-100 rating
+- **8 Health Indicators**: Detailed analysis with status colors
+- **Behavioral Analysis**: Cognitive bias detection and impact assessment  
+- **Monte Carlo Projections**: Portfolio performance scenarios
+- **Actionable Recommendations**: Personalized improvement strategies
 
 ## 🎯 Financial Principles
 
@@ -106,40 +165,41 @@ Based on proven financial fundamentals:
 # Install dependencies
 npm install
 
-# Start development server with hot reload
-npm start
-
-# Build for production
+# Build for testing/production (recommended approach)
 npm run build
 
-# Run test suite
+# Open dist/index.html in browser to test
+
+# Run comprehensive test suite (when available)
 npm test
-
-# Run tests in watch mode
-npm run test:watch
-
-# Generate test coverage report
-npm run test:coverage
 ```
 
 ### Project Structure
 ```
 Financial-Adviser-App/
 ├── src/
-│   ├── app.ts          # Main application logic
-│   ├── types.ts        # TypeScript interfaces
-│   └── index.html      # UI with modern CSS
-├── tests-ts/           # Jest test suites
-├── dist/               # Production build output
-└── webpack.config.js   # Build configuration
+│   ├── app.ts                    # Main application logic
+│   ├── types.ts                  # TypeScript interfaces
+│   ├── index.html                # UI with modern CSS
+│   ├── core/                     # Core engines and calculations
+│   │   ├── MonteCarloEngine.ts   # Portfolio simulation engine
+│   │   ├── ScenarioEngine.ts     # Economic scenario modeling
+│   │   ├── BiasDetectionEngine.ts # Behavioral finance analysis
+│   │   ├── CacheManager.ts       # Performance optimization
+│   │   └── calculations.ts       # Financial health algorithms
+│   ├── components/               # UI components and charts
+│   └── data/                     # Economic scenarios and questions
+├── dist/                         # Production build output
+├── .taskmaster/                  # Project management
+└── webpack.config.js             # Build configuration
 ```
 
 ## 🌐 Deployment
 
-### GitHub Pages (Automated)
-1. Push changes to the `main` branch
-2. GitHub Actions automatically builds and deploys
-3. Live site available at: `https://yourusername.github.io/Financial-Adviser-App`
+### GitHub Pages (Live)
+**Current Deployment**: [https://kjustin2.github.io/Financial-Adviser-App/](https://kjustin2.github.io/Financial-Adviser-App/)
+
+The application is automatically deployed via GitHub Actions when changes are pushed to the main branch.
 
 ### Manual Deployment
 ```bash

@@ -31,7 +31,7 @@ if not exist node_modules (
 )
 
 echo [INFO] Starting local development server...
-echo [INFO] Application will be available at: http://localhost:3000
+echo [INFO] Application will be available at: http://localhost:3011
 echo [INFO] Press Ctrl+C to stop the server
 echo.
 

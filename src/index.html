@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Financial Health Analyzer</title>
+    <title>Comprehensive Financial Health Analyzer</title>
     <style>
         :root {
             --primary-color: #3b82f6;
@@ -42,7 +42,7 @@
         }
 
         .container {
-            max-width: 1000px;
+            max-width: 1200px;
             margin: 0 auto;
             background: white;
             border-radius: var(--border-radius);
@@ -53,9 +53,8 @@
         .header {
             background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
             color: white;
-            padding: 40px 40px 60px;
+            padding: 40px;
             text-align: center;
-            position: relative;
         }
 
         .header h1 {
@@ -67,71 +66,106 @@
         .header p {
             font-size: 1.1rem;
             opacity: 0.9;
+            margin-bottom: 0;
         }
 
         .main-content {
-            padding: 40px;
-            background: white;
-            margin-top: -40px;
-            border-radius: var(--border-radius) var(--border-radius) 0 0;
-            position: relative;
-            z-index: 1;
-        }
-
-        .form-section {
-            margin-bottom: 32px;
-            background: var(--gray-50);
-            border-radius: var(--border-radius);
-            border: 1px solid var(--gray-200);
-            overflow: hidden;
-        }
-
-        .section-header {
-            background: linear-gradient(135deg, var(--gray-100), var(--gray-50));
-            padding: 24px 28px;
-            border-bottom: 1px solid var(--gray-200);
-        }
-
-        .section-header h3 {
-            font-size: 1.25rem;
-            font-weight: 600;
-            color: var(--gray-800);
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .section-content {
-            padding: 24px;
-        }
-
-        .form-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            grid-template-columns: 1fr;
+            gap: 0;
+        }
+
+        .form-container,
+        .results-container {
+            padding: 40px;
+        }
+
+        .results-container {
+            background: var(--gray-50);
+            border-top: 1px solid var(--gray-200);
+        }
+
+        /* Multi-Step Form Styles */
+        .multi-step-form {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .form-progress {
+            margin-bottom: 40px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: var(--gray-200);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 12px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--primary-color);
+            transition: width 0.3s ease;
+        }
+
+        .progress-text {
+            text-align: center;
+            color: var(--gray-600);
+            font-weight: 500;
+        }
+
+        .step-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .step-header h2 {
+            font-size: 1.8rem;
+            color: var(--gray-900);
+            margin-bottom: 8px;
+        }
+
+        .step-header p {
+            color: var(--gray-600);
+            font-size: 1.1rem;
+        }
+
+        .step-fields {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 24px;
+            margin-bottom: 40px;
         }
 
-        .input-group {
-            position: relative;
+        .form-field {
+            display: flex;
+            flex-direction: column;
         }
 
-        .input-group label {
+        .form-field label {
+            font-weight: 600;
+            color: var(--gray-700);
+            margin-bottom: 8px;
             display: flex;
             align-items: center;
-            gap: 8px;
-            font-weight: 500;
-            margin-bottom: 8px;
-            color: var(--gray-700);
+            gap: 4px;
         }
 
-        .required-indicator {
+        .required {
             color: var(--danger-color);
-            font-weight: 600;
         }
 
-        .input-group input,
-        .input-group select {
-            width: 100%;
+        .field-description {
+            font-size: 0.875rem;
+            color: var(--gray-600);
+            margin-bottom: 8px;
+            margin-top: -4px;
+        }
+
+        .form-field input,
+        .form-field select {
             padding: 12px 16px;
             border: 1px solid var(--gray-300);
             border-radius: 8px;
@@ -140,307 +174,220 @@
             background: white;
         }
 
-        .input-group input:focus,
-        .input-group select:focus {
+        .form-field input:focus,
+        .form-field select:focus {
             outline: none;
             border-color: var(--primary-color);
             box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
         }
 
-        .input-group input:required:invalid {
-            border-color: var(--danger-color);
+        .form-navigation {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 20px;
+            border-top: 1px solid var(--gray-200);
         }
 
-        .input-group input:required:valid {
-            border-color: var(--secondary-color);
-        }
-
-        .input-currency {
-            position: relative;
-        }
-
-        .input-currency::before {
-            content: '$';
-            position: absolute;
-            left: 16px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--gray-500);
-            font-weight: 500;
-            pointer-events: none;
-            z-index: 1;
-        }
-
-        .input-currency input {
-            padding-left: 32px;
-        }
-
-        .input-help {
-            font-size: 0.875rem;
-            color: var(--gray-600);
-            margin-top: 4px;
-            line-height: 1.4;
-        }
-
-        .analyze-button {
-            width: 100%;
-            padding: 16px 24px;
-            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
-            color: white;
-            border: none;
-            border-radius: var(--border-radius);
-            font-size: 1.125rem;
+        .btn-primary,
+        .btn-secondary {
+            padding: 12px 24px;
+            border-radius: 8px;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.3s;
-            margin: 32px 0;
-        }
-
-        .analyze-button:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-lg);
-        }
-
-        .results-container {
-            margin-top: 40px;
-            display: none;
-        }
-
-        .results-container.visible {
-            display: block;
-            animation: fadeInUp 0.5s ease-out;
-        }
-
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .results-summary {
-            background: linear-gradient(135deg, var(--gray-500), var(--gray-600));
-            color: white;
-            padding: 32px;
-            border-radius: var(--border-radius);
-            margin-bottom: 24px;
-            text-align: center;
-        }
-
-        .health-score {
-            font-size: 3rem;
-            font-weight: 700;
-            margin-bottom: 8px;
-            color: white;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
-        }
-
-        .score-label {
-            font-size: 1.25rem;
-            opacity: 0.9;
-        }
-
-        .results-summary.score-bg-excellent {
-            background: linear-gradient(135deg, #10b981, #059669);
-        }
-
-        .results-summary.score-bg-good {
-            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
-        }
-
-        .results-summary.score-bg-fair {
-            background: linear-gradient(135deg, #f59e0b, #d97706);
-        }
-
-        .results-summary.score-bg-limited {
-            background: linear-gradient(135deg, #f97316, #ea580c);
-        }
-
-        .results-summary.score-bg-critical {
-            background: linear-gradient(135deg, #ef4444, #dc2626);
-        }
-
-        .quick-metrics {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 16px;
-            margin: 24px 0;
-        }
-
-        .metric-card {
-            background: white;
-            padding: 20px;
-            border-radius: var(--border-radius);
-            border: 1px solid var(--gray-200);
-            text-align: center;
-        }
-
-        .metric-value {
-            font-size: 1.5rem;
-            font-weight: 600;
-            color: var(--primary-color);
-            margin-bottom: 4px;
-        }
-
-        .metric-label {
-            font-size: 0.875rem;
-            color: var(--gray-600);
-        }
-
-        .analysis-section {
-            background: white;
-            border-radius: var(--border-radius);
-            border: 1px solid var(--gray-200);
-            margin: 24px 0;
-            overflow: hidden;
-        }
-
-        .analysis-header {
-            background: linear-gradient(135deg, var(--gray-100), var(--gray-50));
-            padding: 20px 24px;
-            border-bottom: 1px solid var(--gray-200);
-        }
-
-        .analysis-header h3 {
-            font-size: 1.3rem;
-            font-weight: 600;
-            color: var(--gray-800);
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .analysis-content {
-            padding: 24px;
-        }
-
-        .metrics-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
-            margin-bottom: 24px;
-        }
-
-        .metric-item {
-            background: var(--gray-50);
-            border-radius: 8px;
-            padding: 16px;
-            border-left: 4px solid var(--primary-color);
-        }
-
-        .metric-item.excellent {
-            border-left-color: var(--secondary-color);
-            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(16, 185, 129, 0.05));
-        }
-
-        .metric-item.good {
-            border-left-color: var(--primary-color);
-            background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(59, 130, 246, 0.05));
-        }
-
-        .metric-item.fair {
-            border-left-color: var(--accent-color);
-            background: linear-gradient(135deg, rgba(245, 158, 11, 0.1), rgba(245, 158, 11, 0.05));
-        }
-
-        .metric-item.poor {
-            border-left-color: var(--danger-color);
-            background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(239, 68, 68, 0.05));
-        }
-
-        .metric-title {
-            font-weight: 600;
-            color: var(--gray-800);
-            margin-bottom: 8px;
+            transition: all 0.2s;
+            border: none;
             font-size: 1rem;
         }
 
-        .metric-number {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--gray-900);
-            margin-bottom: 4px;
+        .btn-primary {
+            background: var(--primary-color);
+            color: white;
         }
 
-        .metric-description {
-            font-size: 0.875rem;
-            color: var(--gray-600);
-            line-height: 1.4;
+        .btn-primary:hover:not(:disabled) {
+            background: var(--primary-dark);
         }
 
-        .recommendations-section {
-            background: linear-gradient(135deg, #f8fafc, #e2e8f0);
-            padding: 24px;
+        .btn-secondary {
+            background: white;
+            color: var(--gray-700);
+            border: 1px solid var(--gray-300);
+        }
+
+        .btn-secondary:hover:not(:disabled) {
+            background: var(--gray-50);
+        }
+
+        .btn-primary:disabled,
+        .btn-secondary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Results Styles */
+        .results-hidden {
+            display: none;
+        }
+
+        .health-score-summary {
+            background: white;
             border-radius: var(--border-radius);
-            border: 1px solid var(--gray-200);
-            margin: 24px 0;
+            padding: 32px;
+            margin-bottom: 32px;
+            text-align: center;
+            box-shadow: var(--shadow);
         }
 
-        .recommendations-section h3 {
-            color: var(--gray-800);
-            margin-bottom: 16px;
-            font-size: 1.3rem;
-            font-weight: 600;
+        .health-score-circle {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            margin: 0 auto 20px;
             display: flex;
             align-items: center;
-            gap: 8px;
+            justify-content: center;
+            font-size: 2rem;
+            font-weight: 700;
+            color: white;
         }
 
-        .recommendation-item {
-            display: flex;
-            align-items: flex-start;
-            gap: 12px;
-            padding: 12px 16px;
+        .score-excellent { background: var(--secondary-color); }
+        .score-good { background: var(--primary-color); }
+        .score-fair { background: var(--accent-color); }
+        .score-limited { background: #f97316; }
+        .score-critical { background: var(--danger-color); }
+
+        .health-indicators-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+
+        .indicator-card {
             background: white;
-            border-radius: 8px;
-            margin-bottom: 12px;
-            border-left: 4px solid var(--primary-color);
+            border-radius: var(--border-radius);
+            padding: 24px;
+            box-shadow: var(--shadow);
         }
 
-        .recommendation-text {
+        .indicator-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .indicator-name {
+            font-weight: 600;
+            color: var(--gray-900);
+        }
+
+        .indicator-score {
+            font-weight: 700;
+            padding: 4px 12px;
+            border-radius: 20px;
+            color: white;
+            font-size: 0.875rem;
+        }
+
+        .status-excellent { background: var(--secondary-color); }
+        .status-good { background: var(--primary-color); }
+        .status-fair { background: var(--accent-color); }
+        .status-poor { background: #f97316; }
+        .status-critical { background: var(--danger-color); }
+
+        .indicator-metrics {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .metric-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid var(--gray-100);
+        }
+
+        .metric-row:last-child {
+            border-bottom: none;
+        }
+
+        .metric-label {
+            font-weight: 500;
             color: var(--gray-700);
-            font-size: 0.95rem;
-            line-height: 1.5;
+        }
+
+        .metric-value {
+            font-weight: 600;
+            color: var(--gray-900);
+        }
+
+        .loading-indicator {
+            text-align: center;
+            padding: 40px;
+            color: var(--gray-600);
+        }
+
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid var(--gray-200);
+            border-top: 4px solid var(--primary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 16px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
 
         .error-message {
             background: #fef2f2;
+            border: 1px solid #fecaca;
             color: #991b1b;
             padding: 16px;
             border-radius: 8px;
-            border: 1px solid #fecaca;
-            margin: 16px 0;
+            margin-bottom: 20px;
             display: none;
         }
 
-        .hidden {
-            display: none !important;
+        .error-message.show {
+            display: block;
         }
 
-        /* Responsive design */
         @media (max-width: 768px) {
             .container {
                 margin: 10px;
+                border-radius: 8px;
             }
             
             .header {
-                padding: 32px 24px 48px;
+                padding: 20px;
             }
             
             .header h1 {
                 font-size: 2rem;
             }
             
-            .main-content {
-                padding: 24px;
+            .form-container,
+            .results-container {
+                padding: 20px;
             }
             
-            .form-grid {
+            .step-fields {
                 grid-template-columns: 1fr;
+                gap: 16px;
+            }
+
+            .health-indicators-grid {
+                grid-template-columns: 1fr;
+                gap: 16px;
             }
         }
     </style>
@@ -448,207 +395,50 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>💰 Financial Health Analyzer</h1>
-            <p>Get comprehensive insights into your financial wellness</p>
+            <h1>Comprehensive Financial Health Analyzer</h1>
+            <p>Get a detailed analysis of your financial wellness based on 8 key health indicators</p>
         </div>
 
         <div class="main-content">
-            <form id="financialForm">
-                <!-- Financial Information Section -->
-                <div class="form-section">
-                    <div class="section-header">
-                        <h3><span>📊</span> Financial Information</h3>
+            <div class="form-container" id="formContainer">
+                <div class="error-message" id="errorMessage"></div>
+                
+                <div id="multiStepForm">
+                    <!-- Multi-step form will be rendered here -->
+                </div>
+                </div>
+
+            <div class="results-container results-hidden" id="resultsContainer">
+                <div class="loading-indicator" id="loadingIndicator">
+                    <div class="loading-spinner"></div>
+                    <p>Analyzing your financial health...</p>
+                </div>
+
+                <div id="analysisResults" style="display: none;">
+                    <div class="health-score-summary" id="healthScoreSummary">
+                        <div class="health-score-circle" id="healthScoreCircle">
+                            <span id="healthScoreValue">--</span>
                     </div>
-                    <div class="section-content">
-                        <div class="form-grid">
-                            <div class="input-group">
-                                <label for="monthlyIncome">
-                                    Monthly Income <span class="required-indicator">*</span>
-                                </label>
-                                <div class="input-currency">
-                                    <input type="number" id="monthlyIncome" min="0" step="100" required>
-                                </div>
-                                <div class="input-help">Your total monthly take-home income after taxes</div>
-                            </div>
+                        <h2 id="healthLevelText">Financial Health Level</h2>
+                        <p id="healthScoreDescription">Based on 8 key financial health indicators</p>
+                </div>
 
-                            <div class="input-group">
-                                <label for="monthlyExpenses">
-                                    Monthly Expenses <span class="required-indicator">*</span>
-                                </label>
-                                <div class="input-currency">
-                                    <input type="number" id="monthlyExpenses" min="0" step="100" required>
-                                </div>
-                                <div class="input-help">Your total monthly essential expenses</div>
-                            </div>
+                    <div class="health-indicators-grid" id="healthIndicatorsGrid">
+                        <!-- Health indicators will be rendered here -->
+                </div>
 
-                            <div class="input-group">
-                                <label for="savings">
-                                    Current Savings <span class="required-indicator">*</span>
-                                </label>
-                                <div class="input-currency">
-                                    <input type="number" id="savings" min="0" step="500" required>
-                                </div>
-                                <div class="input-help">Total in savings and checking accounts</div>
-                            </div>
+                    <div class="key-metrics-section" id="keyMetricsSection">
+                        <h3>Key Financial Metrics</h3>
+                        <div id="keyMetricsGrid">
+                            <!-- Key metrics will be rendered here -->
+                    </div>
+                    </div>
 
-                            <div class="input-group">
-                                <label for="debt">
-                                    Total Debt <span class="required-indicator">*</span>
-                                </label>
-                                <div class="input-currency">
-                                    <input type="number" id="debt" min="0" step="500" required>
-                                </div>
-                                <div class="input-help">All debt excluding mortgage</div>
-                            </div>
-
-                            <div class="input-group">
-                                <label for="age">
-                                    Age <span class="required-indicator">*</span>
-                                </label>
-                                <input type="number" id="age" min="18" max="100" step="1" required>
-                                <div class="input-help">Required for retirement and investment analysis</div>
-                            </div>
-
-                            <div class="input-group">
-                                <label for="currentInvestments">
-                                    Current Investments <span class="required-indicator">*</span>
-                                </label>
-                                <div class="input-currency">
-                                    <input type="number" id="currentInvestments" min="0" step="1000" required>
-                                </div>
-                                <div class="input-help">401(k), IRA, stocks, bonds, etc. Enter 0 if none</div>
-                            </div>
-
-                            <div class="input-group">
-                                <label for="monthlyInvestmentContribution">
-                                    Monthly Investment Contribution <span class="required-indicator">*</span>
-                                </label>
-                                <div class="input-currency">
-                                    <input type="number" id="monthlyInvestmentContribution" min="0" step="50" required>
-                                </div>
-                                <div class="input-help">Monthly retirement and investment contributions</div>
-                            </div>
-
-                            <div class="input-group">
-                                <label for="retirementAge">
-                                    Target Retirement Age <span class="required-indicator">*</span>
-                                </label>
-                                <input type="number" id="retirementAge" min="50" max="80" step="1" value="67" required>
-                                <div class="input-help">The age you plan to retire</div>
-                            </div>
-
-                            <div class="input-group">
-                                <label for="riskTolerance">
-                                    Investment Risk Tolerance
-                                </label>
-                                <select id="riskTolerance">
-                                    <option value="conservative">Conservative</option>
-                                    <option value="moderate" selected>Moderate</option>
-                                    <option value="aggressive">Aggressive</option>
-                                </select>
-                                <div class="input-help">Your comfort level with investment risk</div>
-                            </div>
+                    <div class="mitigation-report-section" id="mitigationReportSection" style="display: none;">
+                        <h3>Bias Mitigation Recommendations</h3>
+                        <div id="mitigationReport">
+                            <!-- Mitigation report will be rendered here -->
                         </div>
-                    </div>
-                </div>
-
-                <button type="submit" class="analyze-button" id="analyzeBtn">
-                    🔍 Analyze My Financial Health
-                </button>
-
-                <div class="error-message" id="error">
-                    <!-- Error messages will appear here -->
-                </div>
-            </form>
-
-            <!-- Results Section -->
-            <div class="results-container" id="results">
-                <!-- Health Score Summary -->
-                <div class="results-summary" id="healthScoreSummary">
-                    <div class="health-score" id="healthScore">--</div>
-                    <div class="score-label">Financial Health Score</div>
-                </div>
-
-                <!-- Quick Metrics -->
-                <div class="quick-metrics">
-                    <div class="metric-card">
-                        <div class="metric-value" id="cashFlowValue">$--</div>
-                        <div class="metric-label">Monthly Cash Flow</div>
-                    </div>
-                    <div class="metric-card">
-                        <div class="metric-value" id="emergencyFundValue">-- months</div>
-                        <div class="metric-label">Emergency Fund</div>
-                    </div>
-                    <div class="metric-card">
-                        <div class="metric-value" id="debtRatioValue">--%</div>
-                        <div class="metric-label">Debt-to-Income Ratio</div>
-                    </div>
-                    <div class="metric-card">
-                        <div class="metric-value" id="savingsRateValue">--%</div>
-                        <div class="metric-label">Savings Rate</div>
-                    </div>
-                </div>
-
-                <!-- Recommendations -->
-                <div class="recommendations-section">
-                    <h3>🎯 Personalized Recommendations</h3>
-                    <div id="recommendationsList">
-                        <!-- Recommendations will be populated here -->
-                    </div>
-                </div>
-
-                <!-- Financial Analysis Sections -->
-                <div class="analysis-section">
-                    <div class="analysis-header">
-                        <h3>📊 Core Financial Health Metrics</h3>
-                    </div>
-                    <div class="analysis-content" id="coreMetrics">
-                        <!-- Core metrics will be populated here -->
-                    </div>
-                </div>
-
-                <div class="analysis-section">
-                    <div class="analysis-header">
-                        <h3>🏦 Banking & Liquidity Analysis</h3>
-                    </div>
-                    <div class="analysis-content" id="liquidityAnalysis">
-                        <!-- Liquidity analysis will be populated here -->
-                    </div>
-                </div>
-
-                <div class="analysis-section">
-                    <div class="analysis-header">
-                        <h3>💳 Debt Management Analysis</h3>
-                    </div>
-                    <div class="analysis-content" id="debtAnalysis">
-                        <!-- Debt analysis will be populated here -->
-                    </div>
-                </div>
-
-                <div class="analysis-section">
-                    <div class="analysis-header">
-                        <h3>📈 Investment & Retirement Planning</h3>
-                    </div>
-                    <div class="analysis-content" id="investmentAnalysis">
-                        <!-- Investment analysis will be populated here -->
-                    </div>
-                </div>
-
-                <div class="analysis-section">
-                    <div class="analysis-header">
-                        <h3>🔮 Wealth Projection & Future Planning</h3>
-                    </div>
-                    <div class="analysis-content" id="wealthProjections">
-                        <!-- Wealth projections will be populated here -->
-                    </div>
-                </div>
-
-                <div class="analysis-section">
-                    <div class="analysis-header">
-                        <h3>⚖️ Risk Assessment & Stress Testing</h3>
-                    </div>
-                    <div class="analysis-content" id="riskAssessment">
-                        <!-- Risk assessment will be populated here -->
                     </div>
                 </div>
             </div>

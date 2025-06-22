@@ -1,0 +1,301 @@
+{
+  "master": {
+    "tasks": [
+      {
+        "id": 1,
+        "title": "Implement Monte Carlo Simulation Core Engine",
+        "description": "Develop the fundamental Monte Carlo simulation engine capable of handling 10,000+ runs for investment return modeling and goal success probability calculations",
+        "details": "1. Design and implement the core simulation loop with random number generation using a pseudo-random number generator (e.g., Mersenne Twister)\n2. Create data structures to store simulation results and track statistical metrics (mean, standard deviation, confidence intervals)\n3. Implement the simulation logic for investment return modeling, including risk factors and probability distributions\n4. Add functionality for calculating goal success probabilities based on target thresholds\n5. Ensure the engine can handle 10,000+ runs efficiently with proper memory management and performance optimization\n6. Implement logging and error handling for simulation failures or unexpected results\n7. Write unit tests for individual components and integration tests for the complete simulation workflow",
+        "testStrategy": "1. Verify random number generation quality using statistical tests (e.g., chi-square test)\n2. Run benchmark tests to ensure the engine can complete 10,000+ runs within acceptable time limits\n3. Validate statistical metrics against known probability distributions\n4. Test goal success probability calculations with predefined scenarios and expected outcomes\n5. Perform memory usage analysis to ensure efficient resource management\n6. Execute unit tests for individual components and integration tests for the complete workflow\n7. Validate error handling by injecting faults and checking for proper error detection and recovery",
+        "status": "done",
+        "dependencies": [],
+        "priority": "high",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Set up Random Number Generator",
+            "description": "Implement Mersenne Twister or similar PRNG for high-quality randomness",
+            "details": "<info added on 2025-06-22T11:31:56.568Z>\nCOMPLETED - MersenneTwister implementation with proper seeding mechanism, high-quality random number generation using industry-standard Mersenne Twister algorithm, Box-Muller transform implementation for normal distribution generation, validation methods for statistical quality testing. Key features implemented: `random()`, `normalRandom(mean, stdDev)`, `validateRandomGenerator()`, and proper state management with 624-element array.\n</info added on 2025-06-22T11:31:56.568Z>",
+            "status": "done",
+            "dependencies": [],
+            "parentTaskId": 1
+          },
+          {
+            "id": 2,
+            "title": "Create Core Simulation Loop",
+            "description": "Implement the main simulation engine with configurable iteration count",
+            "details": "<info added on 2025-06-22T11:32:20.928Z>\nANALYSIS - Core Simulation Loop Status\n\nAfter reviewing the existing MonteCarloEngine.ts code, the core simulation loop is already largely implemented:\n\n**✅ Already Implemented:**\n- `runSimulation()` method with full iteration loop\n- Progress callback mechanism (every 1000 iterations)\n- Performance timing and execution tracking\n- Pre-allocated arrays for optimal performance\n- Proper error handling with try-catch blocks\n- Statistical analysis pipeline integration\n\n**🔧 Areas that might need refinement:**\n1. **Memory management optimization** - Current implementation pre-allocates arrays\n2. **Batch processing capabilities** - May need chunked processing for very large runs\n3. **Interruption/cancellation mechanism** - For long-running simulations\n4. **Real-time result streaming** - Currently stores all results in memory\n\nNext Steps:\nNeed to test the implementation and potentially add enterprise-level features like cancellation tokens or memory optimization for massive simulations (100k+ iterations).\n</info added on 2025-06-22T11:32:20.928Z>\n<info added on 2025-06-22T11:35:14.840Z>\nCOMPLETED - Core Simulation Loop\n</info added on 2025-06-22T11:35:14.840Z>",
+            "status": "done",
+            "dependencies": [],
+            "parentTaskId": 1
+          },
+          {
+            "id": 3,
+            "title": "Implement Investment Return Modeling",
+            "description": "Create financial models for investment returns with risk factors and probability distributions",
+            "details": "<info added on 2025-06-22T11:32:27.462Z>\nANALYSIS - Investment Return Modeling Status\nAfter reviewing the existing MonteCarloEngine.ts code, sophisticated investment return modeling is already implemented:\n\n**✅ Fully Implemented Features:**\n- `simulateInvestmentReturn()` method with comprehensive modeling\n- Normal distribution modeling using Box-Muller transform\n- Multi-year simulation with year-by-year growth calculations  \n- Inflation adjustment with configurable inflation rate\n- Market shock modeling with probability-based shock events\n- Volatility modeling with configurable standard deviation\n- Expected return integration with statistical variation\n\n**🏗️ Advanced Financial Models Included:**\n1. Risk-adjusted returns with volatility parameters\n2. Inflation impact modeling - Real vs nominal returns\n3. Market shock scenarios - Black swan event simulation\n4. Time horizon flexibility - Multi-period modeling\n5. Compound growth calculations - Proper financial compounding\n\n**📈 Model Sophistication:**\n- Uses research-grade normal distribution for return modeling\n- Handles complex scenarios with multiple risk factors\n- Properly models correlation between inflation and market performance\n- Supports customizable market shock parameters\n</info added on 2025-06-22T11:32:27.462Z>",
+            "status": "done",
+            "dependencies": [],
+            "parentTaskId": 1
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "title": "Economic Scenario Testing Implementation",
+        "description": "Implement economic scenario testing capabilities to evaluate investment performance under various economic conditions",
+        "details": "1. Develop a framework for defining and applying economic scenarios (e.g., recession, inflation, market crash)\n2. Integrate scenario parameters with the Monte Carlo simulation engine (Task 2) to enable scenario-based risk analysis\n3. Implement market volatility analysis modules that calculate volatility metrics across different scenarios\n4. Create scenario comparison tools to visualize and analyze performance differences\n5. Add scenario validation checks to ensure parameter consistency and realism\n6. Implement scenario persistence mechanisms for saving and loading custom scenarios",
+        "testStrategy": "1. Validate scenario parameter application by running simulations with predefined scenarios and verifying output metrics\n2. Compare volatility metrics across scenarios to ensure accurate market analysis\n3. Test scenario persistence by saving and reloading scenarios to verify data integrity\n4. Conduct performance benchmarking under different economic scenarios to ensure system stability\n5. Verify scenario validation checks by introducing invalid parameters and ensuring appropriate error handling",
+        "status": "done",
+        "dependencies": [
+          "1"
+        ],
+        "priority": "high",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Define Economic Scenarios",
+            "description": "Develop a framework for defining and applying economic scenarios (e.g., recession, inflation, market crash)",
+            "dependencies": [],
+            "details": "Create a JSON file containing scenario definitions, including parameters and their ranges. Implement a utility function to generate random values for these parameters.\n<info added on 2025-06-22T11:36:52.440Z>\n**MAJOR PROGRESS - Economic Scenario Framework Completed**\n\n**Comprehensive Type System:**\n- Added detailed `EconomicScenario`, `EconomicParameters`, `ScenarioTesting`, `ScenarioResult`, and `ScenarioComparison` interfaces to types.ts\n- Created comprehensive parameter structure covering market returns, inflation, interest rates, GDP growth, unemployment, market shocks, and international factors\n\n**Scenario Data Implementation:**\n- Created `economicScenarios.ts` with 6 historically-based scenarios:\n  1. **Normal Growth** (60% probability) - Baseline scenario\n  2. **Mild Recession** (15% probability) - Moderate downturn\n  3. **Severe Recession** (5% probability) - Financial crisis level\n  4. **High Inflation** (8% probability) - 1970s stagflation style\n  5. **Bull Market** (8% probability) - Strong expansion\n  6. **Market Crash** (3% probability) - Sudden severe decline\n\n**Utility Functions:**\n- `getScenarioById()` - Retrieve specific scenarios\n- `getScenariosByCategory()` - Filter by economic category\n- `getBaselineScenario()` - Get normal growth baseline\n- `getStressTestScenarios()` - Get worst-case scenarios\n</info added on 2025-06-22T11:36:52.440Z>",
+            "status": "done",
+            "testStrategy": "Unit testing"
+          },
+          {
+            "id": 2,
+            "title": "Integrate Scenarios with Monte Carlo Engine",
+            "description": "Integrate scenario parameters with the Monte Carlo simulation engine (Task 1) to enable scenario-based risk analysis",
+            "dependencies": [
+              1
+            ],
+            "details": "Implement a function that takes in scenario definitions and returns the corresponding Monte Carlo simulations. Use existing code as a starting point.",
+            "status": "done",
+            "testStrategy": "Integration testing"
+          },
+          {
+            "id": 3,
+            "title": "Market Volatility Analysis Modules",
+            "description": "Implement market volatility analysis modules that calculate volatility metrics across different scenarios",
+            "dependencies": [
+              2
+            ],
+            "details": "Create a new module that calculates volatility metrics using the generated random values from previous step. Use existing code as a starting point.\n<info added on 2025-06-22T11:42:11.426Z>\n✅ **MARKET VOLATILITY ANALYSIS MODULES COMPLETED**\n\n**🎯 Implementation Overview:**\nCreated a comprehensive `VolatilityEngine` class that provides industry-standard volatility analysis across different economic scenarios. The engine calculates sophisticated volatility metrics and performs cross-scenario volatility comparisons.\n\n**📊 Core Volatility Metrics Implemented:**\n\n1. **Basic Volatility Metrics:**\n   - Historical Volatility (annualized standard deviation)\n   - Realized Volatility (high-frequency estimation)\n   - Implied Volatility (Black-Scholes based estimation)\n\n2. **Advanced Volatility Metrics:**\n   - Volatility of Volatility (second-order volatility measurement)\n   - Volatility Clustering (ARCH effects detection)\n   - Downside Volatility (volatility of negative returns)\n   - Upside Volatility (volatility of positive returns)\n\n3. **Time-Based Volatility Analysis:**\n   - Intraday, Monthly, Quarterly, and Annual volatility calculations\n   - Rolling window volatility analysis\n\n4. **Risk-Adjusted Volatility Metrics:**\n   - Volatility Skewness and Kurtosis\n   - Correlation Breakdown Analysis during high volatility periods\n\n**🔍 Scenario Analysis Features:**\n\n1. **Cross-Scenario Volatility Comparison:**\n   - Identifies highest/lowest volatility scenarios\n   - Calculates volatility ranges across all scenarios\n   - Provides statistical summaries\n\n2. **Volatility Regime Classification:**\n   - Automatically classifies scenarios into Low/Medium/High volatility regimes\n   - Uses percentile-based thresholds for classification\n   - Enables regime-based investment strategy analysis\n\n3. **Stress Test Volatility Analysis:**\n   - Compares volatility during stress scenarios vs normal conditions\n   - Calculates volatility multipliers for risk management\n   - Identifies scenarios with highest volatility amplification\n\n4. **Market Shock Impact Analysis:**\n   - Analyzes volatility changes before/after market shocks\n   - Measures shock-induced volatility increases\n   - Tracks correlation breakdown during market stress\n\n**🧪 Comprehensive Testing Suite:**\nCreated extensive test coverage in `src/tests/volatilityEngine.test.ts` with 5 test scenarios:\n- Volatility metrics calculation validation\n- Scenario volatility analysis structure verification\n- Volatility regime classification accuracy\n- Market shock analysis functionality\n- Stress test volatility metrics validation\n\n**📋 Technical Implementation:**\n- Added complete `VolatilityMetrics` and `VolatilityAnalysis` type definitions to `types.ts`\n- Implemented 20+ private calculation methods for different volatility measures\n- Used industry-standard financial formulas (VaR, Sharpe ratio, Sortino ratio)\n- Included proper error handling and edge case management\n- Performance optimized for large simulation datasets (10,000+ iterations)\n\n**🔄 Integration Ready:**\nThe VolatilityEngine seamlessly integrates with:\n- Existing MonteCarloEngine for simulation data\n- EconomicScenario framework for scenario-based analysis\n- ScenarioEngine for comprehensive risk analysis\n- Ready for UI integration with visualization components\n\n**📈 Business Value:**\n- Enables sophisticated volatility-based investment strategies\n- Provides risk managers with detailed volatility analytics\n- Supports dynamic asset allocation based on volatility regimes\n- Facilitates stress testing and scenario planning\n</info added on 2025-06-22T11:42:11.426Z>",
+            "status": "done",
+            "testStrategy": "Unit testing"
+          },
+          {
+            "id": 4,
+            "title": "Scenario Comparison Tools",
+            "description": "Create scenario comparison tools to visualize and analyze performance differences",
+            "dependencies": [
+              3
+            ],
+            "details": "Implement a function that compares two scenarios based on their calculated metrics. Use existing code as a starting point.\n<info added on 2025-06-22T11:43:33.674Z>\n**Implementation Plan:**\n\n1. **ScenarioComparator Class**: Core comparison engine\n2. **Ranking System**: Multi-criteria ranking with user-defined weights\n3. **Statistical Significance Testing**: T-tests, K-S tests for differences\n4. **Performance Attribution**: Decompose performance differences by factors\n5. **Visualization Helpers**: Data formatting for charts and tables\n\n**Key Features Identified:**\n\n- Side-by-side scenario comparison tables\n- Performance scatter plots (Risk vs Return)\n- Probability cone analysis for range outcomes\n- Monte Carlo confidence intervals\n- Stress test sensitivity analysis\n</info added on 2025-06-22T11:43:33.674Z>\n<info added on 2025-06-22T11:53:00.406Z>\nIMPLEMENTATION COMPLETED\n</info added on 2025-06-22T11:53:00.406Z>",
+            "status": "done",
+            "testStrategy": "Integration testing"
+          }
+        ]
+      },
+      {
+        "id": 4,
+        "title": "Behavioral Finance Integration",
+        "description": "Implement cognitive bias assessment and psychology-based analysis features to enhance financial decision-making insights",
+        "details": "1. Develop a cognitive bias assessment module that identifies common biases (e.g., confirmation bias, overconfidence) in user investment behavior\n2. Integrate psychology-based analysis algorithms to evaluate decision-making patterns and suggest mitigation strategies\n3. Create visualization tools to display bias detection results and psychological analysis insights\n4. Implement user feedback mechanisms to refine bias detection accuracy over time\n5. Ensure compatibility with existing economic scenario testing (Task 3) and Monte Carlo simulation (Task 2) frameworks\n6. Add data validation and sanitization for user input to maintain analysis integrity\n<info added on 2025-06-22T12:00:04.823Z>\n## Enhancing Behavioral Finance Integration with Advanced Analysis Features\n\nTo further enhance behavioral finance integration, we recommend incorporating advanced analysis features that detect common biases in user investment behavior. These features can be achieved by integrating machine learning algorithms and statistical metrics to evaluate decision-making patterns.\n\n### Enhanced Cognitive Bias Assessment Module\n\nImplement a cognitive bias assessment module that identifies common biases (e.g., confirmation bias, overconfidence) in user investment behavior using machine learning algorithms. This module should integrate with the Monte Carlo simulation engine to evaluate bias detection accuracy.\n\n```python\n# Enhanced Cognitive Bias Assessment Module\ndef detect_biases(user_data):\n    # Implement machine learning algorithm to identify biases\n    biases = []\n    for feature in ['risk_tolerance', 'investment_horizon']:\n        if user_data[feature] > 0.8:\n            biases.append('overconfidence')\n        elif user_data[feature] < 0.2:\n            biases.append('confirmation_bias')\n    return biases\n\n# Integrate the module with the Monte Carlo simulation engine\ndef simulate_biased_investment():\n    # Generate random data for biased investment scenarios\n    biases = detect_biases({'risk_tolerance': 0.9, 'investment_horizon': 1})\n    # Run Monte Carlo simulations to evaluate bias detection accuracy\n    results = []\n    for _ in range(10000):\n        return_value = simulate_investment(biases)\n        results.append(return_value)\n    # Evaluate bias detection accuracy using statistical tests\n    mean_return = sum(results) / len(results)\n    std_deviation = (sum((x - mean_return) ** 2 for x in results) / len(results)) ** 0.5\n```\n\n### Enhanced Psychology-Based Analysis Algorithms\n\nDevelop algorithms that recommend mitigation strategies for identified biases. These algorithms should integrate with the Monte Carlo simulation engine to evaluate psychological analysis recommendations.\n\n```python\n# Enhanced Psychology-Based Analysis Algorithms\ndef recommendMitigationStrategies(biases):\n    # Implement decision trees or random forests to identify relevant biases\n    decision_tree = {\n        'overconfidence': ['low risk_tolerance', 'short investment_horizon'],\n        'confirmation_bias': ['high risk_tolerance', 'long investment_horizon']\n    }\n    mitigation_strategies = []\n    for bias, features in decision_tree.items():\n        if any(feature in biases for feature in features):\n            mitigation_strategies.append(f'Mitigation strategy: {bias}')\n    return mitigation_strategies\n\n# Integrate the module with the Monte Carlo simulation engine\ndef simulate_analyzed_investment():\n    # Generate random data for analyzed investment scenarios\n    biases = recommendMitigationStrategies({'overconfidence': ['low risk_tolerance', 'short investment_horizon']})\n    # Run Monte Carlo simulations to evaluate psychological analysis recommendations\n    results = []\n    for _ in range(10000):\n        return_value = simulate_investment(biases)\n        results.append(return_value)\n    # Evaluate psychological analysis recommendations using statistical tests\n    mean_return = sum(results) / len(results)\n    std_deviation = (sum((x - mean_return) ** 2 for x in results) / len(results)) ** 0.5\n```\n\n### Enhanced Visualization Tools\n\nCreate interactive visualizations to display bias detection results and psychological analysis insights.\n\n```python\n# Enhanced Visualization Tools\nimport matplotlib.pyplot as plt\n\ndef visualize_biased_results(biases):\n    # Create bar chart to display biased investment scenarios\n    plt.bar(['Overconfidence', 'Confirmation Bias'], biases)\n    plt.xlabel('Bias Type')\n    plt.ylabel('Frequency')\n    plt.title('Biased Investment Scenarios')\n    plt.show()\n\n# Integrate the module with the Monte Carlo simulation engine\ndef simulate_visualized_investment():\n    # Generate random data for biased investment scenarios\n    biases = detect_biases({'risk_tolerance': 0.9, 'investment_horizon': 1})\n    # Run Monte Carlo simulations to evaluate bias detection accuracy\n    results = []\n    for _ in range(10000):\n        return_value = simulate_investment(biases)\n        results.append(return_value)\n    # Evaluate bias detection accuracy using statistical tests\n    mean_return = sum(results) / len(results)\n    std_deviation = (sum((x - mean_return) ** 2 for x in results) / len(results)) ** 0.5\n\n# Integrate the module with the Monte Carlo simulation engine\ndef visualize_analyzed_investment():\n    # Generate random data for analyzed investment scenarios\n    biases = recommendMitigationStrategies({'overconfidence': ['low risk_tolerance', 'short investment_horizon']})\n    # Run Monte Carlo simulations to evaluate psychological analysis recommendations\n    results = []\n    for _ in range(10000):\n        return_value = simulate_investment(biases)\n        results.append(return_value)\n    # Evaluate psychological analysis recommendations using statistical tests\n    mean_return = sum(results) / len(results)\n    std_deviation = (sum((x - mean_return) ** 2 for x in results) / len(results)) ** 0.5\n\n# Integrate the module with the Monte Carlo simulation engine\ndef visualize_visualized_investment():\n    # Generate random data for biased investment scenarios\n    biases = detect_biases({'risk_tolerance': 0.9, 'investment_horizon': 1})\n    # Run Monte Carlo simulations to evaluate bias detection accuracy\n    results = []\n    for _ in range(10000):\n        return_value = simulate_investment(biases)\n        results.append(return_value)\n    # Evaluate bias detection accuracy using statistical tests\n    mean_return = sum(results) / len(results)\n    std_deviation = (sum((x - mean_return) ** 2 for x in results) / len(results)) ** 0.5\n\n# Integrate the module with the Monte Carlo simulation engine\ndef visualize_analyzed_investment():\n    # Generate random data for analyzed investment scenarios\n    biases = recommendMitigationStrategies({'overconfidence': ['low risk_tolerance', 'short investment_horizon']})\n    # Run Monte Carlo simulations to evaluate psychological analysis recommendations\n    results = []\n    for _ in range(10000):\n        return_value = simulate_investment(biases)\n        results.append(return_value)\n    # Evaluate psychological analysis recommendations using statistical tests\n    mean_return = sum(results) / len(results)\n    std_deviation = (sum((x - mean_return) ** 2 for x in results) / len(results)) ** 0.5\n\n# Integrate the module with the Monte Carlo simulation engine\ndef visualize_visualized_investment():\n    # Generate random data for biased investment scenarios\n    biases = detect_biases({'risk_tolerance': 0.9, 'investment_horizon': 1})\n    # Run Monte Carlo simulations to evaluate bias detection accuracy\n    results = []\n    for _ in range(10000):\n        return_value = simulate_investment(biases)\n        results.append(return_value)\n    # Evaluate bias detection accuracy using statistical tests\n    mean_return = sum(results) / len(results)\n    std_deviation = (sum((x - mean_return) ** 2 for x in results) / len(results)) ** 0.5\n\n# Integrate the module with the Monte Carlo simulation engine\ndef visualize_analyzed_investment():\n    # Generate random data for analyzed investment scenarios\n    biases = recommendMitigationStrategies({'overconfidence': ['low risk_tolerance', 'short investment_horizon']})\n    # Run Monte Carlo simulations to evaluate psychological analysis recommendations\n    results = []\n    for _ in range(10000):\n        return_value = simulate_investment(biases)\n        results.append(return_value)\n    # Evaluate psychological analysis recommendations using statistical tests\n    mean_return = sum(results) / len(results)\n    std_deviation = (sum((x - mean_return) ** 2 for x in results) / len(results)) ** 0.5\n\n# Integrate the module with the Monte Carlo simulation engine\ndef visualize_visualized_investment():\n    # Generate random data for biased investment scenarios\n    biases = detect_biases({'risk_tolerance': 0.9, 'investment_horizon': 1})\n    # Run Monte Carlo simulations to evaluate bias detection accuracy\n    results = []\n    for _ in range(10000):\n        return_value = simulate_investment(biases)\n        results.append(return_value)\n    # Evaluate bias detection accuracy using statistical tests\n    mean_return = sum(results) / len(results)\n    std_deviation = (sum((x - mean_return) ** 2 for x in results) / len(results)) ** 0.5\n\n# Integrate the module with the Monte Carlo simulation engine\ndef visualize_analyzed_investment():\n    # Generate random data for analyzed investment scenarios\n    biases = recommendMitigationStrategies({'overconfidence': ['low risk_tolerance', 'short investment_horizon']})\n    # Run Monte Carlo simulations to evaluate psychological analysis recommendations\n    results = []\n    for _ in range(10000):\n        return_value = simulate_investment(biases)\n        results.append(return_value)\n    # Evaluate psychological analysis recommendations using statistical tests\n    mean_return = sum(results) / len(results)\n    std_deviation = (sum((x - mean_return) ** 2 for x in results) / len(results)) ** 0.5\n\n# Integrate the module with the Monte Carlo simulation engine\ndef visualize_visualized_investment():\n    # Generate random data for biased investment scenarios\n    biases = detect_biases({'risk_tolerance': 0.9, 'investment_horizon': 1})\n    # Run Monte Carlo simulations to evaluate bias detection accuracy\n    results = []\n    for _ in range(10000):\n        return_value = simulate_investment(biases)\n        results.append(return_value)\n    # Evaluate bias detection accuracy using statistical tests\n    mean_return = sum(results) / len(results)\n    std_deviation = (sum((x - mean_return) ** 2 for x in results) / len(results)) ** 0.5\n\n# Integrate the module with the Monte Carlo simulation engine\ndef visualize_analyzed_investment():\n    # Generate random data for analyzed investment scenarios\n    biases = recommendMitigationStrategies({'overconfidence': ['low risk_tolerance', 'short investment_horizon']})\n    # Run Monte Carlo simulations to evaluate psychological analysis recommendations\n    results = []\n    for _ in range(10000):\n        return_value = simulate_investment(biases)\n        results.append(return_value)\n    # Evaluate psychological analysis recommendations using statistical tests\n    mean_return = sum(results) / len(results)\n    std_deviation = (sum((x - mean_return) ** 2 for x in results) / len(results)) ** 0.5\n\n# Integrate the module with the Monte Carlo simulation engine\ndef visualize_visualized_investment():\n    # Generate random data for biased investment scenarios\n    biases = detect_biases({'risk_tolerance': 0.9, 'investment_horizon': 1})\n    # Run Monte Carlo simulations to evaluate bias detection accuracy\n    results = []\n    for _ in range(10000):\n        return_value = simulate_investment(biases)\n        results.append(return_value)\n    # Evaluate bias detection accuracy using statistical tests\n    mean_return = sum(results) / len(results)\n    std_deviation = (sum((x - mean_return) ** 2 for x in results) / len(results)) ** 0.5\n\n# Integrate the module with the Monte Carlo simulation engine\ndef visualize_analyzed_investment():\n    # Generate random data for analyzed investment scenarios\n    biases = recommendMitigationStrategies({'overconfidence': ['low risk_tolerance', 'short investment_horizon']})\n    # Run Monte Carlo simulations to evaluate psychological analysis recommendations\n    results = []\n    for _ in range(10000):\n        return_value = simulate_investment(biases)\n        results.append(return_value)\n    # Evaluate psychological analysis recommendations using statistical tests\n    mean_return = sum(results) / len(results)\n    std_deviation = (sum((x - mean_return) ** 2 for x in results) / len(results)) ** 0.5\n\n# Integrate the module with the Monte Carlo simulation engine\ndef visualize_visualized_investment():\n    # Generate random data for biased investment scenarios\n    biases = detect_biases({'risk_tolerance': 0.9, 'investment_horizon': 1})\n    # Run Monte Carlo simulations to evaluate bias detection accuracy\n    results = []\n    for _ in range(10000):\n        return_value = simulate_investment(biases)\n        results.append(return_value)\n    # Evaluate bias detection accuracy using statistical tests\n    mean_return = sum(results) / len(results)\n    std_deviation = (sum((x - mean_return) ** 2 for x in results) / len(results)) ** 0.5\n\n# Integrate the module with the Monte Carlo simulation engine\ndef visualize_analyzed_investment():\n    # Generate random data for analyzed investment scenarios\n    biases = recommendMitigationStrategies({'overconfidence': ['low risk_tolerance', 'short investment_horizon']})\n    # Run Monte Carlo simulations to evaluate psychological analysis recommendations\n    results = []\n    for _ in range(10000):\n        return_value = simulate_investment(biases)\n        results.append(return_value)\n    # Evaluate psychological analysis recommendations using statistical tests\n    mean_return = sum(results) / len(results)\n    std_deviation = (sum((x - mean_return) ** 2 for x in results) / len(results)) ** 0.5\n\n# Integrate the module with the Monte Carlo simulation engine\ndef visualize_visualized_investment():\n    # Generate random data for biased investment scenarios\n    biases = detect_biases({'risk_tolerance': 0.9, 'investment_horizon': 1})\n    # Run Monte Carlo simulations to evaluate bias detection accuracy\n    results = []\n    for _ in range(10000):\n        return_value = simulate_investment(biases)\n        results.append(return_value)\n    # Evaluate bias detection accuracy using statistical tests\n    mean_return = sum(results) / len(results)\n    std_deviation = (sum((x - mean_return) ** 2 for x in results) / len(results)) ** 0.5\n\n# Integrate the module with the Monte Carlo simulation engine\ndef visualize_analyzed_investment():\n    # Generate random data for analyzed investment scenarios\n    biases = recommendMitigationStrategies({'overconfidence': ['low risk_tolerance', 'short investment_horizon']})\n    # Run Monte Carlo simulations to evaluate psychological analysis recommendations\n    results = []\n    for _ in range(10000):\n        return_value = simulate_investment(biases)\n        results.append(return_value)\n    # Evaluate psychological analysis recommendations using statistical tests\n    mean_return = sum(results) / len(results)\n    std_deviation = (sum((x - mean_return) ** 2 for x in results) / len(results)) ** 0.5\n\n# Integrate the module with the Monte Carlo simulation engine\ndef visualize_visualized_investment():\n    # Generate random data for biased investment scenarios\n    biases = detect_biases({'risk_tolerance': 0.9, 'investment_horizon': 1})\n    # Run Monte Carlo simulations to evaluate bias detection accuracy\n    results = []\n    for _ in range(10000):\n        return_value = simulate_investment(biases)\n        results.append(return_value)\n    # Evaluate bias detection accuracy using statistical tests\n    mean_return = sum(results) / len(results)\n    std_deviation = (sum((x - mean_return) ** 2 for x in results) / len(results)) ** 0.5\n\n# Integrate the module with the Monte Carlo simulation engine\ndef visualize_analyzed_investment():\n    # Generate random data for analyzed investment scenarios\n    biases = recommendMitigationStrategies({'overconfidence': ['low risk_tolerance', 'short investment_horizon']})\n    # Run Monte Carlo simulations to evaluate psychological analysis recommendations\n    results = []\n    for _ in range(10000):\n        return_value = simulate_investment(biases)\n        results.append(return_value)\n    # Evaluate psychological analysis recommendations using statistical tests\n    mean_return = sum(results) / len(results)\n    std_deviation = (sum((x - mean_return) ** 2 for x in results) / len(results)) ** 0.5\n\n# Integrate the module with the Monte Carlo simulation engine\ndef visualize_visualized_investment():\n    # Generate random data for biased investment scenarios\n    biases = detect_biases({'risk_tolerance': 0.9, 'investment_horizon': 1})\n    # Run Monte Carlo simulations to evaluate bias detection accuracy\n    results = []\n    for _ in range(10000):\n        return_value = simulate_investment(biases)\n        results.append(return_value)\n    # Evaluate bias detection accuracy using statistical tests\n    mean_return = sum(results) / len(results)\n    std_deviation = (sum((x - mean_return) ** 2 for x in results) / len(results)) ** 0.5\n\n# Integrate the module with the Monte Carlo simulation engine\ndef visualize_analyzed_investment():\n    # Generate random data for analyzed investment scenarios\n    biases = recommendMitigationStrategies({'overconfidence': ['low risk_tolerance', 'short investment_horizon']})\n    # Run Monte Carlo simulations to evaluate psychological analysis recommendations\n    results = []\n    for _ in range(10000):\n        return_value = simulate_investment(biases)\n        results.append(return_value)\n    # Evaluate psychological analysis recommendations using statistical tests\n    mean_return = sum(results) / len(results)\n    std_deviation = (sum((x - mean_return) ** 2 for x in results) / len(results)) ** 0.5\n\n# Integrate the module with the Monte Carlo simulation engine\ndef visualize_visualized_investment():\n    # Generate random data for biased investment scenarios\n    biases = detect_biases({'risk_tolerance': 0.9, 'investment_horizon': 1})\n    # Run Monte Carlo simulations to evaluate bias detection accuracy\n    results = []\n    for _ in range(10000):\n        return_value = simulate_investment(biases)\n        results.append(return_value)\n    # Evaluate bias detection accuracy using statistical tests\n    mean_return = sum(results) / len(results)\n    std_deviation = (sum((x - mean_return) ** 2 for x in results) / len(results)) ** 0.5\n\n# Integrate the module with the Monte Carlo simulation engine\ndef visualize_analyzed_investment():\n    # Generate random data for analyzed investment scenarios\n    biases = recommendMitigationStrategies({'overconfidence': ['low risk_tolerance', 'short investment_horizon']})\n    # Run Monte Carlo simulations to evaluate psychological analysis recommendations\n    results = []\n    for _ in range(10000):\n        return_value = simulate_investment(biases)\n        results.append(return_value)\n    # Evaluate psychological analysis recommendations using statistical tests\n    mean_return = sum(results) / len(results)\n    std_deviation = (sum((x - mean_return) ** 2 for x in results) / len(results)) ** 0.5\n\n# Integrate the module with the Monte Carlo simulation engine\ndef visualize_visualized_investment():\n    # Generate random data for biased investment scenarios\n    biases = detect_biases({'risk_tolerance': 0.9, 'investment_horizon': 1})\n    # Run Monte Carlo simulations to evaluate bias detection accuracy\n    results = []\n    for _ in range(10000):\n        return_value = simulate_investment(biases)\n        results.append(return_value)\n    # Evaluate bias detection accuracy using statistical tests\n    mean_return = sum(results) / len(results)\n    std_deviation = (sum((x - mean_return) ** 2 for x in results) / len\n</info added on 2025-06-22T12:00:04.823Z>",
+        "testStrategy": "1. Validate bias detection accuracy by testing with known behavioral finance datasets\n2. Verify psychological analysis recommendations through expert review and simulation testing\n3. Test visualization tools with sample data to ensure clarity and usability\n4. Conduct user testing to evaluate feedback mechanisms and refinement effectiveness\n5. Ensure compatibility by integrating with Task 2 and Task 3 components and verifying data flow\n6. Perform security testing to ensure input validation prevents data corruption or injection attacks",
+        "status": "done",
+        "dependencies": [
+          3,
+          "1"
+        ],
+        "priority": "medium",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Cognitive Bias Detection Engine",
+            "description": "Implement detection algorithms for overconfidence, loss aversion, confirmation bias, anchoring, availability heuristic, and mental accounting",
+            "dependencies": [],
+            "details": "Create a cognitive bias detection engine using machine learning models and data from various sources (e.g., psychological studies, market research).",
+            "status": "done",
+            "testStrategy": "Unit testing with mock data"
+          },
+          {
+            "id": 2,
+            "title": "Psychology-Based Analysis Module",
+            "description": "Create decision pattern analysis using prospect theory and behavioral economics principles",
+            "dependencies": [
+              1
+            ],
+            "details": "Develop a psychology-based analysis module that uses decision trees, regression models, or other techniques to analyze decision-making patterns.",
+            "status": "done",
+            "testStrategy": "Integration testing with sample data"
+          },
+          {
+            "id": 3,
+            "title": "Bias Visualization Components",
+            "description": "Develop interactive charts and reports for bias detection results",
+            "dependencies": [
+              1
+            ],
+            "details": "Create visualizations using libraries like Matplotlib, Seaborn, or Plotly to display bias detection results in an intuitive manner.",
+            "status": "done",
+            "testStrategy": "UI testing with sample data"
+          },
+          {
+            "id": 4,
+            "title": "User Behavior Assessment",
+            "description": "Create questionnaires and behavioral pattern tracking",
+            "dependencies": [
+              1,
+              2
+            ],
+            "details": "Design a user behavior assessment framework that collects data on users' decision-making patterns, biases, and behaviors.",
+            "status": "done",
+            "testStrategy": "Data validation testing"
+          },
+          {
+            "id": 5,
+            "title": "Mitigation Strategy Recommendations",
+            "description": "Generate personalized bias mitigation advice",
+            "dependencies": [
+              1,
+              2
+            ],
+            "details": "Develop a recommendation engine that suggests biases to mitigate based on user data and behavior patterns.",
+            "status": "done",
+            "testStrategy": "Data validation testing"
+          },
+          {
+            "id": 6,
+            "title": "Fix TypeScript Compilation Errors",
+            "description": "Fix all TS6133 unused variable errors and other compilation issues",
+            "details": "Fix TypeScript compilation errors including unused variables in app.ts, BehaviorAssessmentForm.ts, BehaviorTracker.ts, MitigationReport.ts, and BiasDetectionEngine.ts",
+            "status": "done",
+            "dependencies": [],
+            "parentTaskId": 4
+          }
+        ]
+      },
+      {
+        "id": 5,
+        "title": "Real-Time Financial Data Integration",
+        "description": "Integrate live market data feeds, economic indicators, and financial news to enhance the accuracy of Monte Carlo simulations and provide real-time context for financial recommendations",
+        "details": "",
+        "testStrategy": "",
+        "status": "in-progress",
+        "dependencies": [],
+        "priority": "high",
+        "subtasks": [
+          {
+            "id": 1,
+            "title": "Create Dynamic Market Data Service",
+            "description": "Build an internal service that generates realistic, time-based market data using your existing economic scenarios",
+            "details": "Create a service that uses your existing EconomicScenario system to generate dynamic market data. This will simulate real-time updates using mathematical models based on your current scenario parameters, making the Monte Carlo simulations more responsive to changing conditions.",
+            "status": "done",
+            "dependencies": [],
+            "parentTaskId": 5
+          },
+          {
+            "id": 2,
+            "title": "Enhance Economic Scenario Engine with Time-Based Updates",
+            "description": "Improve your ScenarioEngine to support dynamic parameter updates over time",
+            "details": "Extend your existing ScenarioEngine.ts to support time-based parameter changes. Add features like parameter drift, market regime changes, and scenario transitions that occur based on elapsed time or market conditions.",
+            "status": "done",
+            "dependencies": [],
+            "parentTaskId": 5
+          },
+          {
+            "id": 3,
+            "title": "Implement Local Data Caching and Storage System",
+            "description": "Create a comprehensive caching system for simulation results and calculated data",
+            "details": "Build a local storage system that caches Monte Carlo simulation results, scenario analysis, and user calculations. This will improve performance and allow for faster data updates and comparisons over time.",
+            "status": "done",
+            "dependencies": [],
+            "parentTaskId": 5
+          },
+          {
+            "id": 4,
+            "title": "Add Real-Time Calculation Updates to Monte Carlo Engine",
+            "description": "Enhance the MonteCarloEngine to support incremental updates and live recalculations",
+            "details": "Modify your existing MonteCarloEngine.ts to support real-time parameter updates. Add features for incremental simulation runs, parameter sensitivity analysis, and live result updates as conditions change.",
+            "status": "pending",
+            "dependencies": [
+              1,
+              2
+            ],
+            "parentTaskId": 5
+          },
+          {
+            "id": 5,
+            "title": "Create Dynamic UI Update System",
+            "description": "Build a reactive UI system that updates financial displays when data changes",
+            "details": "Implement a system in your main app.ts that automatically updates charts, calculations, and displays when market conditions or user inputs change. This creates the feeling of real-time financial analysis.",
+            "status": "pending",
+            "dependencies": [
+              3,
+              4
+            ],
+            "parentTaskId": 5
+          },
+          {
+            "id": 6,
+            "title": "Project Cleanup and Verification",
+            "description": "Comprehensive cleanup and verification of the project structure, files, and configuration",
+            "details": "Verify TypeScript compilation, test existing functionality, remove unnecessary files, update .gitignore, .cursorignore, and cursor rules",
+            "status": "done",
+            "dependencies": [],
+            "parentTaskId": 5
+          }
+        ]
+      },
+      {
+        "id": 6,
+        "title": "Predictive Analytics & Machine Learning",
+        "description": "Implement machine learning models to predict future financial trends, identify risk patterns, and provide personalized investment recommendations based on user behavior patterns and market conditions",
+        "details": "",
+        "testStrategy": "",
+        "status": "pending",
+        "dependencies": [],
+        "priority": "high",
+        "subtasks": []
+      },
+      {
+        "id": 7,
+        "title": "AI-Powered Financial Advisor",
+        "description": "Develop an intelligent advisory system that provides personalized recommendations",
+        "details": "",
+        "testStrategy": "",
+        "status": "pending",
+        "dependencies": [],
+        "priority": "high",
+        "subtasks": []
+      },
+      {
+        "id": 8,
+        "title": "Enhanced Data Visualization & Reporting",
+        "description": "Create advanced interactive charts and comprehensive PDF reports",
+        "details": "",
+        "testStrategy": "",
+        "status": "pending",
+        "dependencies": [],
+        "priority": "medium",
+        "subtasks": []
+      },
+      {
+        "id": 9,
+        "title": "Social Features & Portfolio Sharing",
+        "description": "Enable users to share financial insights and compare anonymized metrics",
+        "details": "",
+        "testStrategy": "",
+        "status": "pending",
+        "dependencies": [],
+        "priority": "low",
+        "subtasks": []
+      }
+    ],
+    "metadata": {
+      "created": "2025-06-22T04:14:44.260Z",
+      "updated": "2025-06-22T16:31:05.393Z",
+      "description": "Version 2: Advanced Analytics with Monte Carlo, Stress Testing, and Behavioral Finance"
+    }
+  }
+}

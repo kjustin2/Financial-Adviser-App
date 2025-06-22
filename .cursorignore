@@ -1,0 +1,257 @@
+# =============================================================================
+# Financial Health Analyzer - Cursor Ignore Configuration
+# =============================================================================
+# This file prevents sensitive and unnecessary files from being included in AI context
+# for security and performance reasons.
+
+# =============================================================================
+# 🔒 SECURITY - API Keys and Secrets (CRITICAL)
+# =============================================================================
+
+# Environment files with real API keys
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+.env.staging
+
+# API key and secret files
+**/secrets/
+**/keys/
+*.key
+*.pem
+*.p12
+*.pfx
+config/secrets.json
+config/keys.json
+api-keys.json
+credentials.json
+
+# AI Assistant configuration files (may contain API keys)
+.cursor/settings.json
+.roo/config.json
+.windsurf/config.json
+.claude/config.json
+.chatgpt/config.json
+.anthropic/config.json
+.openai/config.json
+
+# =============================================================================
+# 🗂️ BUILD AND DEPENDENCIES
+# =============================================================================
+
+# Node modules and package files
+node_modules/
+package-lock.json
+yarn.lock
+.pnpm-lock.yaml
+
+# Build outputs
+dist/
+build/
+out/
+.next/
+.nuxt/
+.cache/
+.webpack/
+
+# TypeScript cache
+*.tsbuildinfo
+.eslintcache
+.stylelintcache
+
+# =============================================================================
+# 📊 DATA AND LOGS (Potentially Sensitive)
+# =============================================================================
+
+# Financial data files (project-specific security)
+**/financial-data/
+**/user-data/
+**/personal-info/
+*.financial
+*.banking
+user-profiles.json
+financial-reports/
+
+# Log files (may contain sensitive information)
+*.log
+logs/
+debug.log
+error.log
+audit.log
+
+# Database files
+*.sqlite
+*.sqlite3
+*.db
+
+# =============================================================================
+# 🔧 DEVELOPMENT AND TESTING
+# =============================================================================
+
+# Test artifacts
+coverage/
+*.lcov
+test-results/
+playwright-report/
+.nyc_output/
+junit.xml
+
+# Temporary files
+tmp/
+temp/
+.temp/
+*.temp
+*.tmp
+
+# Cache directories
+.cache/
+.parcel-cache/
+.vite/
+.turbo/
+
+# =============================================================================
+# 🤖 AI ASSISTANT WORKING FILES
+# =============================================================================
+
+# AI session and context files
+*.ai-session
+*.ai-context
+*.ai-log
+.cursor/logs/
+.cursor/cache/
+.roo/logs/
+.windsurf/logs/
+.claude/logs/
+.chatgpt/logs/
+
+# AI generated drafts
+*-draft.md
+*-generated.md
+ai-scratch.md
+
+# =============================================================================
+# ⚙️ SYSTEM AND IDE FILES
+# =============================================================================
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+# IDE files
+.vscode/launch.json
+.vscode/tasks.json
+.idea/
+*.swp
+*.swo
+*~
+
+# =============================================================================
+# 📦 PACKAGE MANAGER AND RUNTIME
+# =============================================================================
+
+# Runtime directories
+runtime/
+.pid
+*.pid
+*.seed
+*.pid.lock
+
+# Security and compliance reports
+audit.json
+security-report.json
+*.vulnerability
+vulnerability-report.json
+
+# Backup files
+*.backup
+*.bak
+*~
+*.orig
+
+# =============================================================================
+# 🌐 WEB AND DEPLOYMENT
+# =============================================================================
+
+# Deployment files
+.vercel/
+.netlify/
+.firebase/
+.aws/
+
+# CDN and static files (too large for context)
+public/assets/large/
+static/media/
+assets/videos/
+assets/images/large/
+
+# =============================================================================
+# 📈 FINANCIAL CALCULATION CACHE (Potentially Large)
+# =============================================================================
+
+# Simulation cache files (can be regenerated)
+**/simulation-cache/
+**/monte-carlo-cache/
+simulation-results.json
+monte-carlo-results.json
+
+# Large calculation datasets
+**/calculation-datasets/
+benchmark-data-large.json
+
+# =============================================================================
+# 📝 DOCUMENTATION DRAFTS (Non-essential for AI context)
+# =============================================================================
+
+# Draft documentation
+docs/drafts/
+*.draft.md
+NOTES.md
+SCRATCH.md
+TODO-personal.md
+
+# Generated documentation
+docs/generated/
+api-docs/generated/
+
+# =============================================================================
+# 🧪 EXPERIMENTAL AND RESEARCH FILES
+# =============================================================================
+
+# Research and experimental files
+research/
+experiments/
+prototypes/
+sandbox/
+playground/
+
+# Personal notes and todos
+personal-notes.md
+my-todos.md
+dev-notes.md
+
+# =============================================================================
+# NOTES FOR AI CONTEXT OPTIMIZATION
+# =============================================================================
+# 
+# This .cursorignore file is designed to:
+# 1. Protect sensitive financial and API data from AI context
+# 2. Reduce noise by excluding large/generated files
+# 3. Focus AI attention on core application code
+# 4. Maintain security while preserving development efficiency
+# 
+# Files that ARE included in AI context:
+# - Core TypeScript source files in src/
+# - Configuration files (.cursorrules, tsconfig.json, webpack.config.js)
+# - Package.json and README.md
+# - Essential documentation and templates
+# - .env.example (safe template file)
+# 
+# ============================================================================= 

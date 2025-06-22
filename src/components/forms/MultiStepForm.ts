@@ -1,50 +1,26 @@
 /**
- * Comprehensive Financial Health Analyzer Application
- * Based on Financial Health Network 2024 research and 8 key health indicators
+ * Multi-Step Financial Data Collection Form
+ * Comprehensive form based on 8 financial health indicators research
  */
 
-import { UserFinancialData, ComprehensiveAnalysisResult, FormStep, FormField, UserBehaviorData, BiasDetectionResult, BiasAssessmentResponse, MitigationPlan } from './types';
-import { FinancialCalculationEngine } from './core/calculations';
-import { BehaviorAssessmentForm } from './components/forms/BehaviorAssessmentForm';
-import { BiasDetectionEngine } from './core/BiasDetectionEngine';
-import { MitigationEngine } from './core/MitigationEngine';
-import { MitigationReport } from './components/reports/MitigationReport';
+import { FormStep, FormField, UserFinancialData } from '../../types';
 
-class ComprehensiveFinancialHealthApp {
+export class MultiStepForm {
     private currentStepIndex: number = 0;
     private formData: Partial<UserFinancialData> = {};
     private steps: FormStep[] = [];
-    private analysisResult?: ComprehensiveAnalysisResult;
-    
-    // Behavioral Finance Components
-    private biasDetectionEngine: BiasDetectionEngine;
-    private mitigationEngine: MitigationEngine;
-    private mitigationReport: MitigationReport;
-    private biasResults: BiasDetectionResult[] = [];
-    private mitigationPlan?: MitigationPlan;
+    private onDataChange?: (data: Partial<UserFinancialData>) => void;
+    private onComplete?: (data: UserFinancialData) => void;
 
-    // DOM Elements
-    private elements = {
-        formContainer: document.getElementById('formContainer') as HTMLElement,
-        multiStepForm: document.getElementById('multiStepForm') as HTMLElement,
-        resultsContainer: document.getElementById('resultsContainer') as HTMLElement,
-        loadingIndicator: document.getElementById('loadingIndicator') as HTMLElement,
-        analysisResults: document.getElementById('analysisResults') as HTMLElement,
-        errorMessage: document.getElementById('errorMessage') as HTMLElement,
-        healthScoreSummary: document.getElementById('healthScoreSummary') as HTMLElement,
-        healthScoreCircle: document.getElementById('healthScoreCircle') as HTMLElement,
-        healthScoreValue: document.getElementById('healthScoreValue') as HTMLElement,
-        healthLevelText: document.getElementById('healthLevelText') as HTMLElement,
-        healthIndicatorsGrid: document.getElementById('healthIndicatorsGrid') as HTMLElement,
-        keyMetricsSection: document.getElementById('keyMetricsSection') as HTMLElement
-    };
-
-    constructor() {
-        // Initialize behavioral finance engines
-        this.biasDetectionEngine = new BiasDetectionEngine();
-        this.mitigationEngine = new MitigationEngine();
-        this.mitigationReport = new MitigationReport('mitigationReport');
-        
+    constructor(
+        private container: HTMLElement,
+        callbacks?: {
+            onDataChange?: (data: Partial<UserFinancialData>) => void;
+            onComplete?: (data: UserFinancialData) => void;
+        }
+    ) {
+        this.onDataChange = callbacks?.onDataChange;
+        this.onComplete = callbacks?.onComplete;
         this.initializeSteps();
         this.initializeFormData();
         this.render();
@@ -118,7 +94,7 @@ class ComprehensiveFinancialHealthApp {
             {
                 id: 'income',
                 title: 'Income Sources',
-                description: 'All sources of monthly income (after taxes)',
+                description: 'All sources of monthly income',
                 fields: [
                     {
                         id: 'primarySalary',
@@ -226,24 +202,6 @@ class ComprehensiveFinancialHealthApp {
                         description: 'Insurance premiums, copays, medications',
                         required: true,
                         value: 150,
-                        validation: { min: 0, step: 25 }
-                    },
-                    {
-                        id: 'creditCardPayments',
-                        type: 'number',
-                        label: 'Credit Card Payments',
-                        description: 'Monthly credit card payments',
-                        required: true,
-                        value: 100,
-                        validation: { min: 0, step: 25 }
-                    },
-                    {
-                        id: 'studentLoanPayments',
-                        type: 'number',
-                        label: 'Student Loan Payments',
-                        description: 'Monthly student loan payments',
-                        required: false,
-                        value: 200,
                         validation: { min: 0, step: 25 }
                     },
                     {
@@ -627,12 +585,7 @@ class ComprehensiveFinancialHealthApp {
     }
 
     private render(): void {
-        this.elements.multiStepForm.innerHTML = this.getFormHTML();
-        this.attachEventListeners();
-    }
-
-    private getFormHTML(): string {
-        return `
+        this.container.innerHTML = `
             <div class="multi-step-form">
                 <div class="form-progress">
                     <div class="progress-bar">
@@ -655,6 +608,8 @@ class ComprehensiveFinancialHealthApp {
                 </div>
             </div>
         `;
+
+        this.attachEventListeners();
     }
 
     private renderCurrentStep(): string {
@@ -719,20 +674,21 @@ class ComprehensiveFinancialHealthApp {
     }
 
     private getFieldValue(fieldId: string): any {
+        // Get value from form data based on field ID
         const currentStep = this.steps[this.currentStepIndex];
         const field = currentStep.fields.find(f => f.id === fieldId);
         return field?.value || '';
     }
 
     private attachEventListeners(): void {
-        const prevBtn = document.getElementById('prevBtn') as HTMLButtonElement;
-        const nextBtn = document.getElementById('nextBtn') as HTMLButtonElement;
+        const prevBtn = this.container.querySelector('#prevBtn') as HTMLButtonElement;
+        const nextBtn = this.container.querySelector('#nextBtn') as HTMLButtonElement;
 
         prevBtn?.addEventListener('click', () => this.previousStep());
         nextBtn?.addEventListener('click', () => this.nextStep());
 
         // Add input event listeners for real-time validation
-        const inputs = document.querySelectorAll('#multiStepForm input, #multiStepForm select');
+        const inputs = this.container.querySelectorAll('input, select');
         inputs.forEach(input => {
             input.addEventListener('change', (e) => this.handleFieldChange(e));
         });
@@ -741,7 +697,7 @@ class ComprehensiveFinancialHealthApp {
     private handleFieldChange(event: Event): void {
         const input = event.target as HTMLInputElement | HTMLSelectElement;
         const fieldId = input.id;
-        const value = input.type === 'number' ? parseFloat(input.value) || 0 : input.value;
+        const value = input.type === 'number' ? parseFloat(input.value) : input.value;
         
         // Update the field value in the current step
         const currentStep = this.steps[this.currentStepIndex];
@@ -752,9 +708,13 @@ class ComprehensiveFinancialHealthApp {
 
         // Update the form data structure
         this.updateFormData(fieldId, value);
+        
+        // Trigger data change callback
+        this.onDataChange?.(this.formData);
     }
 
     private updateFormData(fieldId: string, value: any): void {
+        // Update the nested form data structure based on field ID
         const currentStepId = this.steps[this.currentStepIndex].id;
         
         switch (currentStepId) {
@@ -795,11 +755,14 @@ class ComprehensiveFinancialHealthApp {
         const errors: string[] = [];
 
         for (const field of currentStep.fields) {
-            if (field.required && (!field.value || field.value === '')) {
+            // Allow 0 as a valid value for number fields
+            if (field.required && (field.value === undefined || field.value === null || 
+                (field.value === '' && field.type !== 'number') || 
+                (field.type === 'number' && isNaN(Number(field.value))))) {
                 errors.push(`${field.label} is required`);
             }
             
-            if (field.type === 'number' && field.validation) {
+            if (field.type === 'number' && field.validation && field.value !== undefined && field.value !== null && field.value !== '') {
                 const numValue = parseFloat(field.value);
                 if (!isNaN(numValue)) {
                     if (field.validation.min !== undefined && numValue < field.validation.min) {
@@ -815,12 +778,6 @@ class ComprehensiveFinancialHealthApp {
         currentStep.validationErrors = errors;
         currentStep.isComplete = errors.length === 0;
         
-        if (errors.length > 0) {
-            this.showError('Please fix the following errors:\n' + errors.join('\n'));
-        } else {
-            this.hideError();
-        }
-        
         return errors.length === 0;
     }
 
@@ -834,233 +791,36 @@ class ComprehensiveFinancialHealthApp {
     private nextStep(): void {
         if (this.validateCurrentStep()) {
             if (this.currentStepIndex === this.steps.length - 1) {
+                // Complete the form
                 this.completeForm();
             } else {
                 this.currentStepIndex++;
                 this.render();
             }
+        } else {
+            // Show validation errors
+            this.showValidationErrors();
         }
     }
 
-    private async completeForm(): Promise<void> {
-        try {
-            // Show loading state
-            this.elements.resultsContainer.classList.remove('results-hidden');
-            this.elements.loadingIndicator.style.display = 'block';
-            this.elements.analysisResults.style.display = 'none';
-
-            // Add a short delay to show loading state
-            await new Promise(resolve => setTimeout(resolve, 1500));
-
-            this.analysisResult = FinancialCalculationEngine.analyzeFinancialHealth(this.formData as UserFinancialData);
-            await this.runBehavioralFinanceAnalysis();
-            this.displayResults();
-        } catch (error) {
-            this.showError('Analysis failed. Please check your inputs and try again.');
-        } finally {
-            this.elements.loadingIndicator.style.display = 'none';
+    private showValidationErrors(): void {
+        const currentStep = this.steps[this.currentStepIndex];
+        if (currentStep.validationErrors.length > 0) {
+            alert('Please fix the following errors:\n' + currentStep.validationErrors.join('\n'));
         }
     }
 
-    private async runBehavioralFinanceAnalysis(): Promise<void> {
-        try {
-            // Create behavior assessment form
-            const behaviorAssessmentContainer = document.getElementById('behavior-assessment');
-            if (behaviorAssessmentContainer) {
-                new BehaviorAssessmentForm(behaviorAssessmentContainer, {
-                    onComplete: () => {
-                        // Process the results if needed
-                    }
-                });
-            }
-
-            // Simulate user behavior data (in real app, this would come from user interactions)
-            const simulatedBehaviorData: UserBehaviorData = {
-                tradingPatterns: {
-                    frequency: 'monthly',
-                    portfolioTurnover: 0.3,
-                    marketTimingAttempts: 2,
-                    diversificationLevel: 0.7
-                },
-                informationSeeking: {
-                    sourcesUsed: ['financial_news', 'advisor', 'online_research'],
-                    frequencyOfResearch: 3,
-                    newsReactionTime: 2,
-                    expertAdviceReliance: 0.6
-                },
-                riskBehavior: {
-                    actualRiskTolerance: 0.6,
-                    statedRiskTolerance: 0.7,
-                    riskDiscrepancy: 0.1,
-                    panicSellingHistory: false,
-                    fomoBuyingHistory: true
-                },
-                planningBehavior: {
-                    budgetingConsistency: 0.8,
-                    goalSettingClarity: 0.7,
-                    longTermThinking: 0.9,
-                    impulsiveDecisions: 0.2
-                }
-            };
-
-            // Simulate assessment responses (in real app, these would come from user input)
-            const simulatedResponses: BiasAssessmentResponse[] = [
-                { questionId: 'overconfidence_1', response: 'somewhat_agree', timeSpent: 15, confidence: 4 },
-                { questionId: 'loss_aversion_1', response: 'agree', timeSpent: 12, confidence: 5 },
-                { questionId: 'anchoring_1', response: 'neutral', timeSpent: 18, confidence: 3 }
-            ];
-
-            // Run bias detection
-            this.biasResults = this.biasDetectionEngine.detectBiases(
-                this.formData as UserFinancialData,
-                simulatedBehaviorData,
-                simulatedResponses
-            );
-
-            // Generate mitigation plan
-            this.mitigationPlan = this.mitigationEngine.generateMitigationPlan(
-                this.formData as UserFinancialData,
-                simulatedBehaviorData,
-                this.biasResults,
-                simulatedResponses
-            );
-
-            // Display mitigation report
-            this.displayMitigationReport();
-
-        } catch (error) {
-            console.error('Behavioral finance analysis error:', error);
-            this.showError('An error occurred during behavioral analysis.');
+    private completeForm(): void {
+        if (this.isFormComplete()) {
+            this.onComplete?.(this.formData as UserFinancialData);
         }
     }
 
-    private displayMitigationReport(): void {
-        if (!this.mitigationPlan) return;
-
-        // Show mitigation report section
-        const mitigationSection = document.getElementById('mitigationReportSection');
-        if (mitigationSection) {
-            mitigationSection.style.display = 'block';
-        }
-
-        // Render mitigation report
-        this.mitigationReport.updatePlan(this.mitigationPlan);
+    private isFormComplete(): boolean {
+        return this.steps.every(step => step.isComplete);
     }
 
-    private displayResults(): void {
-        if (!this.analysisResult) return;
-
-        // Hide loading, show results
-        this.elements.loadingIndicator.style.display = 'none';
-        this.elements.analysisResults.style.display = 'block';
-
-        // Update health score
-        this.elements.healthScoreValue.textContent = this.analysisResult.overallHealthScore.toString();
-        this.elements.healthLevelText.textContent = this.getHealthLevelText(this.analysisResult.healthLevel);
-        
-        // Set health score circle color
-        this.elements.healthScoreCircle.className = `health-score-circle score-${this.analysisResult.healthLevel}`;
-
-        // Render health indicators
-        this.renderHealthIndicators();
-        
-        // Render key metrics
-        this.renderKeyMetrics();
+    public getCurrentData(): Partial<UserFinancialData> {
+        return this.formData;
     }
-
-    private renderHealthIndicators(): void {
-        if (!this.analysisResult) return;
-
-        const indicatorsHTML = this.analysisResult.healthIndicators.map(indicator => `
-            <div class="indicator-card">
-                <div class="indicator-header">
-                    <div class="indicator-name">${indicator.name}</div>
-                    <div class="indicator-score status-${indicator.status}">${indicator.score}/100</div>
-                </div>
-                <div class="indicator-metrics">
-                    ${indicator.metrics.map(metric => `
-                        <div class="metric-row">
-                            <div class="metric-label">${metric.title}</div>
-                            <div class="metric-value">${metric.value}</div>
-                        </div>
-                    `).join('')}
-                </div>
-            </div>
-        `).join('');
-
-        this.elements.healthIndicatorsGrid.innerHTML = indicatorsHTML;
-    }
-
-    private renderKeyMetrics(): void {
-        if (!this.analysisResult) return;
-
-        const metrics = this.analysisResult.keyMetrics;
-        const keyMetricsHTML = `
-            <div class="indicator-metrics">
-                <div class="metric-row">
-                    <div class="metric-label">Monthly Cash Flow</div>
-                    <div class="metric-value">${this.formatCurrency(metrics.monthlyCashFlow)}</div>
-                </div>
-                <div class="metric-row">
-                    <div class="metric-label">Emergency Fund Coverage</div>
-                    <div class="metric-value">${metrics.emergencyFundMonths.toFixed(1)} months</div>
-                </div>
-                <div class="metric-row">
-                    <div class="metric-label">Debt-to-Income Ratio</div>
-                    <div class="metric-value">${metrics.debtToIncomeRatio.toFixed(1)}%</div>
-                </div>
-                <div class="metric-row">
-                    <div class="metric-label">Savings Rate</div>
-                    <div class="metric-value">${metrics.savingsRate.toFixed(1)}%</div>
-                </div>
-                <div class="metric-row">
-                    <div class="metric-label">Credit Utilization</div>
-                    <div class="metric-value">${metrics.creditUtilization.toFixed(1)}%</div>
-                </div>
-                <div class="metric-row">
-                    <div class="metric-label">Net Worth</div>
-                    <div class="metric-value">${this.formatCurrency(metrics.netWorth)}</div>
-                </div>
-            </div>
-        `;
-
-        const keyMetricsGrid = document.getElementById('keyMetricsGrid');
-        if (keyMetricsGrid) {
-            keyMetricsGrid.innerHTML = keyMetricsHTML;
-        }
-    }
-
-    private getHealthLevelText(healthLevel: string): string {
-        const levelMap: { [key: string]: string } = {
-            'excellent': 'Excellent Financial Health',
-            'good': 'Good Financial Health',
-            'fair': 'Fair Financial Health',
-            'limited': 'Limited Financial Health',
-            'critical': 'Critical Financial Health'
-        };
-        return levelMap[healthLevel] || 'Financial Health Assessment';
-    }
-
-    private formatCurrency(amount: number): string {
-        return new Intl.NumberFormat('en-US', {
-            style: 'currency',
-            currency: 'USD',
-            minimumFractionDigits: 0,
-            maximumFractionDigits: 0
-        }).format(amount);
-    }
-
-    private showError(message: string): void {
-        this.elements.errorMessage.textContent = message;
-        this.elements.errorMessage.classList.add('show');
-    }
-
-    private hideError(): void {
-        this.elements.errorMessage.classList.remove('show');
-    }
-}
-
-// Initialize the application when DOM is loaded
-document.addEventListener('DOMContentLoaded', () => {
-    new ComprehensiveFinancialHealthApp();
-});
+} 
