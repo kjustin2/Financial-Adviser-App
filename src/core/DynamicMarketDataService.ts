@@ -32,6 +32,15 @@ export interface UpdateConfig {
     enableRegimeChange: boolean;
 }
 
+// Add missing EconomicIndicator interface
+interface EconomicIndicator {
+    name: string;
+    value: number;
+    unit: string;
+    trend: 'up' | 'down' | 'stable';
+    lastUpdated: string;
+}
+
 /**
  * Dynamic Market Data Service
  * Generates realistic, time-based market data using economic scenarios
@@ -552,5 +561,87 @@ export class DynamicMarketDataService {
             statistics: this.getMarketStatistics(),
             config: { ...this.updateConfig }
         };
+    }
+
+    public async generateMockMarketData(): Promise<MarketDataPoint[]> {
+        return new Promise((resolve, _reject) => {
+            // Simulate API delay
+            setTimeout(() => {
+                const data: MarketDataPoint[] = [];
+                const now = new Date();
+                
+                for (let i = 30; i >= 0; i--) {
+                    const date = new Date(now);
+                    date.setDate(date.getDate() - i);
+                    
+                    // Generate realistic market data with some volatility
+                    const baseValue = 4200 + Math.sin(i * 0.1) * 200;
+                    const randomVariation = (Math.random() - 0.5) * 100;
+                    
+                    data.push({
+                        timestamp: date,
+                        marketPrice: baseValue + randomVariation,
+                        volatility: 0.15 + (Math.random() - 0.5) * 0.05,
+                        volume: Math.floor(Math.random() * 1000000) + 5000000,
+                        marketReturn: (Math.random() - 0.5) * 0.04,
+                        inflationRate: 0.032,
+                        interestRates: {
+                            shortTerm: 5.25,
+                            longTerm: 4.85,
+                            federalFunds: 5.33
+                        },
+                        economicIndicators: {
+                            gdpGrowth: 2.1,
+                            unemployment: 3.8,
+                            currencyVolatility: 0.08
+                        },
+                        scenarioId: 'normal',
+                        marketCondition: 'sideways'
+                    });
+                }
+                
+                resolve(data);
+            }, 500);
+        });
+    }
+
+    public async generateMockEconomicData(): Promise<EconomicIndicator[]> {
+        return new Promise((resolve, _reject) => {
+            // Simulate API delay
+            setTimeout(() => {
+                const indicators: EconomicIndicator[] = [
+                    {
+                        name: 'Inflation Rate',
+                        value: 3.2,
+                        unit: '%',
+                        trend: 'down',
+                        lastUpdated: new Date().toISOString()
+                    },
+                    {
+                        name: 'Interest Rate',
+                        value: 5.25,
+                        unit: '%',
+                        trend: 'stable',
+                        lastUpdated: new Date().toISOString()
+                    },
+                    {
+                        name: 'Unemployment Rate',
+                        value: 3.8,
+                        unit: '%',
+                        trend: 'up',
+                        lastUpdated: new Date().toISOString()
+                    },
+                    {
+                        name: 'GDP Growth',
+                        value: 2.1,
+                        unit: '%',
+                        trend: 'up',
+                        lastUpdated: new Date().toISOString()
+                    }
+                ];
+                
+                resolve(indicators);
+            }, 300);
+        });
     }
 } 

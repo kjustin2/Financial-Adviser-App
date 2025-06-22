@@ -795,11 +795,14 @@ class ComprehensiveFinancialHealthApp {
         const errors: string[] = [];
 
         for (const field of currentStep.fields) {
-            if (field.required && (!field.value || field.value === '')) {
+            // Allow 0 as a valid value for number fields
+            if (field.required && (field.value === undefined || field.value === null || 
+                (field.value === '' && field.type !== 'number') || 
+                (field.type === 'number' && isNaN(Number(field.value))))) {
                 errors.push(`${field.label} is required`);
             }
             
-            if (field.type === 'number' && field.validation) {
+            if (field.type === 'number' && field.validation && field.value !== undefined && field.value !== null && field.value !== '') {
                 const numValue = parseFloat(field.value);
                 if (!isNaN(numValue)) {
                     if (field.validation.min !== undefined && numValue < field.validation.min) {
