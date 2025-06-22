@@ -1,44 +1,86 @@
-# 💰 Financial Health Analyzer MVP
+# 💰 Financial Health Analyzer
 
-A comprehensive, research-based financial health analyzer built with TypeScript. This MVP implements the Financial Health Network 2024 standards with 8 key financial health indicators, Monte Carlo simulations, behavioral finance analysis, and real-time economic scenario modeling.
+A comprehensive, research-based financial health analyzer built with TypeScript. This application implements the Financial Health Network 2024 standards and provides two distinct analysis paths: a "Quick Analysis" for a rapid snapshot and a "Comprehensive Analysis" for a deep dive into your financial well-being.
 
 ## 🚀 Live Demo
 
 **🌐 [Try the Financial Health Analyzer](https://kjustin2.github.io/Financial-Adviser-App/)**
 
-## ✨ Current MVP Features
+## ✨ Features
 
-### 🎯 8 Core Financial Health Indicators (Research-Based)
+### Two Analysis Modes
+- **Quick Analysis**: Get a fast, high-level overview of your financial health with just six key inputs. Ideal for a quick check-up.
+- **Comprehensive Analysis**: A deep, multi-step assessment covering 8 core financial health indicators, behavioral finance, and long-term goal planning.
+
+### 🎯 8 Core Financial Health Indicators (Comprehensive Analysis)
 Based on Financial Health Network 2024 standards:
-1. **Spending vs Income Analysis** - Cash flow and expense ratios
-2. **Bill Payment Reliability** - Payment history and consistency  
-3. **Emergency Savings Adequacy** - 3-6 month expense coverage
-4. **Debt Management Effectiveness** - Debt-to-income ratios
-5. **Credit Score Health** - Credit utilization and optimization
-6. **Insurance Coverage Confidence** - Adequate protection analysis
-7. **Long-term Financial Goal Confidence** - Retirement planning
-8. **Financial Planning Engagement** - Budgeting and planning activities
+1.  **Spending vs Income Analysis**
+2.  **Bill Payment Reliability**
+3.  **Emergency Savings Adequacy**
+4.  **Debt Management Effectiveness**
+5.  **Credit Score Health**
+6.  **Insurance Coverage Confidence**
+7.  **Long-term Financial Goal Confidence**
+8.  **Financial Planning Engagement**
 
-### 🧠 Advanced Analysis Engines
-- **Monte Carlo Simulation**: 10,000+ scenario portfolio projections
-- **Economic Scenario Testing**: Bull, bear, recession, and recovery models
-- **Behavioral Finance Analysis**: Cognitive bias detection and mitigation
-- **Dynamic Market Data Integration**: Real-time scenario adjustments
-- **Performance Caching System**: Optimized calculations with local storage
+### 🧠 Advanced Analysis & Personalized Recommendations
+- **Data-Driven Insights**: The calculation engine processes your data to identify strengths and weaknesses.
+- **Personalized Action Plan**: The `RecommendationEngine` generates a prioritized list of actionable steps to improve your financial health, from high-priority warnings to low-priority suggestions.
 
-### 📊 Interactive Multi-Step Assessment
-- **6-Step Progressive Form**: Guided data collection with validation
-- **Real-time Health Score**: 0-100 comprehensive rating
-- **Behavioral Bias Assessment**: Psychology-based questionnaire
-- **Risk Tolerance Analysis**: Investment strategy recommendations
-- **Personalized Mitigation Plans**: Action items based on detected biases
+## 🚀 Getting Started
 
-### 📈 Comprehensive Reporting
-- **Financial Health Dashboard**: Visual indicators with status colors
-- **Behavioral Analysis Charts**: Bias detection radar charts
-- **Impact Analysis**: Quantified effects of cognitive biases
-- **Risk-Adjusted Projections**: Monte Carlo result visualizations
-- **Actionable Recommendations**: Priority-based improvement strategies
+### Prerequisites
+- Node.js 18+
+- A modern web browser
+
+### Development
+1.  **Clone the repository**:
+    ```bash
+    git clone https://github.com/kjustin2/Financial-Adviser-App.git
+    cd Financial-Adviser-App
+    ```
+2.  **Install dependencies**:
+    ```bash
+    npm install
+    ```
+3.  **Run the development server**:
+    ```bash
+    npm start
+    ```
+    This will open the application at `http://localhost:3011`.
+
+### Building for Production
+To create a static build for deployment:
+```bash
+npm run build
+```
+The optimized files will be placed in the `dist/` directory.
+
+## 🏗️ Project Structure
+
+The project follows a modular, feature-oriented architecture:
+
+```
+src/
+├── core/                 # Core business logic (calculations, engines)
+├── components/           # Reusable UI components (forms, charts, reports)
+├── data/                 # Static data and benchmarks
+├── services/             # Application services (e.g., FormService)
+├── interfaces/           # TypeScript type and interface definitions
+├── utils/                # Utility functions
+└── ImprovedApp.ts        # Main application entry point
+```
+
+## 🔒 Privacy & Security
+
+This application is designed with privacy as a top priority.
+- **Client-Side Calculations**: All financial data is processed locally in your browser. No data is ever sent to a server.
+- **No Tracking**: The application does not use cookies, analytics, or any tracking scripts.
+- **Open Source**: The code is fully transparent and available for review.
+
+## 🤝 Contributing
+
+Contributions are welcome! Please feel free to submit a pull request or open an issue for any bugs or feature requests.
 
 ## 🚀 Quick Start
 
@@ -209,13 +251,6 @@ npm run build
 # Deploy dist/ folder to any static hosting service
 # (Netlify, Vercel, AWS S3, etc.)
 ```
-
-## 🔒 Privacy & Security
-
-- **No Data Transmission**: All calculations performed locally in your browser
-- **No Sign-up Required**: Use immediately without accounts or registration
-- **No Tracking**: Zero analytics, cookies, or data collection
-- **Open Source**: Complete code transparency for security review
 
 ## 🧪 Testing
 

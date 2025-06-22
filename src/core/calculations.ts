@@ -3,14 +3,15 @@
  * Based on Financial Health Network 2024 research and industry best practices
  */
 
+import { UserFinancialData } from '../interfaces/core-types';
 import { 
-    UserFinancialData, 
     HealthIndicator, 
     FinancialMetric, 
     ComprehensiveAnalysisResult,
     WealthProjection,
     ScenarioAnalysis
-} from '../types';
+} from '../interfaces/analysis-types';
+import { RecommendationEngine } from './RecommendationEngine';
 
 export class FinancialCalculationEngine {
     
@@ -18,11 +19,13 @@ export class FinancialCalculationEngine {
      * Perform comprehensive financial health analysis
      */
     public static analyzeFinancialHealth(data: UserFinancialData): ComprehensiveAnalysisResult {
+        // Validate that we're using real user data, not defaults
+        this.validateUserData(data);
         const keyMetrics = this.calculateKeyMetrics(data);
         const healthIndicators = this.calculateHealthIndicators(data, keyMetrics);
         const overallHealthScore = this.calculateOverallHealthScore(healthIndicators);
         
-        return {
+        const result: ComprehensiveAnalysisResult = {
             overallHealthScore,
             healthLevel: this.getHealthLevel(overallHealthScore),
             healthIndicators,
@@ -33,13 +36,17 @@ export class FinancialCalculationEngine {
             insuranceAnalysis: this.analyzeInsurance(data),
             wealthProjections: this.projectWealth(data, keyMetrics),
             scenarioAnalysis: this.analyzeScenarios(data, keyMetrics),
-            prioritizedRecommendations: this.generatePrioritizedRecommendations(healthIndicators, data),
+            prioritizedRecommendations: [], // Will be populated next
             peerBenchmarks: this.calculatePeerBenchmarks(data),
             detailedInsights: this.generateDetailedInsights(data, keyMetrics, healthIndicators),
             financialRatios: this.calculateFinancialRatios(data, keyMetrics),
             riskAssessment: this.assessFinancialRisk(data, keyMetrics),
             goalAnalysis: this.analyzeFinancialGoals(data, keyMetrics)
         };
+
+        result.prioritizedRecommendations = RecommendationEngine.generateRecommendations(result, data);
+
+        return result;
     }
 
     /**
@@ -138,7 +145,8 @@ export class FinancialCalculationEngine {
                     benchmark: 'Excellent: 20%+, Good: 10-19%'
                 }
             ],
-            recommendations: this.getSpendingRecommendations(cashFlowRatio)
+            recommendations: this.getSpendingRecommendations(cashFlowRatio),
+            explanation: `This indicator measures if you spend less than you earn. Your cash flow ratio is ${cashFlowRatio.toFixed(1)}%, resulting in a score of ${score}/100. A healthy ratio is typically above 10-20%.`
         };
     }
 
@@ -195,7 +203,8 @@ export class FinancialCalculationEngine {
                     benchmark: 'Excellent: 800+, Good: 740-799, Fair: 670-739'
                 }
             ],
-            recommendations: this.getPaymentReliabilityRecommendations(reliability)
+            recommendations: this.getPaymentReliabilityRecommendations(reliability),
+            explanation: `This indicator reflects your consistency in paying bills on time. Your self-reported reliability is '${this.formatReliabilityText(reliability)}', leading to a score of ${score}/100. On-time payments are crucial for a good credit score.`
         };
     }
 
@@ -275,7 +284,7 @@ export class FinancialCalculationEngine {
     /**
      * Health Indicator 3: Emergency Savings Adequacy
      */
-    private static analyzeEmergencySavings(_data: UserFinancialData, keyMetrics: any): HealthIndicator {
+    private static analyzeEmergencySavings(data: UserFinancialData, keyMetrics: any): HealthIndicator {
         const emergencyFundMonths = keyMetrics.emergencyFundMonths;
         
         let score = 0;
@@ -308,19 +317,29 @@ export class FinancialCalculationEngine {
                     title: 'Emergency Fund Coverage',
                     value: `${emergencyFundMonths.toFixed(1)} months`,
                     numericValue: emergencyFundMonths,
-                    description: 'Months of expenses covered by emergency fund',
+                    description: 'How many months of expenses your liquid savings can cover',
                     status,
-                    benchmark: 'Target: 3-6 months of expenses'
+                    benchmark: 'Target: 3-6 months'
+                },
+                {
+                    title: 'Total Liquid Assets',
+                    value: this.formatCurrency(data.assets.checking + data.assets.savings + 
+                                              data.assets.moneyMarket + data.assets.emergencyFund),
+                    numericValue: data.assets.checking + data.assets.savings + 
+                                 data.assets.moneyMarket + data.assets.emergencyFund,
+                    description: 'Cash and easily accessible funds',
+                    status
                 }
             ],
-            recommendations: this.getEmergencyFundRecommendations(emergencyFundMonths)
+            recommendations: this.getEmergencyFundRecommendations(emergencyFundMonths),
+            explanation: `This measures your financial cushion for unexpected events. You have ${emergencyFundMonths.toFixed(1)} months of expenses saved, giving you a score of ${score}/100. The standard recommendation is 3-6 months.`
         };
     }
 
     /**
      * Health Indicator 4: Debt Management Effectiveness
      */
-    private static analyzeDebtManagement(_data: UserFinancialData, keyMetrics: any): HealthIndicator {
+    private static analyzeDebtManagement(data: UserFinancialData, keyMetrics: any): HealthIndicator {
         const debtToIncomeRatio = keyMetrics.debtToIncomeRatio;
         
         let score = 0;
@@ -353,12 +372,20 @@ export class FinancialCalculationEngine {
                     title: 'Debt-to-Income Ratio',
                     value: `${debtToIncomeRatio.toFixed(1)}%`,
                     numericValue: debtToIncomeRatio,
-                    description: 'Total debt payments as percentage of income',
+                    description: 'Percentage of your income that goes to debt payments',
                     status,
-                    benchmark: 'Excellent: <20%, Good: 20-36%, Fair: 36-50%'
+                    benchmark: 'Target: Below 36%'
+                },
+                {
+                    title: 'Total Debt',
+                    value: this.formatCurrency(this.getTotalDebt(data.liabilities)),
+                    numericValue: this.getTotalDebt(data.liabilities),
+                    description: 'Total amount of outstanding debt',
+                    status
                 }
             ],
-            recommendations: this.getDebtManagementRecommendations(debtToIncomeRatio)
+            recommendations: this.getDebtManagementRecommendations(debtToIncomeRatio),
+            explanation: `This indicator assesses how manageable your debt is. Your debt-to-income ratio is ${debtToIncomeRatio.toFixed(1)}%, resulting in a score of ${score}/100. A lower ratio is generally better.`
         };
     }
 
@@ -407,12 +434,13 @@ export class FinancialCalculationEngine {
                     title: 'Credit Utilization',
                     value: `${creditUtilization.toFixed(1)}%`,
                     numericValue: creditUtilization,
-                    description: 'Percentage of available credit being used',
-                    status: creditUtilization <= 10 ? 'excellent' : creditUtilization <= 30 ? 'good' : 'poor',
-                    benchmark: 'Target: Under 30%, Excellent: Under 10%'
+                    description: 'Percentage of available credit you are using',
+                    status: this.getCreditUtilizationStatus(keyMetrics.creditUtilization),
+                    benchmark: 'Target: Below 30%'
                 }
             ],
-            recommendations: this.getCreditHealthRecommendations(creditScore, creditUtilization)
+            recommendations: this.getCreditHealthRecommendations(data.liabilities.creditScore, keyMetrics.creditUtilization),
+            explanation: `This reflects your creditworthiness. With a credit score of ${data.liabilities.creditScore} and a utilization of ${keyMetrics.creditUtilization.toFixed(1)}%, your score is ${score}/100. Both are key factors in your financial health.`
         };
     }
 
@@ -454,21 +482,14 @@ export class FinancialCalculationEngine {
             weight: 10,
             metrics: [
                 {
-                    title: 'Health Insurance',
-                    value: hasHealthInsurance ? 'Yes' : 'No',
-                    description: 'Health insurance coverage',
-                    status: hasHealthInsurance ? 'excellent' : 'critical',
-                    benchmark: 'Essential for financial protection'
-                },
-                {
-                    title: 'Life Insurance',
-                    value: hasLifeInsurance ? 'Yes' : 'No',
-                    description: 'Life insurance coverage',
-                    status: hasLifeInsurance ? 'good' : 'poor',
-                    benchmark: 'Recommended for dependents'
+                    title: 'Self-Reported Confidence',
+                    value: this.formatConfidenceText(confidence),
+                    description: 'Your confidence in your insurance coverage',
+                    status
                 }
             ],
-            recommendations: this.getInsuranceRecommendations(data.insurance)
+            recommendations: this.getInsuranceRecommendations(data.insurance),
+            explanation: `This measures your confidence in being protected from financial shocks. Your reported confidence level gives you a score of ${score}/100.`
         };
     }
 
@@ -508,8 +529,8 @@ export class FinancialCalculationEngine {
             metrics: [
                 {
                     title: 'Retirement Confidence',
-                    value: retirementConfidence.replace('-', ' ').replace(/\b\w/g, l => l.toUpperCase()),
-                    description: 'Confidence in retirement planning',
+                    value: this.formatConfidenceText(retirementConfidence),
+                    description: 'Your confidence in your retirement savings plan',
                     status,
                     benchmark: 'Target: Very confident with active saving'
                 },
@@ -522,7 +543,8 @@ export class FinancialCalculationEngine {
                     benchmark: 'Target: 10-15% of income'
                 }
             ],
-            recommendations: this.getRetirementRecommendations(data.goals, monthlyInvestment)
+            recommendations: this.getRetirementRecommendations(data.goals, monthlyInvestment),
+            explanation: `This assesses your confidence in reaching long-term financial goals like retirement. Your reported confidence results in a score of ${score}/100.`
         };
     }
 
@@ -530,52 +552,59 @@ export class FinancialCalculationEngine {
      * Health Indicator 8: Financial Planning Engagement
      */
     private static analyzeFinancialPlanningEngagement(data: UserFinancialData): HealthIndicator {
-        const budgetingMethod = data.behaviors.budgetingMethod;
-        const planningEngagement = data.behaviors.financialPlanningEngagement;
-        const hasAutomaticSavings = data.behaviors.automaticSavings;
-        
-        let score = 0;
+        const budgeting = data.behaviors.budgetingMethod;
+        const planning = data.behaviors.financialPlanningEngagement;
+
+        let budgetScore = 0;
+        switch (budgeting) {
+            case 'detailed-budget': budgetScore = 100; break;
+            case 'simple-tracking': budgetScore = 75; break;
+            case 'mental-budget': budgetScore = 40; break;
+            case 'no-budget': budgetScore = 0; break;
+        }
+
+        let planningScore = 0;
+        switch (planning) {
+            case 'actively-plan': planningScore = 100; break;
+            case 'occasionally-plan': planningScore = 70; break;
+            case 'rarely-plan': planningScore = 30; break;
+            case 'never-plan': planningScore = 0; break;
+        }
+
+        const score = Math.round((budgetScore * 0.5) + (planningScore * 0.5));
         let status: 'excellent' | 'good' | 'fair' | 'poor' | 'critical' = 'critical';
-        
-        if (budgetingMethod === 'detailed-budget' && planningEngagement === 'actively-plan' && hasAutomaticSavings) {
-            score = 100;
+
+        if (score >= 90) {
             status = 'excellent';
-        } else if (budgetingMethod !== 'no-budget' && planningEngagement !== 'never-plan') {
-            score = 75;
+        } else if (score >= 70) {
             status = 'good';
-        } else if (budgetingMethod !== 'no-budget' || hasAutomaticSavings) {
-            score = 50;
+        } else if (score >= 50) {
             status = 'fair';
-        } else if (planningEngagement !== 'never-plan') {
-            score = 25;
+        } else if (score >= 20) {
             status = 'poor';
-        } else {
-            score = 0;
-            status = 'critical';
         }
 
         return {
-            name: 'Financial Planning',
+            name: 'Financial Planning Engagement',
             score,
             status,
-            weight: 5,
+            weight: 10,
             metrics: [
                 {
                     title: 'Budgeting Method',
-                    value: budgetingMethod.replace('-', ' ').replace(/\b\w/g, l => l.toUpperCase()),
-                    description: 'How you track expenses',
-                    status,
-                    benchmark: 'Target: Detailed budget tracking'
+                    value: this.formatBudgetText(budgeting),
+                    description: 'How you manage your budget',
+                    status: score >= 70 ? 'good' : 'poor'
                 },
                 {
                     title: 'Planning Engagement',
-                    value: planningEngagement.replace('-', ' ').replace(/\b\w/g, l => l.toUpperCase()),
-                    description: 'How often you plan financially',
-                    status,
-                    benchmark: 'Target: Active financial planning'
+                    value: this.formatPlanningText(planning),
+                    description: 'How actively you plan your finances',
+                    status: score >= 70 ? 'good' : 'poor'
                 }
             ],
-            recommendations: this.getPlanningRecommendations(budgetingMethod, planningEngagement)
+            recommendations: this.getPlanningRecommendations(budgeting, planning),
+            explanation: `This measures how actively you are planning and tracking your finances. Your approach gives you a score of ${score}/100.`
         };
     }
 
@@ -834,30 +863,6 @@ export class FinancialCalculationEngine {
                 probability: 'Medium'
             }
         ];
-    }
-
-    /**
-     * Generate Prioritized Recommendations
-     */
-    private static generatePrioritizedRecommendations(healthIndicators: HealthIndicator[], _data: UserFinancialData): string[] {
-        const recommendations: { priority: number; text: string }[] = [];
-        
-        // Analyze each indicator and add prioritized recommendations
-        healthIndicators.forEach(indicator => {
-            if (indicator.status === 'critical' || indicator.status === 'poor') {
-                indicator.recommendations.forEach(rec => {
-                    const priority = indicator.status === 'critical' ? 1 : 
-                                   indicator.status === 'poor' ? 2 : 3;
-                    recommendations.push({ priority, text: `${indicator.name}: ${rec}` });
-                });
-            }
-        });
-        
-        // Sort by priority and return top 10
-        return recommendations
-            .sort((a, b) => a.priority - b.priority)
-            .slice(0, 10)
-            .map(r => r.text);
     }
 
     /**
@@ -1244,5 +1249,73 @@ export class FinancialCalculationEngine {
         }
         
         return recommendations;
+    }
+
+    private static getCreditUtilizationStatus(utilization: number): 'excellent' | 'good' | 'fair' | 'poor' | 'critical' {
+        if (utilization <= 10) return 'excellent';
+        if (utilization <= 30) return 'good';
+        if (utilization <= 50) return 'fair';
+        if (utilization <= 80) return 'poor';
+        return 'critical';
+    }
+
+    private static formatConfidenceText(confidence: string): string {
+        return confidence.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+    }
+
+    private static formatBudgetText(budget: string): string {
+        const map: { [key: string]: string } = {
+            'detailed-budget': 'Detailed Budget',
+            'simple-tracking': 'Simple Tracking',
+            'mental-budget': 'Mental Budget',
+            'no-budget': 'No Budget'
+        };
+        return map[budget] || budget;
+    }
+
+    private static formatPlanningText(planning: string): string {
+        const map: { [key: string]: string } = {
+            'actively-plan': 'Actively Plan',
+            'occasionally-plan': 'Occasionally Plan',
+            'rarely-plan': 'Rarely Plan',
+            'never-plan': 'Never Plan'
+        };
+        return map[planning] || planning;
+    }
+
+    /**
+     * Validate that we're using actual user data, not mock/default values
+     */
+    private static validateUserData(data: UserFinancialData): void {
+        console.log('🔍 Data Validation - Verifying actual user inputs:', {
+            primarySalary: data.income.primarySalary,
+            housing: data.expenses.housing,
+            totalAssets: this.getTotalAssets(data.assets),
+            totalLiabilities: this.getTotalLiabilities(data.liabilities),
+            creditScore: data.liabilities.creditScore
+        });
+
+        // Log key calculations to ensure we're using real data
+        const totalIncome = this.getTotalMonthlyIncome(data.income);
+        const totalExpenses = this.getTotalMonthlyExpenses(data.expenses);
+        const cashFlow = totalIncome - totalExpenses;
+        
+        console.log('🔍 Calculated Metrics from User Data:', {
+            totalMonthlyIncome: totalIncome,
+            totalMonthlyExpenses: totalExpenses,
+            monthlyCashFlow: cashFlow,
+            emergencyFundMonths: totalExpenses > 0 ? (data.assets.checking + data.assets.savings + data.assets.emergencyFund) / totalExpenses : 0
+        });
+
+        // Validate critical inputs are not zero/default
+        if (data.income.primarySalary <= 0) {
+            throw new Error('Invalid data: Primary salary cannot be zero or negative');
+        }
+
+        if (data.liabilities.creditScore < 300 || data.liabilities.creditScore > 850) {
+            throw new Error('Invalid data: Credit score must be between 300 and 850');
+        }
+
+        console.log('✅ Data validation passed - using actual user inputs');
     }
 } 

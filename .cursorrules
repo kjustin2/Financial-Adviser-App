@@ -9,7 +9,6 @@ For accelerated development on this established codebase, follow these specializ
 - **Core Architecture:** [financial_analyzer.mdc](mdc:.cursor/rules/financial_analyzer.mdc) - Main project patterns, TypeScript standards, and financial calculation frameworks
 - **Behavioral Finance:** [behavioral_finance.mdc](mdc:.cursor/rules/behavioral_finance.mdc) - Cognitive bias detection, psychology analysis, and mitigation strategies  
 - **Simulations:** [simulations.mdc](mdc:.cursor/rules/simulations.mdc) - Monte Carlo engines, statistical analysis, and market data modeling
-- **Task Management:** [taskmaster/taskmaster.mdc](mdc:.cursor/rules/taskmaster/taskmaster.mdc) - Task Master workflow integration
 
 These rules are automatically applied based on file patterns and contain proven patterns from the existing codebase.
 
@@ -48,32 +47,31 @@ These rules are automatically applied based on file patterns and contain proven 
 ## Architecture & Design Patterns
 
 ### Core Architecture
-- **Modular Design**: Organized into `src/core/`, `src/components/`, `src/utils/`, `src/data/` directories
-- **Object-Oriented Approach**: Use classes for main application logic and calculation engines
-- **Type-First Development**: Comprehensive TypeScript interfaces defined in `src/types.ts`
-- **Multi-Step Form Pattern**: Progressive data collection with validation at each step
-- **Calculation Engine Pattern**: Centralized financial calculations in `FinancialCalculationEngine`
+- **Modular Design**: Organized into `src/core/`, `src/components/`, `src/utils/`, `src/data/`, `src/services/`, and `src/interfaces/` directories.
+- **Object-Oriented Approach**: Use classes for main application logic (`ImprovedApp.ts`), calculation engines, and services.
+- **Type-First Development**: Comprehensive TypeScript interfaces are defined in the `src/interfaces/` directory, organized by domain (`core-types.ts`, `analysis-types.ts`, etc.).
+- **Multi-Step Form Pattern**: Progressive data collection with validation at each step, managed by `FormService.ts`.
+- **Calculation Engine Pattern**: Centralized financial calculations in `calculations.ts`.
+- **Recommendation Engine**: Provides data-driven, personalized financial advice via the `RecommendationEngine.ts`.
 
 ### File Organization Standards
 ```
 src/
-├── core/                 # Core business logic and calculations
-├── components/           # Reusable UI components
-│   ├── forms/           # Form-related components
-│   ├── charts/          # Data visualization components
-│   └── reports/         # Report generation components
-├── data/                # Static data and benchmarks
-├── utils/               # Utility functions
-├── styles/              # CSS modules and styling
-└── types.ts             # Comprehensive type definitions
+├── core/                 # Core business logic (calculations, engines)
+├── components/           # Reusable UI components (forms, charts, reports)
+├── data/                 # Static data and benchmarks
+├── services/             # Application services (e.g., FormService)
+├── interfaces/           # TypeScript type and interface definitions
+├── utils/                # Utility functions
+└── ImprovedApp.ts        # Main application entry point
 ```
 
 ## TypeScript Standards
 
 ### Type Definitions
-- **Comprehensive Interfaces**: All data structures must be defined in `src/types.ts`
-- **Financial Data Modeling**: Use the established interfaces (`UserFinancialData`, `HealthIndicator`, etc.)
-- **Strict Typing**: Always prefer explicit types over `any`
+- **Modular Interfaces**: All data structures must be defined in the `src/interfaces/` directory, separated by concern.
+- **Financial Data Modeling**: Use the established interfaces (`UserFinancialData`, `HealthIndicator`, etc.).
+- **Strict Typing**: Always prefer explicit types over `any`.
 - **Interface Naming**: Use descriptive names ending with `Data`, `Info`, `Result`, etc.
 - **Security Types**: Define types for API responses and sensitive data structures
 
@@ -170,10 +168,10 @@ src/
 
 ### When Adding New Features
 1. **Security Assessment**: Evaluate security implications first
-2. **Update Types First**: Add interfaces to `types.ts`
-3. **Create Calculation Logic**: Add to `FinancialCalculationEngine` with validation
-4. **Build UI Components**: Follow established component patterns with security
-5. **Add Validation**: Implement proper form validation with security checks
+2. **Update Types First**: Add or update interfaces in the `src/interfaces/` directory.
+3. **Create Calculation Logic**: Add to `core/calculations.ts` or a relevant engine, including validation.
+4. **Build UI Components**: Follow established component patterns with security.
+5. **Add Validation**: Implement proper form validation with security checks.
 6. **Update Documentation**: Keep comments and docs current
 7. **Test Security**: Test for common vulnerabilities
 

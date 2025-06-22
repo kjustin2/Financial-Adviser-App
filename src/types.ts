@@ -218,6 +218,7 @@ export interface HealthIndicator {
     weight: number; // weighting in overall score
     metrics: FinancialMetric[];
     recommendations: string[];
+    explanation: string;
 }
 
 export interface ScenarioAnalysis {
@@ -279,7 +280,7 @@ export interface ComprehensiveAnalysisResult {
     scenarioAnalysis: ScenarioAnalysis[];
     
     // Recommendations
-    prioritizedRecommendations: string[];
+    prioritizedRecommendations: Recommendation[];
     
     // Peer Comparisons
     peerBenchmarks: {
@@ -496,7 +497,7 @@ export interface EconomicParameters {
     };
     
     // Market Shocks
-    marketShocks: Array<{
+    marketShocks?: Array<{
         probability: number; // Per year
         impact: number; // Percentage impact
         duration: number; // Months
