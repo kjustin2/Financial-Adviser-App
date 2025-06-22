@@ -134,7 +134,7 @@
 
         .step-fields {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 24px;
             margin-bottom: 40px;
         }
@@ -587,28 +587,83 @@
             display: block;
         }
 
+        /* Mobile-First Responsive Design */
         @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+
             .container {
-                margin: 10px;
+                margin: 0;
                 border-radius: 8px;
+                overflow-x: hidden;
             }
             
             .header {
-                padding: 20px;
+                padding: 24px 16px;
             }
             
             .header h1 {
-                font-size: 2rem;
+                font-size: 1.75rem;
+                line-height: 1.3;
+            }
+            
+            .header p {
+                font-size: 1rem;
+                line-height: 1.5;
             }
             
             .form-container,
             .results-container {
-                padding: 20px;
+                padding: 16px;
             }
             
             .step-fields {
                 grid-template-columns: 1fr;
                 gap: 16px;
+                margin-bottom: 32px;
+            }
+
+            .form-field input,
+            .form-field select {
+                padding: 14px 16px;
+                font-size: 16px; /* Prevents zoom on iOS */
+                width: 100%;
+                min-height: 48px; /* Touch-friendly target */
+            }
+
+            .btn-primary,
+            .btn-secondary {
+                padding: 14px 20px;
+                font-size: 1rem;
+                min-height: 48px;
+                width: 100%;
+                margin: 8px 0;
+            }
+
+            .form-navigation {
+                flex-direction: column;
+                gap: 12px;
+                padding-top: 24px;
+            }
+
+            .form-navigation .btn-secondary {
+                order: 2;
+            }
+
+            .form-navigation .btn-primary {
+                order: 1;
+            }
+
+            .step-header h2 {
+                font-size: 1.5rem;
+                line-height: 1.3;
+                margin-bottom: 12px;
+            }
+
+            .step-header p {
+                font-size: 1rem;
+                line-height: 1.5;
             }
 
             .health-indicators-grid {
@@ -617,45 +672,185 @@
             }
 
             .health-score-summary {
-                padding: 24px 20px;
-                margin-bottom: 32px;
+                padding: 24px 16px;
+                margin-bottom: 24px;
+                border-radius: 16px;
             }
 
             .health-score-circle {
-                width: 120px;
-                height: 120px;
-                font-size: 2rem;
+                width: 100px;
+                height: 100px;
+                font-size: 1.75rem;
+                margin-bottom: 20px;
             }
 
             .indicator-card {
-                padding: 20px;
+                padding: 20px 16px;
+                border-radius: 12px;
+            }
+
+            .indicator-card h3 {
+                font-size: 1.1rem;
+                line-height: 1.3;
+            }
+
+            .indicator-score {
+                font-size: 1.5rem;
+            }
+
+            .indicator-status {
+                font-size: 0.875rem;
+                padding: 4px 12px;
+            }
+
+            .indicator-description {
+                font-size: 0.875rem;
+                line-height: 1.4;
             }
 
             .key-metrics-section,
             .mitigation-report-section {
-                padding: 24px 20px;
+                padding: 20px 16px;
+                border-radius: 16px;
+                margin-bottom: 24px;
+            }
+
+            .key-metrics-section h3,
+            .mitigation-report-section h3 {
+                font-size: 1.25rem;
+                margin-bottom: 20px;
             }
 
             .loading-indicator {
-                padding: 40px 20px;
+                padding: 32px 16px;
+            }
+
+            .loading-indicator p {
+                font-size: 1rem;
+                margin-top: 16px;
             }
 
             .loading-spinner {
-                width: 40px;
-                height: 40px;
-                border-width: 4px;
+                width: 36px;
+                height: 36px;
+                border-width: 3px;
             }
 
             .metric-row {
-                padding: 10px 12px;
+                padding: 12px 16px;
+                margin-bottom: 8px;
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 4px;
+                border-radius: 8px;
+            }
+
+            .metric-label {
+                font-size: 0.875rem;
+                font-weight: 600;
+            }
+
+            .metric-value {
+                font-size: 1rem;
+                font-weight: 700;
             }
 
             .indicator-name {
-                font-size: 1rem;
+                font-size: 0.95rem;
+                line-height: 1.3;
             }
 
             #healthLevelText {
                 font-size: 1.25rem;
+                line-height: 1.3;
+                margin-bottom: 8px;
+            }
+
+            #healthScoreDescription {
+                font-size: 0.925rem;
+                line-height: 1.4;
+            }
+
+            /* Fix horizontal overflow issues */
+            .container * {
+                max-width: 100%;
+                box-sizing: border-box;
+            }
+
+            /* Improve text readability */
+            .field-description {
+                font-size: 0.8rem;
+                line-height: 1.4;
+            }
+
+            /* Better spacing for small screens */
+            .multi-step-form {
+                max-width: 100%;
+            }
+
+            .progress-bar {
+                margin-bottom: 16px;
+            }
+
+            .step-header {
+                margin-bottom: 32px;
+            }
+        }
+
+        /* Extra small screens */
+        @media (max-width: 480px) {
+            body {
+                padding: 5px;
+            }
+
+            .header {
+                padding: 20px 12px;
+            }
+
+            .header h1 {
+                font-size: 1.5rem;
+            }
+
+            .header p {
+                font-size: 0.925rem;
+            }
+
+            .form-container,
+            .results-container {
+                padding: 12px;
+            }
+
+            .health-score-circle {
+                width: 90px;
+                height: 90px;
+                font-size: 1.5rem;
+            }
+
+            .health-score-summary {
+                padding: 20px 12px;
+            }
+
+            .indicator-card {
+                padding: 16px 12px;
+            }
+
+            .key-metrics-section,
+            .mitigation-report-section {
+                padding: 16px 12px;
+            }
+
+            .step-header h2 {
+                font-size: 1.25rem;
+            }
+
+            .form-field input,
+            .form-field select {
+                padding: 12px 14px;
+            }
+
+            .btn-primary,
+            .btn-secondary {
+                padding: 12px 16px;
             }
         }
     </style>

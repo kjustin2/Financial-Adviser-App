@@ -3,6 +3,16 @@
 ## Project Overview
 This is a comprehensive Financial Health Analyzer application built with TypeScript, HTML, and CSS. The application is research-based, implementing the Financial Health Network 2024 standards and 8 key financial health indicators.
 
+## 🚀 **Development Speed Rules**
+For accelerated development on this established codebase, follow these specialized rule sets:
+
+- **Core Architecture:** [financial_analyzer.mdc](mdc:.cursor/rules/financial_analyzer.mdc) - Main project patterns, TypeScript standards, and financial calculation frameworks
+- **Behavioral Finance:** [behavioral_finance.mdc](mdc:.cursor/rules/behavioral_finance.mdc) - Cognitive bias detection, psychology analysis, and mitigation strategies  
+- **Simulations:** [simulations.mdc](mdc:.cursor/rules/simulations.mdc) - Monte Carlo engines, statistical analysis, and market data modeling
+- **Task Management:** [taskmaster/taskmaster.mdc](mdc:.cursor/rules/taskmaster/taskmaster.mdc) - Task Master workflow integration
+
+These rules are automatically applied based on file patterns and contain proven patterns from the existing codebase.
+
 ## 🔒 Security-First Development
 
 ### Critical Security Rules

@@ -259,6 +259,24 @@
             "status": "done",
             "dependencies": [],
             "parentTaskId": 6
+          },
+          {
+            "id": 6,
+            "title": "Fix Mobile Responsiveness Issues",
+            "description": "Address mobile view problems where information is cut off. Optimize responsive design for mobile devices including proper viewport handling, text scaling, button sizing, form field optimization, and content layout adjustments.",
+            "details": "",
+            "status": "done",
+            "dependencies": [],
+            "parentTaskId": 6
+          },
+          {
+            "id": 7,
+            "title": "Update Cursor Rules for Accelerated Development",
+            "description": "Create comprehensive Cursor rules based on established Financial Health Analyzer patterns to accelerate future development. Include specialized rule sets for financial calculations, behavioral finance patterns, simulation frameworks, and TypeScript conventions.",
+            "details": "",
+            "status": "done",
+            "dependencies": [],
+            "parentTaskId": 6
           }
         ]
       },
@@ -298,7 +316,7 @@
     ],
     "metadata": {
       "created": "2025-06-22T04:14:44.260Z",
-      "updated": "2025-06-22T19:03:57.793Z",
+      "updated": "2025-06-22T19:12:45.466Z",
       "description": "Version 2: Advanced Analytics with Monte Carlo, Stress Testing, and Behavioral Finance"
     }
   }
