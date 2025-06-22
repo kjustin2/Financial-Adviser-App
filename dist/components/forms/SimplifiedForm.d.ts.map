@@ -1,0 +1,1 @@
+{"version":3,"file":"SimplifiedForm.d.ts","sourceRoot":"","sources":["../../../src/components/forms/SimplifiedForm.ts"],"names":[],"mappings":"AAMA,qBAAa,cAAc;IACvB,OAAO,CAAC,SAAS,CAAc;IAC/B,OAAO,CAAC,UAAU,CAAc;gBAEpB,WAAW,EAAE,MAAM;IAO/B,OAAO,CAAC,mBAAmB;IAW3B,OAAO,CAAC,MAAM;IAed,OAAO,CAAC,oBAAoB;IAQ5B,OAAO,CAAC,YAAY;IAUpB,OAAO,CAAC,aAAa;IAKrB,OAAO,CAAC,oBAAoB;CAuI/B"}
