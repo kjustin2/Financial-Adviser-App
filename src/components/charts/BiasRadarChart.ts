@@ -384,8 +384,8 @@ export class BiasRadarChart {
         const biasName = this.formatBiasName(biasType);
         tooltip.innerHTML = `
             <strong>${biasName}</strong><br>
-            Your Score: ${userScore.toFixed(1)}%<br>
-            Population Avg: ${benchmark.toFixed(1)}%<br>
+            Your Score: ${this.formatScore(userScore)}%<br>
+            Population Avg: ${this.formatScore(benchmark)}%<br>
             ${userScore > benchmark ? 'Above average bias' : 'Below average bias'}
         `;
 
@@ -428,5 +428,11 @@ export class BiasRadarChart {
         if (this.data) {
             this.render();
         }
+    }
+
+    private formatScore(score: number): string {
+        if (typeof score !== 'number' || isNaN(score)) return 'N/A';
+        if (score === 0) return '0';
+        return score.toFixed(1);
     }
 } 

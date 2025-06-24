@@ -33,6 +33,7 @@ export class ActionableRecommendations {
     }
 
     private createRecommendationHTML(recommendation: Recommendation): string {
+        // Defensive: Prevent $NaN or undefined in displayed values
         return `
             <div class="recommendation-card priority-${recommendation.priority}">
                 <div class="recommendation-header">

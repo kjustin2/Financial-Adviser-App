@@ -3,19 +3,80 @@ description: Guidelines for creating and maintaining Cursor rules to ensure cons
 globs: .cursor/rules/*.mdc
 alwaysApply: true
 ---
+---
+description: Enforce accurate, meaningful numbers, cohesive design, and detailed planning for all UI and analysis work
+globs: src/components/**/*.ts, src/index.html, src/core/**/*.ts, src/services/**/*.ts
+alwaysApply: true
+---
 
-- **Required Rule Structure:**
-  ```markdown
-  ---
-  description: Clear, one-line description of what the rule enforces
-  globs: path/to/files/*.ext, other/path/**/*
-  alwaysApply: boolean
-  ---
+- **Accurate, Meaningful Numbers**
+  - **DO:** Ensure all user-facing numbers are calculated from actual user input and validated.
+    ```typescript
+    // ✅ DO
+    const netWorth = assetsTotal - liabilitiesTotal;
+    if (typeof netWorth !== 'number' || isNaN(netWorth)) return 'N/A';
+    ```
+  - **DON'T:** Display placeholder, undefined, or stale data.
+    ```typescript
+    // ❌ DON'T
+    const netWorth = undefined;
+    ```
 
-  - **Main Points in Bold**
-    - Sub-points with details
-    - Examples and explanations
-  ```
+- **Cohesive, Unified Design**
+  - **DO:** Use the same card/grid/container styles, color palette, and formatting for all forms and results.
+    ```typescript
+    // ✅ DO
+    // Use EnhancedResultsDisplay for all results
+    display.render(analysisResult);
+    ```
+  - **DON'T:** Use inconsistent layouts or styles between quick and comprehensive analysis.
+
+- **Detailed Planning**
+  - **DO:** Start all major changes with a detailed plan with tasks and subtasks.
+    ```markdown
+    // ✅ DO
+    ## Plan
+    - Task 1: ...
+      - Subtask 1.1: ...
+    ```
+  - **DON'T:** Make major changes without a plan.
+
+- **Edge Case Handling**
+  - **DO:** Always check for $NaN, undefined, or negative values before displaying financial metrics.
+    ```typescript
+    // ✅ DO
+    if (typeof value !== 'number' || isNaN(value)) return 'N/A';
+    if (value === 0) return '$0';
+    ```
+  - **DON'T:** Display $NaN, undefined, or negative values in the UI.
+    ```typescript
+    // ❌ DON'T
+    return `$${value}`; // if value could be NaN
+    ```
+
+- **Detailed Financial Analysis**
+  - **DO:** Provide granular breakdowns (net worth, savings rate, debt structure, expenses, investments, insurance, benchmarks, scenarios).
+  - **DO:** Add actionable insights and explanations for each area.
+
+- **Mobile-First & Responsive Design**
+  - **DO:** Use CSS Grid/Flexbox and media queries for all components.
+  - **DO:** Test on various screen sizes and ensure touch targets are large enough.
+  - **DON'T:** Use fixed pixel widths for layout-critical elements.
+  - **DO:** Use relative units (%, rem, em) for sizing and spacing.
+  - **DO:** Ensure touch targets are large enough for mobile users.
+  - **DO:** Use semantic HTML and ARIA attributes for accessibility.
+  - **DO:** Provide horizontal scrolling for wide tables/charts on mobile.
+  - **DO:** Minimize modal/pop-up use on mobile; prefer inline expansion.
+  - **DO:** Ensure all forms and buttons are easily usable on small screens.
+  - **DO:** Use color contrast and font sizes that meet accessibility standards.
+
+- **Testing & Documentation**
+  - **DO:** Add/expand tests for all new logic and edge cases.
+  - **DO:** Add/expand JSDoc and inline comments for new/updated logic.
+
+- **Main Points in Bold**
+  - Sub-points with details
+  - Examples and explanations
 
 - **File References:**
   - Use `[filename](mdc:path/to/file)` ([filename](mdc:filename)) to reference files

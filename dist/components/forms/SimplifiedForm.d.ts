@@ -1,3 +1,7 @@
+/**
+ * SimplifiedForm Component
+ * Renders a single-step form for a "Quick Analysis" of financial health.
+ */
 export declare class SimplifiedForm {
     private container;
     private formFields;
@@ -6,7 +10,5 @@ export declare class SimplifiedForm {
     private render;
     private attachEventListeners;
     private handleSubmit;
-    private getFieldValue;
-    private createFullDataObject;
 }
 //# sourceMappingURL=SimplifiedForm.d.ts.map

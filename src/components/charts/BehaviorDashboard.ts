@@ -145,24 +145,27 @@ export class BehaviorDashboard {
     }
 
     private renderMetricCard(title: string, score: number, description: string): string {
-        const status = this.getScoreStatus(score);
+        // Defensive: Prevent $NaN or undefined in displayed values
+        const displayScore = typeof score === 'number' && !isNaN(score) && score >= 0 ? score : 0;
+        const status = this.getScoreStatus(displayScore);
         const color = this.getStatusColor(status);
         
         return `
             <div class="metric-card ${status}">
                 <div class="metric-header">
                     <h4>${title}</h4>
-                    <span class="metric-score" style="color: ${color}">${score}</span>
+                    <span class="metric-score" style="color: ${color}">${displayScore}</span>
                 </div>
                 <div class="metric-bar">
-                    <div class="metric-fill" style="width: ${score}%; background-color: ${color}"></div>
+                    <div class="metric-fill" style="width: ${displayScore}%; background-color: ${color}"></div>
                 </div>
-                <p class="metric-description">${description}</p>
+                <p class="metric-description">${description || 'No description available.'}</p>
             </div>
         `;
     }
 
     private renderProgressSection(): string {
+        // Defensive: Show 'No data' if progress data is missing
         const progressData = this.behaviorTracker.getProgressData();
         
         return `

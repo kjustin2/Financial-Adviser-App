@@ -1735,4 +1735,30 @@
             .benefits-list li {
                 padding: 15px;
             }
+        }
+
+        html, body {
+            max-width: 100vw;
+            overflow-x: hidden;
+        }
+        body {
+            font-size: 16px;
+            line-height: 1.5;
+        }
+        @media (max-width: 600px) {
+            body {
+                font-size: 15px;
+                padding: 0 4px;
+            }
+            .container, .main, .dashboard, .form-section, .results-section {
+                padding: 0 2vw;
+                width: 100vw;
+                box-sizing: border-box;
+            }
+            h1, h2, h3 {
+                font-size: 1.2em;
+            }
+            button, input, select {
+                font-size: 1em;
+            }
         }</style><script defer="defer" src="/Financial-Adviser-App/bundle.js"></script></head><body><div class="container"><div class="header"><h1>Comprehensive Financial Health Analyzer</h1><p>Get a detailed analysis of your financial wellness based on 8 key health indicators</p></div><div class="main-content"><div id="analysisChoiceContainer" class="analysis-choice"><div class="choice-container"><h2>Choose Your Analysis Type</h2><div class="choice-options"><div class="choice-option"><div class="option-card quick-option"><div class="option-icon">⚡</div><h3>Quick Analysis</h3><p>Get instant insights with just 6 essential inputs</p><ul class="option-features"><li>✅ Takes less than 2 minutes</li><li>✅ Essential financial health metrics</li><li>✅ Personalized recommendations</li></ul><button class="btn-primary choice-btn" id="chooseQuickAnalysis">Start Quick Analysis</button></div></div><div class="choice-option"><div class="option-card comprehensive-option"><div class="option-icon">📊</div><h3>Comprehensive Analysis</h3><p>Deep dive analysis with detailed financial data</p><ul class="option-features"><li>✅ Complete financial picture</li><li>✅ Advanced behavioral insights</li><li>✅ Detailed action plans</li></ul><button class="btn-secondary choice-btn" id="chooseComprehensiveAnalysis">Start Comprehensive Analysis</button></div></div></div></div></div><div id="formContainer" style="display: none;"><div class="error-message" id="errorMessage"></div><div id="multiStepForm" class="multi-step-form"></div></div><div id="resultsContainer" class="results-hidden"><div class="loading-indicator" id="loadingIndicator"><div class="loading-spinner"></div><p>Analyzing your financial health...</p></div><div id="analysisResults" style="display: none;"><div class="health-score-summary" id="healthScoreSummary"><div class="health-score-circle" id="healthScoreCircle"><span id="healthScoreValue">--</span></div><h2 id="healthLevelText">Financial Health Level</h2><p id="healthScoreDescription">Based on 8 key financial health indicators</p></div><div class="health-indicators-grid" id="healthIndicatorsGrid"></div><div class="key-metrics-section" id="keyMetricsSection"><h3>Key Financial Metrics</h3><div id="keyMetricsGrid"></div></div><div class="mitigation-report-section" id="mitigationReportSection" style="display: none;"><h3>Bias Mitigation Recommendations</h3><div id="mitigationReport"></div></div><div class="results-grid"><div id="healthIndicatorsGrid" class="indicators-grid"></div></div><div id="recommendationsContainer"></div></div></div></div></div><script src="app.js"></script></body></html>

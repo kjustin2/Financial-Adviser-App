@@ -18,7 +18,6 @@ export class ImprovedFinancialHealthApp {
     private multiStepForm?: MultiStepForm; // Used for comprehensive analysis
     private quickForm?: QuickAnalysisForm;
     private resultsDisplay?: EnhancedResultsDisplay;
-    private analysisResult?: ComprehensiveAnalysisResult;
 
     // DOM Elements
     private analysisChoiceContainer?: HTMLElement;
@@ -151,8 +150,6 @@ export class ImprovedFinancialHealthApp {
     }
 
     private displayResults(analysisResult: ComprehensiveAnalysisResult): void {
-        this.analysisResult = analysisResult;
-        
         // Hide loading indicator
         const loadingIndicator = document.getElementById('loadingIndicator');
         const analysisResults = document.getElementById('analysisResults');
@@ -187,12 +184,6 @@ export class ImprovedFinancialHealthApp {
                         <button class="btn btn-outline" id="startNewAnalysis">
                             📊 Start New Analysis
                         </button>
-                        <button class="btn btn-secondary" id="exportResults">
-                            📄 Export Results
-                        </button>
-                        <button class="btn btn-primary" id="saveProgress">
-                            💾 Save Progress
-                        </button>
                     </div>
                     <div class="analysis-info">
                         <p class="analysis-type">
@@ -204,29 +195,11 @@ export class ImprovedFinancialHealthApp {
                     </div>
                 </div>
             `;
-            
             resultsContainer.insertAdjacentHTML('beforeend', navigationHTML);
-            
-            // Attach navigation event listeners
             const startNewBtn = document.getElementById('startNewAnalysis');
-            const exportBtn = document.getElementById('exportResults');
-            const saveBtn = document.getElementById('saveProgress');
-            
             if (startNewBtn) {
                 startNewBtn.addEventListener('click', () => {
                     this.resetApplication();
-                });
-            }
-            
-            if (exportBtn) {
-                exportBtn.addEventListener('click', () => {
-                    this.exportResults();
-                });
-            }
-            
-            if (saveBtn) {
-                saveBtn.addEventListener('click', () => {
-                    this.saveProgress();
                 });
             }
         }
@@ -234,7 +207,6 @@ export class ImprovedFinancialHealthApp {
 
     private resetApplication(): void {
         this.currentAnalysisType = null;
-        this.analysisResult = undefined;
         
         // Reset form instances
         if (this.multiStepForm) {
@@ -248,70 +220,6 @@ export class ImprovedFinancialHealthApp {
         }
         
         this.showAnalysisChoice();
-    }
-
-    private exportResults(): void {
-        if (!this.analysisResult) return;
-        
-        // Create a simplified export of the results
-        const exportData = {
-            analysisDate: new Date().toISOString(),
-            analysisType: this.currentAnalysisType,
-            overallScore: this.analysisResult.overallHealthScore,
-            healthLevel: this.analysisResult.healthLevel,
-            keyMetrics: this.analysisResult.keyMetrics,
-            healthIndicators: this.analysisResult.healthIndicators.map(indicator => ({
-                name: indicator.name,
-                score: indicator.score,
-                status: indicator.status,
-                explanation: indicator.explanation
-            })),
-            topRecommendations: this.analysisResult.prioritizedRecommendations
-                .filter(rec => rec.priority === 'high')
-                .slice(0, 5)
-                .map(rec => ({
-                    title: rec.title,
-                    description: rec.description,
-                    actionSteps: rec.actionSteps,
-                    timeframe: rec.timeframe
-                }))
-        };
-        
-        // Create and download JSON file
-        const dataStr = JSON.stringify(exportData, null, 2);
-        const dataBlob = new Blob([dataStr], { type: 'application/json' });
-        const url = URL.createObjectURL(dataBlob);
-        
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = `financial-health-analysis-${new Date().toISOString().split('T')[0]}.json`;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        
-        URL.revokeObjectURL(url);
-        
-        // Show success message
-        this.showSuccessMessage('Results exported successfully!');
-    }
-
-    private saveProgress(): void {
-        if (!this.analysisResult) return;
-        
-        // Save to localStorage for demonstration
-        const saveData = {
-            timestamp: new Date().toISOString(),
-            analysisType: this.currentAnalysisType,
-            results: this.analysisResult
-        };
-        
-        try {
-            localStorage.setItem('financialHealthAnalysis', JSON.stringify(saveData));
-            this.showSuccessMessage('Progress saved successfully!');
-        } catch (error) {
-            console.error('Failed to save progress:', error);
-            this.showError('Failed to save progress. Please try again.');
-        }
     }
 
     private showError(message: string): void {
@@ -333,27 +241,6 @@ export class ImprovedFinancialHealthApp {
                 errorContainer.parentNode.removeChild(errorContainer);
             }
         }, 5000);
-    }
-
-    private showSuccessMessage(message: string): void {
-        // Show success message to user
-        const successContainer = document.createElement('div');
-        successContainer.className = 'success-toast';
-        successContainer.innerHTML = `
-            <div class="toast-content">
-                <span class="toast-icon">✅</span>
-                <span class="toast-message">${message}</span>
-            </div>
-        `;
-        
-        document.body.appendChild(successContainer);
-        
-        // Remove after 3 seconds
-        setTimeout(() => {
-            if (successContainer.parentNode) {
-                successContainer.parentNode.removeChild(successContainer);
-            }
-        }, 3000);
     }
 }
 

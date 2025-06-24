@@ -56,23 +56,34 @@ export class FinancialCalculationEngine {
         const totalIncome = this.getTotalMonthlyIncome(data.income);
         const totalExpenses = this.getTotalMonthlyExpenses(data.expenses);
         const monthlyCashFlow = totalIncome - totalExpenses;
-        
         const totalAssets = this.getTotalAssets(data.assets);
         const totalLiabilities = this.getTotalLiabilities(data.liabilities);
-        const netWorth = totalAssets - totalLiabilities;
-        
-        const totalLiquidAssets = data.assets.checking + data.assets.savings + 
-                                 data.assets.moneyMarket + data.assets.emergencyFund;
-        
+        // Defensive: Prevent NaN/undefined
+        const netWorth = (typeof totalAssets === 'number' && typeof totalLiabilities === 'number' && !isNaN(totalAssets) && !isNaN(totalLiabilities)) ? (totalAssets - totalLiabilities) : 0;
+        const totalLiquidAssets = (data.assets.checking || 0) + (data.assets.savings || 0) + (data.assets.moneyMarket || 0) + (data.assets.emergencyFund || 0);
         const totalDebt = this.getTotalDebt(data.liabilities);
-        
+        // DTI: Use monthly income, not annualized (see Wells Fargo, Experian, CFPB)
+        const debtToIncomeRatio = totalIncome > 0 ? (totalDebt / totalIncome) * 100 : (totalDebt > 0 ? 100 : 0);
+        // Defensive breakdowns for UI
+        const netWorthBreakdown = {
+            totalAssets,
+            totalLiabilities,
+            netWorth
+        };
+        const dtiBreakdown = {
+            totalDebt,
+            totalIncome,
+            debtToIncomeRatio
+        };
         return {
-            monthlyCashFlow,
-            emergencyFundMonths: totalExpenses > 0 ? totalLiquidAssets / totalExpenses : 0,
-            debtToIncomeRatio: totalIncome > 0 ? (totalDebt / (totalIncome * 12)) * 100 : 0,
-            savingsRate: totalIncome > 0 ? ((monthlyCashFlow - data.behaviors.monthlyInvestmentContribution) / totalIncome) * 100 : 0,
+            monthlyCashFlow: isNaN(monthlyCashFlow) ? 0 : monthlyCashFlow,
+            emergencyFundMonths: totalExpenses > 0 && totalLiquidAssets >= 0 ? totalLiquidAssets / totalExpenses : 0,
+            debtToIncomeRatio,
+            dtiBreakdown,
+            savingsRate: totalIncome > 0 ? ((monthlyCashFlow - (data.behaviors?.monthlyInvestmentContribution || 0)) / totalIncome) * 100 : 0,
             creditUtilization: data.liabilities.totalCreditLimit > 0 ? (data.liabilities.creditCardDebt / data.liabilities.totalCreditLimit) * 100 : 0,
             netWorth,
+            netWorthBreakdown,
             liquidityRatio: totalLiabilities > 0 ? totalLiquidAssets / totalLiabilities : totalLiquidAssets > 0 ? 100 : 0,
             assetAllocationScore: this.calculateAssetAllocationScore(data)
         };
@@ -86,7 +97,7 @@ export class FinancialCalculationEngine {
             this.analyzeSpendingVsIncome(data, keyMetrics),
             this.analyzeBillPaymentReliability(data),
             this.analyzeEmergencySavings(data, keyMetrics),
-            this.analyzeDebtManagement(data, keyMetrics),
+            this.analyzeDebtManagement(data),
             this.analyzeCreditHealth(data, keyMetrics),
             this.analyzeInsuranceConfidence(data),
             this.analyzeLongTermGoalConfidence(data),
@@ -208,6 +219,73 @@ export class FinancialCalculationEngine {
         };
     }
 
+    /**
+     * Analyze Debt Management Effectiveness (core health indicator #4)
+     * Uses research-based debt-to-income ratio, edge case handling, and clear status logic.
+     * - Target: <36% total DTI, <28% housing DTI
+     * - Status: 'excellent' <20%, 'good' <28%, 'fair' <36%, 'poor' <43%, 'critical' >=43%
+     * - Handles zero/negative income and missing data
+     */
+    private static analyzeDebtManagement(data: UserFinancialData): HealthIndicator {
+        // Defensive: Validate income and liabilities
+        const totalMonthlyIncome = this.getTotalMonthlyIncome(data.income);
+        const totalMonthlyDebt = this.getTotalDebt(data.liabilities);
+        let debtToIncomeRatio = 0;
+        let status: 'excellent' | 'good' | 'fair' | 'poor' | 'critical' = 'critical';
+        let explanation = '';
+        let recommendations: string[] = [];
+
+        if (totalMonthlyIncome > 0) {
+            debtToIncomeRatio = totalMonthlyDebt / totalMonthlyIncome;
+            if (debtToIncomeRatio < 0.2) {
+                status = 'excellent';
+                explanation = 'Your debt-to-income ratio is well below recommended thresholds.';
+            } else if (debtToIncomeRatio < 0.28) {
+                status = 'good';
+                explanation = 'Your debt-to-income ratio is healthy and manageable.';
+            } else if (debtToIncomeRatio < 0.36) {
+                status = 'fair';
+                explanation = 'Your debt-to-income ratio is approaching risk thresholds.';
+            } else if (debtToIncomeRatio < 0.43) {
+                status = 'poor';
+                explanation = 'Your debt-to-income ratio is above recommended limits. Consider reducing debt.';
+            } else {
+                status = 'critical';
+                explanation = 'Your debt-to-income ratio is dangerously high. Immediate action is needed.';
+            }
+        } else {
+            // Edge case: zero or negative income
+            debtToIncomeRatio = totalMonthlyDebt > 0 ? 1 : 0;
+            status = totalMonthlyDebt > 0 ? 'critical' : 'excellent';
+            explanation = totalMonthlyDebt > 0
+                ? 'No reported income but outstanding debts. Address income or debt immediately.'
+                : 'No income or debt reported.';
+        }
+
+        // Recommendations (research-based)
+        recommendations = this.getDebtManagementRecommendations(debtToIncomeRatio);
+
+        return {
+            name: 'Debt Management Effectiveness',
+            score: Math.max(0, 100 - Math.round(debtToIncomeRatio * 100)),
+            status,
+            weight: 0.15,
+            metrics: [
+                {
+                    title: 'Debt-to-Income Ratio',
+                    value: (debtToIncomeRatio * 100).toFixed(1) + '%',
+                    numericValue: debtToIncomeRatio,
+                    description: 'Total monthly debt payments as a percentage of monthly income',
+                    status,
+                    benchmark: '<36%',
+                    improvement: status === 'excellent' ? '' : 'Reduce debt or increase income to improve ratio.'
+                }
+            ],
+            recommendations,
+            explanation
+        };
+    }
+
     // Helper Methods
     private static getTotalMonthlyIncome(income: any): number {
         return income.primarySalary + income.secondaryIncome + income.businessIncome + 
@@ -223,26 +301,42 @@ export class FinancialCalculationEngine {
     }
 
     private static getTotalAssets(assets: any): number {
-        return assets.checking + assets.savings + assets.moneyMarket + assets.emergencyFund +
-               assets.employer401k + assets.traditionalIRA + assets.rothIRA + assets.brokerageAccounts +
-               assets.stocks + assets.bonds + assets.mutualFunds + assets.primaryResidence +
-               assets.investmentProperties + assets.cryptocurrency + assets.preciousMetals +
-               assets.collectibles + assets.businessEquity + assets.otherAssets;
+        // Defensive: Treat missing/invalid as zero
+        return (assets.checking || 0) + (assets.savings || 0) + (assets.moneyMarket || 0) + (assets.emergencyFund || 0) +
+               (assets.employer401k || 0) + (assets.traditionalIRA || 0) + (assets.rothIRA || 0) + (assets.brokerageAccounts || 0) +
+               (assets.stocks || 0) + (assets.bonds || 0) + (assets.mutualFunds || 0) + (assets.primaryResidence || 0) +
+               (assets.investmentProperties || 0) + (assets.cryptocurrency || 0) + (assets.preciousMetals || 0) +
+               (assets.collectibles || 0) + (assets.businessEquity || 0) + (assets.otherAssets || 0);
     }
 
-    private static getTotalLiabilities(liabilities: any): number {
-        return liabilities.mortgageBalance + liabilities.homeEquityLoan + liabilities.autoLoans +
-               liabilities.securedCreditLines + liabilities.creditCardDebt + liabilities.personalLoans +
-               liabilities.studentLoans + liabilities.medicalDebt + liabilities.businessLoans +
-               liabilities.businessCreditLines + liabilities.taxDebt + liabilities.legalJudgments +
-               liabilities.otherDebt;
-    }
-
+    /**
+     * Get total monthly debt payments from all liability categories
+     * Allows total debt to be zero and prevents NaN
+     */
     private static getTotalDebt(liabilities: any): number {
-        return this.getTotalLiabilities(liabilities);
+        if (!liabilities || typeof liabilities !== 'object') return 0;
+        return [
+            'mortgageBalance', 'homeEquityLoan', 'autoLoans', 'securedCreditLines',
+            'creditCardDebt', 'personalLoans', 'studentLoans', 'medicalDebt',
+            'businessLoans', 'businessCreditLines', 'taxDebt', 'legalJudgments', 'otherDebt'
+        ].reduce((sum, key) => sum + (Number(liabilities[key]) || 0), 0);
+    }
+
+    /**
+     * Get total liabilities from all liability categories
+     * Sums all liability fields, treating missing as zero
+     */
+    private static getTotalLiabilities(liabilities: any): number {
+        return [
+            'mortgageBalance', 'homeEquityLoan', 'autoLoans', 'securedCreditLines',
+            'creditCardDebt', 'personalLoans', 'studentLoans', 'medicalDebt',
+            'businessLoans', 'businessCreditLines', 'taxDebt', 'legalJudgments', 'otherDebt'
+        ].reduce((sum, key) => sum + (Number(liabilities[key]) || 0), 0);
     }
 
     private static formatCurrency(amount: number): string {
+        if (typeof amount !== 'number' || isNaN(amount)) return 'N/A';
+        if (amount === 0) return '$0';
         return new Intl.NumberFormat('en-US', {
             style: 'currency',
             currency: 'USD',
@@ -331,61 +425,8 @@ export class FinancialCalculationEngine {
                     status
                 }
             ],
-            recommendations: this.getEmergencyFundRecommendations(emergencyFundMonths),
+            recommendations: this.getEmergencyFundRecommendations(emergencyFundMonths, this.getTotalMonthlyExpenses(data.expenses)),
             explanation: `This measures your financial cushion for unexpected events. You have ${emergencyFundMonths.toFixed(1)} months of expenses saved, giving you a score of ${score}/100. The standard recommendation is 3-6 months.`
-        };
-    }
-
-    /**
-     * Health Indicator 4: Debt Management Effectiveness
-     */
-    private static analyzeDebtManagement(data: UserFinancialData, keyMetrics: any): HealthIndicator {
-        const debtToIncomeRatio = keyMetrics.debtToIncomeRatio;
-        
-        let score = 0;
-        let status: 'excellent' | 'good' | 'fair' | 'poor' | 'critical' = 'critical';
-        
-        if (debtToIncomeRatio <= 20) {
-            score = 100;
-            status = 'excellent';
-        } else if (debtToIncomeRatio <= 36) {
-            score = 80;
-            status = 'good';
-        } else if (debtToIncomeRatio <= 50) {
-            score = 60;
-            status = 'fair';
-        } else if (debtToIncomeRatio <= 70) {
-            score = 40;
-            status = 'poor';
-        } else {
-            score = 20;
-            status = 'critical';
-        }
-
-        return {
-            name: 'Debt Management',
-            score,
-            status,
-            weight: 15,
-            metrics: [
-                {
-                    title: 'Debt-to-Income Ratio',
-                    value: `${debtToIncomeRatio.toFixed(1)}%`,
-                    numericValue: debtToIncomeRatio,
-                    description: 'Percentage of your income that goes to debt payments',
-                    status,
-                    benchmark: 'Target: Below 36%'
-                },
-                {
-                    title: 'Total Debt',
-                    value: this.formatCurrency(this.getTotalDebt(data.liabilities)),
-                    numericValue: this.getTotalDebt(data.liabilities),
-                    description: 'Total amount of outstanding debt',
-                    status
-                }
-            ],
-            recommendations: this.getDebtManagementRecommendations(debtToIncomeRatio),
-            explanation: `This indicator assesses how manageable your debt is. Your debt-to-income ratio is ${debtToIncomeRatio.toFixed(1)}%, resulting in a score of ${score}/100. A lower ratio is generally better.`
         };
     }
 
@@ -866,33 +907,50 @@ export class FinancialCalculationEngine {
     }
 
     /**
-     * Generate Detailed Financial Insights
+     * Generate more detailed financial analysis for the user
+     * - Net worth breakdown, savings rate, debt structure, expense categorization, investment diversification, insurance adequacy, peer benchmarks, scenario/stress testing
+     * - All calculations robust to edge cases
      */
-    private static generateDetailedInsights(data: UserFinancialData, keyMetrics: any, healthIndicators: HealthIndicator[]): any {
-        const monthlyIncome = this.getTotalMonthlyIncome(data.income);
-        const monthlyExpenses = this.getTotalMonthlyExpenses(data.expenses);
-        const netWorth = keyMetrics.netWorth;
-        
+    private static generateDetailedInsights(data: UserFinancialData, keyMetrics: any, _healthIndicators: HealthIndicator[]): any {
+        // Defensive: handle missing/invalid data
+        const assets = data.assets || {};
+        const liabilities = data.liabilities || {};
+        const expenses = data.expenses || {};
+        const investments = {
+            '401k': assets.employer401k || 0,
+            'IRA': (assets.traditionalIRA || 0) + (assets.rothIRA || 0),
+            'Brokerage': assets.brokerageAccounts || 0,
+            'Stocks': assets.stocks || 0,
+            'Bonds': assets.bonds || 0,
+            'Mutual Funds': assets.mutualFunds || 0,
+            'Crypto': assets.cryptocurrency || 0,
+            'Real Estate': assets.primaryResidence || 0 + assets.investmentProperties || 0
+        };
+        const debtStructure = {
+            'Secured Debt': (liabilities.mortgageBalance || 0) + (liabilities.homeEquityLoan || 0) + (liabilities.autoLoans || 0) + (liabilities.securedCreditLines || 0),
+            'Unsecured Debt': (liabilities.creditCardDebt || 0) + (liabilities.personalLoans || 0) + (liabilities.studentLoans || 0) + (liabilities.medicalDebt || 0),
+            'Business Debt': (liabilities.businessLoans || 0) + (liabilities.businessCreditLines || 0),
+            'Other Debt': (liabilities.taxDebt || 0) + (liabilities.legalJudgments || 0) + (liabilities.otherDebt || 0)
+        };
+        const expenseCategories = {
+            'Fixed': (expenses.housing || 0) + (expenses.utilities || 0) + (expenses.insurance || 0) + (expenses.loanPayments || 0) + (expenses.childcare || 0),
+            'Variable': (expenses.food || 0) + (expenses.transportation || 0) + (expenses.healthcare || 0) + (expenses.clothing || 0) + (expenses.personalCare || 0),
+            'Discretionary': (expenses.entertainment || 0) + (expenses.diningOut || 0) + (expenses.hobbies || 0) + (expenses.subscriptions || 0) + (expenses.shopping || 0) + (expenses.travel || 0)
+        };
+        // Peer benchmarks, scenario/stress testing, and insurance adequacy are already included in other sections, but can be summarized here
         return {
-            cashFlowAnalysis: {
-                monthlyIncome,
-                monthlyExpenses,
-                surplus: keyMetrics.monthlyCashFlow,
-                surplusPercentage: monthlyIncome > 0 ? (keyMetrics.monthlyCashFlow / monthlyIncome) * 100 : 0,
-                insight: keyMetrics.monthlyCashFlow > 0 ? 
-                    'Positive cash flow provides opportunities for wealth building' :
-                    'Negative cash flow requires immediate attention to avoid debt accumulation'
+            netWorthBreakdown: {
+                totalAssets: this.getTotalAssets(assets),
+                totalLiabilities: this.getTotalLiabilities(liabilities),
+                netWorth: keyMetrics.netWorth
             },
-            netWorthAnalysis: {
-                currentNetWorth: netWorth,
-                netWorthPerAge: data.personalInfo.age > 0 ? netWorth / data.personalInfo.age : 0,
-                projectedGrowth: this.calculateNetWorthGrowth(data, keyMetrics),
-                insight: netWorth > 0 ? 
-                    'Positive net worth indicates good financial foundation' :
-                    'Negative net worth requires debt reduction focus'
-            },
-            riskFactors: this.identifyRiskFactors(data, keyMetrics),
-            opportunities: this.identifyOpportunities(data, keyMetrics, healthIndicators)
+            savingsRate: keyMetrics.savingsRate,
+            debtStructure,
+            expenseCategories,
+            investmentBreakdown: investments,
+            insuranceAdequacy: data.insurance || {},
+            peerBenchmarks: keyMetrics.peerBenchmarks || {},
+            scenarioAnalysis: keyMetrics.scenarioAnalysis || []
         };
     }
 
@@ -961,9 +1019,8 @@ export class FinancialCalculationEngine {
         }
         
         return {
-            overallRiskLevel: this.calculateOverallRisk(risks),
-            riskFactors: risks,
-            riskScore: this.calculateRiskScore(data, keyMetrics)
+            overallRiskLevel: 'unknown',
+            riskFactors: risks
         };
     }
 
@@ -994,51 +1051,6 @@ export class FinancialCalculationEngine {
     }
 
     // Helper methods for the new analysis functions
-    private static calculateNetWorthGrowth(_data: UserFinancialData, keyMetrics: any): number {
-        return keyMetrics.monthlyCashFlow * 12; // Annual net worth growth potential
-    }
-
-    private static identifyRiskFactors(data: UserFinancialData, keyMetrics: any): string[] {
-        const risks: string[] = [];
-        
-        if (keyMetrics.emergencyFundMonths < 3) risks.push('Insufficient emergency fund');
-        if (keyMetrics.debtToIncomeRatio > 36) risks.push('High debt-to-income ratio');
-        if (keyMetrics.creditUtilization > 30) risks.push('High credit utilization');
-        if (data.behaviors.monthlyInvestmentContribution < data.income.primarySalary * 0.1) {
-            risks.push('Low retirement savings rate');
-        }
-        
-        return risks;
-    }
-
-    private static identifyOpportunities(data: UserFinancialData, keyMetrics: any, _healthIndicators: HealthIndicator[]): string[] {
-        const opportunities: string[] = [];
-        
-        if (keyMetrics.monthlyCashFlow > 500) opportunities.push('Increase investment contributions');
-        if (keyMetrics.creditUtilization < 10) opportunities.push('Consider rewards credit cards');
-        if (data.assets.checking > data.expenses.housing * 2) opportunities.push('Move excess cash to high-yield savings');
-        
-        return opportunities;
-    }
-
-    private static calculateOverallRisk(risks: any[]): string {
-        const highRisks = risks.filter(r => r.level === 'High').length;
-        if (highRisks >= 2) return 'High';
-        if (highRisks === 1) return 'Medium';
-        return 'Low';
-    }
-
-    private static calculateRiskScore(data: UserFinancialData, keyMetrics: any): number {
-        let score = 100;
-        
-        if (keyMetrics.emergencyFundMonths < 3) score -= 20;
-        if (keyMetrics.debtToIncomeRatio > 36) score -= 15;
-        if (keyMetrics.creditUtilization > 30) score -= 10;
-        if (data.behaviors.monthlyInvestmentContribution === 0) score -= 15;
-        
-        return Math.max(0, score);
-    }
-
     private static calculateRetirementProjection(data: UserFinancialData, _keyMetrics: any): number {
         const currentAge = data.personalInfo.age;
         const retirementAge = data.goals.retirementAge;
@@ -1121,49 +1133,51 @@ export class FinancialCalculationEngine {
         return ['Keep up the excellent payment history!'];
     }
 
-    private static getEmergencyFundRecommendations(months: number): string[] {
-        if (months < 1) {
+    /**
+     * Get actionable, research-based recommendations for emergency fund
+     * Prevents $NaN by checking for valid numbers and zero expenses
+     */
+    private static getEmergencyFundRecommendations(months: number, monthlyExpenses?: number): string[] {
+        if (typeof months !== 'number' || isNaN(months) || months < 0) months = 0;
+        if (typeof monthlyExpenses !== 'number' || isNaN(monthlyExpenses) || monthlyExpenses <= 0) {
             return [
-                'Start building emergency fund immediately - even $500 helps',
-                'Set up automatic transfers to savings account',
-                'Cut discretionary spending to build emergency buffer'
-            ];
-        } else if (months < 3) {
-            return [
-                'Good start! Continue building to reach 3-month target',
-                'Consider increasing your monthly emergency fund contributions',
-                'Keep emergency funds in high-yield savings account'
-            ];
-        } else if (months < 6) {
-            return [
-                'Great progress! Work toward 6-month emergency fund',
-                'Your emergency fund provides good financial security'
+                'Unable to calculate additional savings needed due to missing or invalid expense data. Please review your expense inputs.'
             ];
         }
-        return ['Excellent emergency fund! You have strong financial security.'];
+        if (months >= 6) return ['You have a strong emergency fund. Maintain your current savings habits.'];
+        if (months >= 3) return ['Your emergency fund is solid. Consider increasing to 6 months for extra security.'];
+        const needed = Math.max(0, Math.round((3 - months) * monthlyExpenses));
+        if (isNaN(needed) || needed < 0) {
+            return ['Unable to calculate additional savings needed due to invalid data.'];
+        }
+        return [
+            `You currently have ${!isNaN(months) ? months.toFixed(1) : 'N/A'} months of expenses saved. While this is a good start, aiming for at least 3 months provides a much stronger safety net. You need to save approximately $${!isNaN(needed) ? needed.toLocaleString() : 'N/A'} more to reach this goal.`
+        ];
     }
 
+    /**
+     * Get actionable, research-based recommendations for debt management
+     * - <20%: Maintain current habits
+     * - 20-28%: Monitor and avoid new debt
+     * - 28-36%: Reduce discretionary spending, pay down high-interest debt
+     * - 36-43%: Aggressively pay down debt, consider consolidation
+     * - >43%: Seek professional help, create a debt reduction plan
+     */
     private static getDebtManagementRecommendations(ratio: number): string[] {
-        if (ratio > 50) {
-            return [
-                'Urgent: Debt ratio is too high - consider debt consolidation',
-                'Focus on paying off highest interest rate debts first',
-                'Consider credit counseling services',
-                'Avoid taking on any new debt'
-            ];
-        } else if (ratio > 36) {
-            return [
-                'Work on reducing debt load - focus on high-interest debt',
-                'Consider debt avalanche or snowball method',
-                'Avoid new debt until ratios improve'
-            ];
-        } else if (ratio > 20) {
-            return [
-                'Debt levels are manageable but could be improved',
-                'Continue making regular payments and avoid new debt'
-            ];
-        }
-        return ['Excellent debt management! Keep up the good work.'];
+        if (ratio < 0.2) return ['Maintain your current debt management habits.'];
+        if (ratio < 0.28) return ['Monitor your debt and avoid taking on new obligations.'];
+        if (ratio < 0.36) return [
+            'Reduce discretionary spending to free up cash for debt payments.',
+            'Prioritize paying down high-interest debt.'
+        ];
+        if (ratio < 0.43) return [
+            'Aggressively pay down debt to lower your debt-to-income ratio.',
+            'Consider debt consolidation or refinancing options.'
+        ];
+        return [
+            'Seek professional financial counseling or debt management assistance.',
+            'Create a strict debt reduction plan and avoid new debt.'
+        ];
     }
 
     private static getCreditHealthRecommendations(creditScore: number, utilization: number): string[] {

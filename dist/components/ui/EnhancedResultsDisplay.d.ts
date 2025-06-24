@@ -7,18 +7,12 @@ export declare class EnhancedResultsDisplay {
     private container;
     constructor(containerId: string);
     render(analysisResult: ComprehensiveAnalysisResult): void;
-    private generateHTML;
     private generateOverallScoreSection;
     private generateKeyInsightsSection;
-    private generateHealthIndicatorsSection;
     private generateActionPlanSection;
-    private generateKeyInsights;
     private attachInteractiveElements;
-    private getHealthLevelText;
-    private getScoreExplanation;
-    private formatStatus;
     private formatTimeframe;
     private formatImpact;
-    private formatCurrency;
+    private getScoreColor;
 }
 //# sourceMappingURL=EnhancedResultsDisplay.d.ts.map

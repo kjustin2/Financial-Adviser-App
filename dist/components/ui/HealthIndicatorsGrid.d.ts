@@ -10,7 +10,9 @@ export declare class HealthIndicatorsGrid {
     private generateHTML;
     private generateIndicatorCard;
     private generateMetricsHTML;
+    private formatMetricValue;
     private generateRecommendationsHTML;
     private formatStatus;
+    private formatCurrency;
 }
 //# sourceMappingURL=HealthIndicatorsGrid.d.ts.map

@@ -80,5 +80,6 @@ export declare class BiasRadarChart {
      * Resize chart to fit container
      */
     resize(): void;
+    private formatScore;
 }
 //# sourceMappingURL=BiasRadarChart.d.ts.map

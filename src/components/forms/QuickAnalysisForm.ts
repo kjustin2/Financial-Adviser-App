@@ -285,16 +285,8 @@ export class QuickAnalysisForm {
         // First, strip any non-digit characters except for a decimal point
         const value = input.value.replace(/[^0-9.]/g, '');
         const numericValue = parseFloat(value) || 0;
-
-        if (numericValue > 0) {
-            // Format to a string with commas, but no fractional digits for simplicity
-            input.value = numericValue.toLocaleString('en-US', {
-                maximumFractionDigits: 0,
-            });
-        } else {
-            // Clear the input if it's zero or invalid
-            input.value = '';
-        }
+        // Allow zero as a valid value
+        input.value = numericValue > 0 ? numericValue.toLocaleString('en-US', { maximumFractionDigits: 0 }) : '0';
     }
 
     private updateRealTimeCalculations(): void {
@@ -306,31 +298,46 @@ export class QuickAnalysisForm {
 
         // Update emergency fund months
         const totalExpenses = housing + expenses;
-        if (totalExpenses > 0 && savings > 0) {
-            const emergencyMonths = (savings / totalExpenses).toFixed(1);
-            const emergencyGoal = document.getElementById('emergencyGoal');
-            if (emergencyGoal) {
-                emergencyGoal.textContent = emergencyMonths;
-                emergencyGoal.className = parseFloat(emergencyMonths) >= 3 ? 'good' : 'needs-improvement';
+        const emergencyGoal = document.getElementById('emergencyGoal');
+        if (emergencyGoal) {
+            if (totalExpenses > 0 && savings >= 0) {
+                const emergencyMonths = (savings / totalExpenses);
+                emergencyGoal.textContent = isNaN(emergencyMonths) ? 'N/A' : emergencyMonths.toFixed(1);
+                emergencyGoal.className = !isNaN(emergencyMonths) && emergencyMonths >= 3 ? 'good' : 'needs-improvement';
+            } else {
+                emergencyGoal.textContent = 'N/A';
+                emergencyGoal.className = '';
             }
         }
 
         // Update debt-to-income ratio
-        if (income > 0 && debt > 0) {
+        const debtRatioElement = document.getElementById('debtRatio');
+        if (income > 0) {
             const annualIncome = income * 12;
-            const debtRatio = ((debt / annualIncome) * 100).toFixed(1);
-            const debtRatioElement = document.getElementById('debtRatio');
-            if (debtRatioElement) {
-                debtRatioElement.textContent = `${debtRatio}%`;
-                debtRatioElement.className = parseFloat(debtRatio) <= 36 ? 'good' : 'needs-improvement';
+            let debtRatio = 0;
+            if (debt > 0) {
+                debtRatio = ((debt / annualIncome) * 100);
+                if (debtRatioElement) {
+                    debtRatioElement.textContent = `${debtRatio.toFixed(1)}%`;
+                    debtRatioElement.className = debtRatio <= 36 ? 'good' : 'needs-improvement';
+                }
+            } else if (debt === 0) {
+                if (debtRatioElement) {
+                    debtRatioElement.textContent = 'No debt! 🎉';
+                    debtRatioElement.className = 'good';
+                }
             }
+        } else if (debtRatioElement) {
+            debtRatioElement.textContent = 'N/A';
+            debtRatioElement.className = '';
         }
     }
 
     private getNumericValue(fieldName: string): number {
-        const input = document.getElementById(fieldName) as HTMLInputElement;
-        // Strip commas and currency symbols for accurate parsing
-        return input ? parseFloat(input.value.replace(/[^0-9.-]/g, '')) || 0 : 0;
+        const value = Number((this.container.querySelector(`[name="${fieldName}"]`) as HTMLInputElement)?.value);
+        // Allow zero as valid, only block negatives and NaN
+        if (typeof value !== 'number' || isNaN(value) || value < 0) return 0;
+        return value;
     }
 
     private updateProgress(): void {
@@ -381,24 +388,20 @@ export class QuickAnalysisForm {
     private validateField(input: HTMLInputElement): void {
         const fieldContainer = input.closest('.form-field');
         const feedback = fieldContainer?.querySelector('.input-feedback');
-        
         if (!feedback) return;
-
         let isValid = true;
         let message = '';
-
         const value = this.getNumericValue(input.name);
         const fieldName = input.name;
-
         // Basic validation
-        if (input.required && !input.value.trim()) {
+        if (input.required && input.value.trim() === '') {
             isValid = false;
             message = 'This field is required';
         } else if (value < 0) {
             isValid = false;
             message = 'Value cannot be negative';
         } else {
-            // Field-specific validation (only for hard rules)
+            // Field-specific validation
             switch (fieldName) {
                 case 'creditScore':
                     if (value < 300 || value > 850) {
@@ -406,16 +409,11 @@ export class QuickAnalysisForm {
                         message = 'Credit score must be between 300 and 850';
                     }
                     break;
-                // REMOVED: Subjective validation for income and housing to prevent incorrect limits.
-                // The user should be able to input any realistic value without warnings
-                // that could be misinterpreted as errors.
+                // $0 is valid for all other fields, including debt
             }
         }
-
-        // Update field appearance
         fieldContainer?.classList.toggle('field-valid', isValid);
         fieldContainer?.classList.toggle('field-error', !isValid);
-        
         if (feedback) {
             feedback.textContent = message;
             (feedback as HTMLElement).style.display = message ? 'block' : 'none';
@@ -549,10 +547,10 @@ export class QuickAnalysisForm {
             throw new Error('Monthly income is required and cannot be zero');
         }
 
-        // Build comprehensive data structure using ONLY user inputs with intelligent allocation
+        // Use only user-entered values for all fields
         return {
             personalInfo: {
-                age: 35, // Reasonable default for calculations
+                age: 35,
                 maritalStatus: 'single',
                 dependents: 0,
                 state: 'CA',
@@ -578,38 +576,38 @@ export class QuickAnalysisForm {
             },
             expenses: {
                 housing: monthlyHousing, // USER INPUT
-                utilities: Math.round(monthlyExpenses * 0.15), // Based on user's total expenses
-                insurance: Math.round(monthlyExpenses * 0.10),
-                loanPayments: Math.round(totalDebt * 0.02), // Based on user's debt
+                utilities: 0,
+                insurance: 0,
+                loanPayments: 0,
                 childcare: 0,
-                food: Math.round(monthlyExpenses * 0.30), // Based on user's total expenses
-                transportation: Math.round(monthlyExpenses * 0.25),
-                healthcare: Math.round(monthlyExpenses * 0.08),
-                clothing: Math.round(monthlyExpenses * 0.05),
-                personalCare: Math.round(monthlyExpenses * 0.03),
-                entertainment: Math.round(monthlyExpenses * 0.10),
-                diningOut: Math.round(monthlyExpenses * 0.08),
-                hobbies: Math.round(monthlyExpenses * 0.04),
-                subscriptions: Math.round(monthlyExpenses * 0.02),
-                shopping: Math.round(monthlyExpenses * 0.06),
-                travel: Math.round(monthlyExpenses * 0.08),
-                creditCardPayments: Math.round(totalDebt * 0.015), // Based on user's debt
-                studentLoanPayments: Math.round(totalDebt * 0.005),
+                food: 0,
+                transportation: 0,
+                healthcare: 0,
+                clothing: 0,
+                personalCare: 0,
+                entertainment: 0,
+                diningOut: 0,
+                hobbies: 0,
+                subscriptions: 0,
+                shopping: 0,
+                travel: 0,
+                creditCardPayments: 0,
+                studentLoanPayments: 0,
                 otherDebtPayments: 0
             },
             assets: {
-                checking: Math.round(totalSavings * 0.20), // Based on user's savings
-                savings: Math.round(totalSavings * 0.50),
+                checking: totalSavings, // USER INPUT
+                savings: 0,
                 moneyMarket: 0,
-                emergencyFund: Math.round(totalSavings * 0.30),
-                employer401k: Math.round(monthlyIncome * 12 * 2), // Based on user's income
+                emergencyFund: 0,
+                employer401k: 0,
                 traditionalIRA: 0,
                 rothIRA: 0,
-                brokerageAccounts: Math.round(totalSavings * 0.10),
+                brokerageAccounts: 0,
                 stocks: 0,
                 bonds: 0,
                 mutualFunds: 0,
-                primaryResidence: monthlyHousing * 200, // Based on user's housing cost
+                primaryResidence: 0,
                 investmentProperties: 0,
                 cryptocurrency: 0,
                 preciousMetals: 0,
@@ -618,13 +616,13 @@ export class QuickAnalysisForm {
                 otherAssets: 0
             },
             liabilities: {
-                mortgageBalance: monthlyHousing > 1000 ? monthlyHousing * 150 : 0, // Based on user's housing
+                mortgageBalance: 0,
                 homeEquityLoan: 0,
-                autoLoans: Math.round(totalDebt * 0.30), // Based on user's debt
+                autoLoans: 0,
                 securedCreditLines: 0,
-                creditCardDebt: Math.round(totalDebt * 0.40),
-                personalLoans: Math.round(totalDebt * 0.10),
-                studentLoans: Math.round(totalDebt * 0.20),
+                creditCardDebt: totalDebt, // USER INPUT
+                personalLoans: 0,
+                studentLoans: 0,
                 medicalDebt: 0,
                 businessLoans: 0,
                 businessCreditLines: 0,
@@ -632,31 +630,31 @@ export class QuickAnalysisForm {
                 legalJudgments: 0,
                 otherDebt: 0,
                 creditScore: creditScore, // USER INPUT
-                totalCreditLimit: Math.round(totalDebt * 2.5) // Based on user's debt
+                totalCreditLimit: 0
             },
             insurance: {
                 healthInsurance: true,
-                healthDeductible: 2000,
-                healthOutOfPocketMax: 8000,
+                healthDeductible: 0,
+                healthOutOfPocketMax: 0,
                 lifeInsurance: false,
                 lifeCoverageAmount: 0,
                 shortTermDisability: false,
                 longTermDisability: false,
                 disabilityCoveragePercent: 0,
-                homeInsurance: true,
-                autoInsurance: true,
+                homeInsurance: false,
+                autoInsurance: false,
                 umbrellaPolicy: false,
                 insuranceConfidence: 'somewhat-confident'
             },
             goals: {
-                emergencyFundTarget: (monthlyHousing + monthlyExpenses) * 6, // Based on user's expenses
+                emergencyFundTarget: 0,
                 debtPayoffGoal: totalDebt > 0,
                 majorPurchaseAmount: 0,
                 homeDownPayment: 0,
                 educationFunding: 0,
                 careerChangeBuffer: 0,
                 retirementAge: 65,
-                retirementIncomeNeeded: monthlyIncome * 0.80, // Based on user's income
+                retirementIncomeNeeded: 0,
                 legacyGoalAmount: 0,
                 retirementConfidence: 'somewhat-confident',
                 longTermGoalConfidence: 'somewhat-confident',
@@ -664,12 +662,12 @@ export class QuickAnalysisForm {
                 investmentExperience: 'intermediate'
             },
             behaviors: {
-                billPaymentReliability: creditScore > 750 ? 'always-on-time' : creditScore > 650 ? 'usually-on-time' : 'sometimes-late', // Based on user's credit score
+                billPaymentReliability: creditScore > 750 ? 'always-on-time' : creditScore > 650 ? 'usually-on-time' : 'sometimes-late',
                 budgetingMethod: 'simple-tracking',
                 financialPlanningEngagement: 'occasionally-plan',
                 automaticSavings: totalSavings > monthlyIncome,
-                monthlyInvestmentContribution: Math.round(monthlyIncome * 0.10), // Based on user's income
-                emergencyFundPriority: totalSavings < (monthlyHousing + monthlyExpenses) * 3 ? 'high' : 'medium', // Based on user's data
+                monthlyInvestmentContribution: 0,
+                emergencyFundPriority: totalSavings < (monthlyHousing + monthlyExpenses) * 3 ? 'high' : 'medium',
                 impulseSpendingFrequency: 'sometimes',
                 expenseTrackingMethod: 'casual'
             }
@@ -687,8 +685,7 @@ export class QuickAnalysisForm {
                     </ul>
                 </div>
             `;
-            (errorContainer as HTMLElement).style.display = 'block';
-            errorContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            errorContainer.style.display = 'block';
         }
     }
-} 
+}

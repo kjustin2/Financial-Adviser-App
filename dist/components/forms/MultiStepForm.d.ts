@@ -28,7 +28,7 @@ export declare class MultiStepForm {
     private nextStep;
     private showValidationErrors;
     private completeForm;
-    private isFormComplete;
+    private buildCompleteUserData;
     getCurrentData(): Partial<UserFinancialData>;
 }
 //# sourceMappingURL=MultiStepForm.d.ts.map

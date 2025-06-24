@@ -302,22 +302,14 @@ export class BiasImpactChart {
      * Format currency values
      */
     private formatCurrency(amount: number): string {
-        const absAmount = Math.abs(amount);
-        const formatter = new Intl.NumberFormat('en-US', {
+        if (typeof amount !== 'number' || isNaN(amount)) return 'N/A';
+        if (amount === 0) return '$0';
+        return new Intl.NumberFormat('en-US', {
             style: 'currency',
             currency: 'USD',
             minimumFractionDigits: 0,
             maximumFractionDigits: 0
-        });
-
-        let formatted = formatter.format(absAmount);
-        
-        // Add negative sign if needed
-        if (amount < 0) {
-            formatted = '-' + formatted;
-        }
-
-        return formatted;
+        }).format(amount);
     }
 
     /**

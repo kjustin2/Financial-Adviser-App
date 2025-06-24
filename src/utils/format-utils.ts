@@ -8,6 +8,8 @@
  * @returns A string formatted as currency (e.g., "$1,234.56").
  */
 export function formatCurrency(amount: number): string {
+    if (typeof amount !== 'number' || isNaN(amount)) return 'N/A';
+    if (amount === 0) return '$0';
     return new Intl.NumberFormat('en-US', {
         style: 'currency',
         currency: 'USD',

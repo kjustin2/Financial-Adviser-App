@@ -55,11 +55,27 @@ export interface ComprehensiveAnalysisResult {
         monthlyCashFlow: number;
         emergencyFundMonths: number;
         debtToIncomeRatio: number;
-        savingsRate: number;
+        savingsRate: number | string;
         creditUtilization: number;
         netWorth: number;
         liquidityRatio: number;
         assetAllocationScore: number;
+        dtiBreakdown?: {
+            totalDebt: number;
+            totalIncome: number;
+            debtToIncomeRatio: number;
+        };
+        netWorthBreakdown?: {
+            totalAssets: number;
+            totalLiabilities: number;
+            netWorth: number;
+        };
+        savingsRateBreakdown?: {
+            savings: number;
+            totalIncome: number;
+            formula: string;
+            savingsRate: number;
+        };
     };
     liquidityAnalysis: FinancialMetric[];
     debtAnalysis: FinancialMetric[];

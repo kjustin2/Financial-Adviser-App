@@ -10,7 +10,6 @@ export declare class ImprovedFinancialHealthApp {
     private multiStepForm?;
     private quickForm?;
     private resultsDisplay?;
-    private analysisResult?;
     private analysisChoiceContainer?;
     private formContainer?;
     private resultsContainer?;
@@ -27,9 +26,6 @@ export declare class ImprovedFinancialHealthApp {
     private displayResults;
     private addResultsNavigation;
     private resetApplication;
-    private exportResults;
-    private saveProgress;
     private showError;
-    private showSuccessMessage;
 }
 //# sourceMappingURL=ImprovedApp.d.ts.map

@@ -25,11 +25,27 @@ export declare class FinancialCalculationEngine {
      * Health Indicator 2: Bill Payment Reliability
      */
     private static analyzeBillPaymentReliability;
+    /**
+     * Analyze Debt Management Effectiveness (core health indicator #4)
+     * Uses research-based debt-to-income ratio, edge case handling, and clear status logic.
+     * - Target: <36% total DTI, <28% housing DTI
+     * - Status: 'excellent' <20%, 'good' <28%, 'fair' <36%, 'poor' <43%, 'critical' >=43%
+     * - Handles zero/negative income and missing data
+     */
+    private static analyzeDebtManagement;
     private static getTotalMonthlyIncome;
     private static getTotalMonthlyExpenses;
     private static getTotalAssets;
-    private static getTotalLiabilities;
+    /**
+     * Get total monthly debt payments from all liability categories
+     * Allows total debt to be zero and prevents NaN
+     */
     private static getTotalDebt;
+    /**
+     * Get total liabilities from all liability categories
+     * Sums all liability fields, treating missing as zero
+     */
+    private static getTotalLiabilities;
     private static formatCurrency;
     private static formatReliabilityText;
     private static calculateOverallHealthScore;
@@ -38,10 +54,6 @@ export declare class FinancialCalculationEngine {
      * Health Indicator 3: Emergency Savings Adequacy
      */
     private static analyzeEmergencySavings;
-    /**
-     * Health Indicator 4: Debt Management Effectiveness
-     */
-    private static analyzeDebtManagement;
     /**
      * Health Indicator 5: Credit Score Health
      */
@@ -84,7 +96,9 @@ export declare class FinancialCalculationEngine {
      */
     private static analyzeScenarios;
     /**
-     * Generate Detailed Financial Insights
+     * Generate more detailed financial analysis for the user
+     * - Net worth breakdown, savings rate, debt structure, expense categorization, investment diversification, insurance adequacy, peer benchmarks, scenario/stress testing
+     * - All calculations robust to edge cases
      */
     private static generateDetailedInsights;
     /**
@@ -99,11 +113,6 @@ export declare class FinancialCalculationEngine {
      * Analyze Financial Goals
      */
     private static analyzeFinancialGoals;
-    private static calculateNetWorthGrowth;
-    private static identifyRiskFactors;
-    private static identifyOpportunities;
-    private static calculateOverallRisk;
-    private static calculateRiskScore;
     private static calculateRetirementProjection;
     private static isRetirementOnTrack;
     private static calculateTimeToEmergencyGoal;
@@ -111,7 +120,19 @@ export declare class FinancialCalculationEngine {
     private static getCreditScoreStatus;
     private static getSpendingRecommendations;
     private static getPaymentReliabilityRecommendations;
+    /**
+     * Get actionable, research-based recommendations for emergency fund
+     * Prevents $NaN by checking for valid numbers and zero expenses
+     */
     private static getEmergencyFundRecommendations;
+    /**
+     * Get actionable, research-based recommendations for debt management
+     * - <20%: Maintain current habits
+     * - 20-28%: Monitor and avoid new debt
+     * - 28-36%: Reduce discretionary spending, pay down high-interest debt
+     * - 36-43%: Aggressively pay down debt, consider consolidation
+     * - >43%: Seek professional help, create a debt reduction plan
+     */
     private static getDebtManagementRecommendations;
     private static getCreditHealthRecommendations;
     private static getInsuranceRecommendations;
