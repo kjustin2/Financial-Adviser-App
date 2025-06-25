@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Comprehensive Financial Health Analyzer</title>
     <style>
         :root {
@@ -1038,836 +1038,193 @@
             display: block;
         }
 
-        /* Mobile-First Responsive Design */
-        @media (max-width: 768px) {
-            body {
-                padding: 10px;
-            }
-
-            .container {
-                margin: 0;
-                border-radius: 8px;
-                overflow-x: hidden;
-            }
-            
-            .header {
-                padding: 24px 16px;
-            }
-            
-            .header h1 {
-                font-size: 1.75rem;
-                line-height: 1.3;
-            }
-            
-            .header p {
-                font-size: 1rem;
-                line-height: 1.5;
-            }
-            
-            .form-container,
-            .results-container {
-                padding: 16px;
-            }
-            
-            .step-fields {
-                grid-template-columns: 1fr;
-                gap: 16px;
-                margin-bottom: 32px;
-            }
-
-            .form-field input,
-            .form-field select {
-                padding: 14px 16px;
-                font-size: 16px; /* Prevents zoom on iOS */
-                width: 100%;
-                min-height: 48px; /* Touch-friendly target */
-            }
-
-            .btn-primary,
-            .btn-secondary {
-                padding: 14px 20px;
-                font-size: 1rem;
-                min-height: 48px;
-                width: 100%;
-                margin: 8px 0;
-            }
-
-            .form-navigation {
-                flex-direction: column;
-                gap: 12px;
-                padding-top: 24px;
-            }
-
-            .form-navigation .btn-secondary {
-                order: 2;
-            }
-
-            .form-navigation .btn-primary {
-                order: 1;
-            }
-
-            .step-header h2 {
-                font-size: 1.5rem;
-                line-height: 1.3;
-                margin-bottom: 12px;
-            }
-
-            .step-header p {
-                font-size: 1rem;
-                line-height: 1.5;
-            }
-
-            .health-indicators-grid {
-                grid-template-columns: 1fr;
-                gap: 16px;
-            }
-
-            .health-score-summary {
-                padding: 24px 16px;
-                margin-bottom: 24px;
-                border-radius: 16px;
-            }
-
-            .health-score-circle {
-                width: 100px;
-                height: 100px;
-                font-size: 1.75rem;
-                margin-bottom: 20px;
-            }
-
-            .indicator-card {
-                padding: 20px 16px;
-                border-radius: 12px;
-            }
-
-            .indicator-card h3 {
-                font-size: 1.1rem;
-                line-height: 1.3;
-            }
-
-            .indicator-score {
-                font-size: 1.5rem;
-            }
-
-            .indicator-status {
-                font-size: 0.875rem;
-                padding: 4px 12px;
-            }
-
-            .indicator-description {
-                font-size: 0.875rem;
-                line-height: 1.4;
-            }
-
-            .key-metrics-section,
-            .mitigation-report-section {
-                padding: 20px 16px;
-                border-radius: 16px;
-                margin-bottom: 24px;
-            }
-
-            .key-metrics-section h3,
-            .mitigation-report-section h3 {
-                font-size: 1.25rem;
-                margin-bottom: 20px;
-            }
-
-            .loading-indicator {
-                padding: 32px 16px;
-            }
-
-            .loading-indicator p {
-                font-size: 1rem;
-                margin-top: 16px;
-            }
-
-            .loading-spinner {
-                width: 36px;
-                height: 36px;
-                border-width: 3px;
-            }
-
-            .metric-row {
-                padding: 12px 16px;
-                margin-bottom: 8px;
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 4px;
-                border-radius: 8px;
-            }
-
-            .metric-label {
-                font-size: 0.875rem;
-                font-weight: 600;
-            }
-
-            .metric-value {
-                font-size: 1rem;
-                font-weight: 700;
-            }
-
-            .indicator-name {
-                font-size: 0.95rem;
-                line-height: 1.3;
-            }
-
-            #healthLevelText {
-                font-size: 1.25rem;
-                line-height: 1.3;
-                margin-bottom: 8px;
-            }
-
-            #healthScoreDescription {
-                font-size: 0.925rem;
-                line-height: 1.4;
-            }
-
-            /* Fix horizontal overflow issues */
-            .container * {
-                max-width: 100%;
-                box-sizing: border-box;
-            }
-
-            /* Improve text readability */
-            .field-description {
-                font-size: 0.8rem;
-                line-height: 1.4;
-            }
-
-            /* Better spacing for small screens */
-            .multi-step-form {
-                max-width: 100%;
-            }
-
-            .progress-bar {
-                margin-bottom: 16px;
-            }
-
-            .step-header {
-                margin-bottom: 32px;
-            }
-        }
-
-        /* Extra small screens */
-        @media (max-width: 480px) {
-            body {
-                padding: 5px;
-            }
-
-            .header {
-                padding: 20px 12px;
-            }
-
-            .header h1 {
-                font-size: 1.5rem;
-            }
-
-            .header p {
-                font-size: 0.925rem;
-            }
-
-            .form-container,
-            .results-container {
-                padding: 12px;
-            }
-
-            .health-score-circle {
-                width: 90px;
-                height: 90px;
-                font-size: 1.5rem;
-            }
-
-            .health-score-summary {
-                padding: 20px 12px;
-            }
-
-            .indicator-card {
-                padding: 16px 12px;
-            }
-
-            .key-metrics-section,
-            .mitigation-report-section {
-                padding: 16px 12px;
-            }
-
-            .step-header h2 {
-                font-size: 1.25rem;
-            }
-
-            .form-field input,
-            .form-field select {
-                padding: 12px 14px;
-            }
-
-            .btn-primary,
-            .btn-secondary {
-                padding: 12px 16px;
-            }
-        }
-
-        /* Quick Analysis Form Enhanced Styles */
-        .quick-analysis-form {
-            max-width: 900px;
-            margin: 0 auto;
-            padding: 40px;
-            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
-            border-radius: 16px;
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-            border: 1px solid rgba(255, 255, 255, 0.8);
-        }
-
-        .quick-analysis-form .form-header {
-            text-align: center;
-            margin-bottom: 40px;
-        }
-
-        .quick-analysis-form .form-header h2 {
-            color: var(--gray-900);
-            margin-bottom: 15px;
-            font-size: 2.5rem;
-            font-weight: 700;
-            background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .quick-analysis-form .form-description {
-            color: var(--gray-600);
-            font-size: 1.2rem;
-            line-height: 1.6;
-            max-width: 600px;
-            margin: 0 auto;
-        }
-
-        .progress-indicator {
-            margin-top: 30px;
-            max-width: 400px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        .progress-indicator .progress-bar {
+        /* Mobile-First & Responsive Design (see cursor_rules.mdc) */
+        .main-content, .choice-container, .form-container, .results-container {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
             width: 100%;
-            height: 8px;
-            background: var(--gray-200);
-            border-radius: 4px;
-            overflow: hidden;
-            margin-bottom: 10px;
+            box-sizing: border-box;
         }
-
-        .progress-indicator .progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, var(--primary-color) 0%, var(--secondary-color) 100%);
-            transition: width 0.3s ease;
-            width: 0%;
-        }
-
-        .progress-indicator .progress-text {
-            text-align: center;
-            font-size: 0.9rem;
-            color: var(--gray-600);
-            margin: 0;
-        }
-
-        .quick-form {
-            margin-top: 40px;
-        }
-
-        .quick-form .form-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-            gap: 30px;
-            margin-bottom: 40px;
-        }
-
-        .quick-form .form-field {
-            position: relative;
-            background: white;
-            padding: 25px;
-            border-radius: 12px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-            border: 1px solid var(--gray-200);
-            transition: all 0.3s ease;
-        }
-
-        .quick-form .form-field:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-        }
-
-        .quick-form .form-field.field-valid {
-            border-color: var(--secondary-color);
-            box-shadow: 0 4px 6px -1px rgba(16, 185, 129, 0.1);
-        }
-
-        .quick-form .form-field.field-error {
-            border-color: var(--danger-color);
-            box-shadow: 0 4px 6px -1px rgba(239, 68, 68, 0.1);
-        }
-
-        .quick-form .field-label {
+        .choice-options {
             display: flex;
-            align-items: center;
-            gap: 8px;
-            font-weight: 600;
-            color: var(--gray-700);
-            margin-bottom: 12px;
-            font-size: 1.1rem;
-        }
-
-        .quick-form .label-text {
-            flex: 1;
-        }
-
-        .quick-form .required {
-            color: var(--danger-color);
-            font-size: 1.2rem;
-        }
-
-        .help-icon {
-            width: 20px;
-            height: 20px;
-            background: var(--gray-400);
-            color: white;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
             justify-content: center;
-            font-size: 0.8rem;
-            cursor: help;
-            transition: background-color 0.2s ease;
         }
-
-        .help-icon:hover {
-            background: var(--primary-color);
+        .choice-option {
+            flex: 1 1 220px;
+            min-width: 180px;
+            max-width: 320px;
+            margin: 0.5rem 0;
         }
-
-        .quick-form .input-wrapper {
-            position: relative;
+        .option-card {
+            min-height: 180px;
             display: flex;
+            flex-direction: column;
             align-items: center;
-            margin-bottom: 10px;
+            justify-content: space-between;
+            padding: 1.2rem 1rem;
+            border-radius: 14px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            background: #fff;
         }
-
-        .quick-form .currency-symbol {
-            position: absolute;
-            left: 16px;
-            color: var(--gray-500);
-            font-weight: 600;
-            z-index: 2;
-            pointer-events: none;
-            font-size: 1.1rem;
+        .option-card button {
+            min-width: 44px;
+            min-height: 44px;
+            font-size: 1rem;
+            border-radius: 8px;
         }
-
-        .quick-form .field-input {
+        @media (max-width: 900px) {
+            .choice-options { flex-direction: column; align-items: stretch; }
+            .choice-option { max-width: unset; width: 100%; }
+        }
+        @media (max-width: 600px) {
+            .main-content, .choice-container, .form-container, .results-container {
+                padding: 0 2vw;
+            }
+            .option-card { padding: 1rem 0.5rem; }
+            .option-card button { width: 100%; }
+        }
+        /* Ensure all buttons/inputs are touch-friendly */
+        button, .btn-primary, .btn-secondary, input, select {
+            min-width: 44px;
+            min-height: 44px;
+            font-size: 1rem;
+            border-radius: 8px;
+        }
+        /* Horizontal scroll for wide results grid on mobile */
+        .results-grid, .health-indicators-grid, #keyMetricsGrid {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            display: block;
             width: 100%;
-            padding: 16px 20px;
-            border: 2px solid var(--gray-300);
-            border-radius: 8px;
-            font-size: 1.1rem;
-            transition: all 0.3s ease;
-            background: white;
-            font-weight: 500;
         }
-
-        .quick-form .currency-input {
-            padding-left: 36px;
-        }
-
-        .quick-form .field-input:focus {
-            outline: none;
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-            transform: scale(1.02);
-        }
-
-        .quick-form .field-input:invalid {
-            border-color: var(--danger-color);
-        }
-
-        .input-feedback {
-            font-size: 0.9rem;
-            color: var(--danger-color);
-            margin-top: 5px;
-            display: none;
-            font-weight: 500;
-        }
-
-        .quick-form .field-help {
-            font-size: 0.95rem;
-            color: var(--gray-600);
-            line-height: 1.4;
-            margin-bottom: 10px;
-        }
-
-        .expense-breakdown,
-        .savings-indicator,
-        .debt-ratio-indicator {
-            padding: 10px;
-            background: var(--gray-50);
-            border-radius: 6px;
-            border: 1px solid var(--gray-200);
-        }
-
-        .savings-indicator .good,
-        .debt-ratio-indicator .good {
-            color: var(--secondary-color);
-            font-weight: 600;
-        }
-
-        .savings-indicator .needs-improvement,
-        .debt-ratio-indicator .needs-improvement {
-            color: var(--danger-color);
-            font-weight: 600;
-        }
-
-        .credit-range {
-            margin-top: 10px;
-        }
-
-        .range-indicator {
-            display: flex;
-            gap: 5px;
-            font-size: 0.8rem;
-        }
-
-        .range {
-            padding: 4px 8px;
-            border-radius: 4px;
-            color: white;
-            font-weight: 600;
-            text-align: center;
-            flex: 1;
-        }
-
-        .range.poor { background: #dc2626; }
-        .range.fair { background: #d97706; }
-        .range.good { background: #059669; }
-        .range.excellent { background: #0d9488; }
-
-        .quick-form .form-actions {
-            text-align: center;
-            margin-top: 50px;
-        }
-
-        .quick-form .btn-large {
-            padding: 18px 40px;
-            font-size: 1.2rem;
-            font-weight: 600;
-            border-radius: 12px;
-            display: inline-flex;
-            align-items: center;
-            gap: 12px;
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .quick-form .btn-large:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-            transform: none;
-        }
-
-        .quick-form .btn-large:not(:disabled):hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 15px -3px rgba(59, 130, 246, 0.3);
-        }
-
-        .quick-form .btn-large.ready {
-            background: linear-gradient(135deg, var(--secondary-color) 0%, var(--primary-color) 100%);
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-        }
-
-        .quick-form .btn-icon {
-            font-size: 1.3rem;
-        }
-
-        .btn-loader {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .spinner {
-            width: 20px;
-            height: 20px;
-            border: 2px solid transparent;
-            border-top: 2px solid white;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        .quick-form .analysis-note {
-            margin-top: 20px;
-            color: var(--gray-600);
-            font-size: 1rem;
-            max-width: 500px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        .form-benefits {
-            margin-top: 60px;
-            padding: 40px;
-            background: linear-gradient(135deg, var(--gray-50) 0%, white 100%);
-            border-radius: 16px;
-            border: 1px solid var(--gray-200);
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-        }
-
-        .form-benefits h3 {
-            color: var(--gray-900);
-            margin-bottom: 30px;
-            text-align: center;
-            font-size: 1.5rem;
-            font-weight: 600;
-        }
-
-        .benefits-list {
-            list-style: none;
-            padding: 0;
-            max-width: 600px;
-            margin: 0 auto;
-            display: grid;
-            gap: 15px;
-        }
-
-        .benefits-list li {
-            padding: 20px;
-            background: white;
-            border-radius: 10px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-            border: 1px solid var(--gray-200);
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            transition: all 0.3s ease;
-        }
-
-        .benefits-list li:hover {
-            transform: translateX(5px);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
-
-        .benefit-icon {
-            font-size: 1.5rem;
-            flex-shrink: 0;
-        }
-
-        .benefits-list li span:last-child {
-            color: var(--gray-700);
-            font-size: 1rem;
-            line-height: 1.5;
-        }
-
-        .validation-errors {
-            margin-top: 20px;
-            padding: 20px;
-            background: #fef2f2;
-            border: 1px solid #fecaca;
-            border-radius: 8px;
-            color: #991b1b;
-        }
-
-        .error-messages h4 {
-            margin: 0 0 10px 0;
-            color: #991b1b;
-        }
-
-        .error-messages ul {
-            margin: 0;
-            padding-left: 20px;
-        }
-
-        /* Tooltip Styles */
-        .tooltip {
-            position: absolute;
-            background: var(--gray-900);
-            color: white;
-            padding: 8px 12px;
-            border-radius: 6px;
-            font-size: 0.9rem;
-            z-index: 1000;
-            white-space: nowrap;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-        }
-
-        .tooltip::after {
-            content: '';
-            position: absolute;
-            top: 100%;
-            left: 50%;
-            transform: translateX(-50%);
-            border: 5px solid transparent;
-            border-top-color: var(--gray-900);
-        }
-
-        /* Mobile Responsiveness for Quick Form */
-        @media (max-width: 768px) {
-            .quick-analysis-form {
-                padding: 25px;
-                margin: 10px;
-            }
-
-            .quick-form .form-grid {
-                grid-template-columns: 1fr;
-                gap: 20px;
-            }
-
-            .quick-form .form-field {
-                padding: 20px;
-            }
-
-            .quick-analysis-form .form-header h2 {
-                font-size: 2rem;
-            }
-
-            .quick-form .btn-large {
-                padding: 16px 30px;
-                font-size: 1.1rem;
-            }
-
-            .benefits-list li {
-                padding: 15px;
-            }
-        }
-
-        html, body {
+        /* Prevent overflow */
+        html, body, .container, .main-content {
             max-width: 100vw;
             overflow-x: hidden;
         }
-        body {
-            font-size: 16px;
-            line-height: 1.5;
+        /* Readable text on mobile */
+        body, .option-card, .choice-option, .form-container, .results-container {
+            font-size: 1rem;
         }
-        @media (max-width: 600px) {
-            body {
-                font-size: 15px;
-                padding: 0 4px;
+        @media (max-width: 480px) {
+            body, .option-card, .choice-option, .form-container, .results-container {
+                font-size: 0.95rem;
             }
-            .container, .main, .dashboard, .form-section, .results-section {
-                padding: 0 2vw;
-                width: 100vw;
-                box-sizing: border-box;
-            }
-            h1, h2, h3 {
-                font-size: 1.2em;
-            }
-            button, input, select {
-                font-size: 1em;
-            }
+        }
+        /* ARIA and semantic HTML improvements */
+        .main-content[role="main"] {
+            outline: none;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h1>Comprehensive Financial Health Analyzer</h1>
-            <p>Get a detailed analysis of your financial wellness based on 8 key health indicators</p>
-        </div>
-
-        <div class="main-content">
-            <div id="analysisChoiceContainer" class="analysis-choice">
-                <div class="choice-container">
-                    <h2>Choose Your Analysis Type</h2>
-                    <div class="choice-options">
-                        <div class="choice-option">
-                            <div class="option-card quick-option">
-                                <div class="option-icon">⚡</div>
-                                <h3>Quick Analysis</h3>
-                                <p>Get instant insights with just 6 essential inputs</p>
-                                <ul class="option-features">
-                                    <li>✅ Takes less than 2 minutes</li>
-                                    <li>✅ Essential financial health metrics</li>
-                                    <li>✅ Personalized recommendations</li>
-                                </ul>
-                                <button class="btn-primary choice-btn" id="chooseQuickAnalysis">
-                                    Start Quick Analysis
-                                </button>
-                            </div>
+    <header class="header">
+        <h1>Comprehensive Financial Health Analyzer</h1>
+        <p>Your research-based, privacy-first financial health platform</p>
+    </header>
+    <main class="container" aria-label="Main content">
+        <section id="analysisChoiceContainer" aria-label="Choose Analysis Type">
+            <div class="choice-container">
+                <h2>Choose Your Analysis Type</h2>
+                <div class="choice-options">
+                    <div class="choice-option">
+                        <div class="option-card quick-option">
+                            <div class="option-icon">⚡</div>
+                            <h3>Quick Analysis</h3>
+                            <p>Get instant insights with just 6 essential inputs</p>
+                            <ul class="option-features">
+                                <li>✅ Takes less than 2 minutes</li>
+                                <li>✅ Essential financial health metrics</li>
+                                <li>✅ Personalized recommendations</li>
+                            </ul>
+                            <button class="btn-primary" id="chooseQuickAnalysis" aria-label="Start Quick Analysis">Start Quick Analysis</button>
                         </div>
-                        <div class="choice-option">
-                            <div class="option-card comprehensive-option">
-                                <div class="option-icon">📊</div>
-                                <h3>Comprehensive Analysis</h3>
-                                <p>Deep dive analysis with detailed financial data</p>
-                                <ul class="option-features">
-                                    <li>✅ Complete financial picture</li>
-                                    <li>✅ Advanced behavioral insights</li>
-                                    <li>✅ Detailed action plans</li>
-                                </ul>
-                                <button class="btn-secondary choice-btn" id="chooseComprehensiveAnalysis">
-                                    Start Comprehensive Analysis
-                                </button>
-                            </div>
+                    </div>
+                    <div class="choice-option">
+                        <div class="option-card comprehensive-option">
+                            <div class="option-icon">📊</div>
+                            <h3>Comprehensive Analysis</h3>
+                            <p>Deep dive analysis with detailed financial data</p>
+                            <ul class="option-features">
+                                <li>✅ Complete financial picture</li>
+                                <li>✅ Advanced behavioral insights</li>
+                                <li>✅ Detailed action plans</li>
+                            </ul>
+                            <button class="btn-primary" id="chooseComprehensiveAnalysis" aria-label="Start Comprehensive Analysis">Start Comprehensive Analysis</button>
                         </div>
                     </div>
                 </div>
             </div>
-            <div id="formContainer" style="display: none;">
-                <div class="error-message" id="errorMessage"></div>
-                
-                <div id="multiStepForm" class="multi-step-form">
-                    <!-- Form content will be rendered here by JS -->
-                </div>
+        </section>
+        <section id="formContainer" aria-label="Financial Data Form">
+            <div class="error-message" id="errorMessage"></div>
+            
+            <div id="multiStepForm" class="multi-step-form">
+                <!-- Form content will be rendered here by JS -->
             </div>
-            <div id="resultsContainer" class="results-hidden">
-                <div class="loading-indicator" id="loadingIndicator">
-                    <div class="loading-spinner"></div>
-                    <p>Analyzing your financial health...</p>
-                </div>
-
-                <div id="analysisResults" style="display: none;">
-                    <div class="health-score-summary" id="healthScoreSummary">
-                        <div class="health-score-circle" id="healthScoreCircle">
-                            <span id="healthScoreValue">--</span>
-                        </div>
-                        <h2 id="healthLevelText">Financial Health Level</h2>
-                        <p id="healthScoreDescription">Based on 8 key financial health indicators</p>
-                    </div>
-
-                    <div class="health-indicators-grid" id="healthIndicatorsGrid">
-                        <!-- Health indicators will be rendered here -->
-                    </div>
-
-                    <div class="key-metrics-section" id="keyMetricsSection">
-                        <h3>Key Financial Metrics</h3>
-                        <div id="keyMetricsGrid">
-                            <!-- Key metrics will be rendered here -->
-                        </div>
-                    </div>
-
-                    <div class="mitigation-report-section" id="mitigationReportSection" style="display: none;">
-                        <h3>Bias Mitigation Recommendations</h3>
-                        <div id="mitigationReport">
-                            <!-- Mitigation report will be rendered here -->
-                        </div>
-                    </div>
-
-                    <div class="results-grid">
-                        <div id="healthIndicatorsGrid" class="indicators-grid"></div>
-                    </div>
-
-                    <div id="recommendationsContainer"></div>
-
-                    <!-- Detailed analysis sections would go here -->
-                </div>
+        </section>
+        <section id="resultsContainer" aria-label="Analysis Results">
+            <div class="loading-indicator" id="loadingIndicator">
+                <div class="loading-spinner"></div>
+                <p>Analyzing your financial health...</p>
             </div>
-        </div>
-    </div>
 
-    <script src="app.js"></script>
+            <div id="analysisResults" style="display: none;">
+                <div class="health-score-summary" id="healthScoreSummary">
+                    <div class="health-score-circle" id="healthScoreCircle">
+                        <span id="healthScoreValue">--</span>
+                    </div>
+                    <h2 id="healthLevelText">Financial Health Level</h2>
+                    <p id="healthScoreDescription">Based on 8 key financial health indicators</p>
+                </div>
+
+                <div class="health-indicators-grid" id="healthIndicatorsGrid">
+                    <!-- Health indicators will be rendered here -->
+                </div>
+
+                <div class="key-metrics-section" id="keyMetricsSection">
+                    <h3>Key Financial Metrics</h3>
+                    <div id="keyMetricsGrid">
+                        <!-- Key metrics will be rendered here -->
+                    </div>
+                </div>
+
+                <div class="mitigation-report-section" id="mitigationReportSection" style="display: none;">
+                    <h3>Bias Mitigation Recommendations</h3>
+                    <div id="mitigationReport">
+                        <!-- Mitigation report will be rendered here -->
+                    </div>
+                </div>
+
+                <div class="results-grid">
+                    <div id="healthIndicatorsGrid" class="indicators-grid"></div>
+                </div>
+
+                <div id="recommendationsContainer"></div>
+
+                <!-- Detailed analysis sections would go here -->
+            </div>
+        </section>
+    </main>
+    <footer aria-label="Footer">
+        <p style="text-align:center; color:var(--gray-500); font-size:0.95rem; padding:16px 0;">&copy; 2024 Financial Health Analyzer. All rights reserved.</p>
+    </footer>
+    <!-- Toast notifications for errors/success -->
+    <div id="toastContainer" aria-live="polite"></div>
+    <script src="bundle.js"></script>
+    <script>
+        // Accessibility: Add role="alert" to error/success toasts dynamically
+        function showToast(message, type) {
+            const toast = document.createElement('div');
+            toast.className = type === 'error' ? 'error-toast' : 'success-toast';
+            toast.setAttribute('role', 'alert');
+            toast.innerHTML = `<div class="toast-content"><span class="toast-icon">${type === 'error' ? '❌' : '✅'}</span><span class="toast-message">${message}</span></div>`;
+            document.getElementById('toastContainer').appendChild(toast);
+            setTimeout(() => toast.remove(), 5000);
+        }
+    </script>
 </body>
 </html> 

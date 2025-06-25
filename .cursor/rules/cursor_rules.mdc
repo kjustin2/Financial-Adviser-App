@@ -3,112 +3,813 @@ description: Guidelines for creating and maintaining Cursor rules to ensure cons
 globs: .cursor/rules/*.mdc
 alwaysApply: true
 ---
+# Financial Health Analyzer – Unified Cursor Rules
+
+## Prompt Engineering Best Practices (2024+)
+
+> **These rules are mandatory for all AI prompt handling, code generation, and review in this project.**
+
+### 1. Clarity & Specificity
+- Write prompts that are clear, unambiguous, and as specific as possible.
+- Always provide detailed context, including the final goal, relevant constraints, and any background needed for accurate results.
+- Specify the desired output format, length, tone, and style (e.g., TypeScript expert, formal, concise, etc.).
+- Use positive instructions (what to do), not just what to avoid.
+
+### 2. Use of Examples & Data
+- Supply relevant examples (code, data, templates, etc.) to illustrate the desired output or style.
+- When possible, provide real, up-to-date data or sample inputs to guide the AI.
+- For complex tasks, include one-shot or few-shot examples to clarify expectations.
+
+### 3. Task Decomposition & Chain-of-Thought
+- Break complex tasks into smaller, manageable steps or sub-prompts.
+- Use chain-of-thought prompting: ask the AI to explain its reasoning, outline steps, or provide intermediate outputs before the final answer.
+- For code, require step-by-step plans and pseudocode before implementation.
+
+### 4. Persona, Framing, and Role Definition
+- Assign a clear persona or frame of reference (e.g., "as a TypeScript expert", "as a financial adviser").
+- State the AI's capabilities and limitations explicitly when relevant.
+- Use an instructional, authoritative, and consistent tone throughout.
+
+### 5. Output Control & Iterative Refinement
+- Specify the exact output format (e.g., code block, table, bullet list, markdown section, etc.).
+- Use iterative refinement: start with a basic prompt, review the output, and refine the prompt as needed.
+- Encourage feedback loops: review, critique, and improve prompts and outputs regularly.
+
+### 6. Platform & Domain Adaptation
+- Adapt prompts to the unique requirements of the platform (Cursor, GitHub Copilot, etc.) and the financial/TypeScript domain.
+- Reference authoritative sources and industry standards for financial, coding, and UX best practices.
+- Use domain-specific terminology and ensure all outputs are compliant with project and regulatory standards.
+
+### 7. Security, Privacy, and Ethics
+- Never include secrets, credentials, or sensitive data in prompts or outputs.
+- Redact or anonymize any PII or financial data before using it in prompts.
+- Ensure prompts do not encourage or allow the AI to generate harmful, biased, or non-compliant content.
+- Always check outputs for security, privacy, and ethical compliance before use.
+
+### 8. Prompt Hygiene & Traceability
+- Remove or redact any sensitive or proprietary information from prompts and responses before logging or sharing.
+- Maintain traceability: log the original prompt, AI response, and any human edits for major code changes.
+- Reference the originating prompt in commit messages or documentation when AI-generated code is used.
+
+### 9. Continuous Improvement
+- Regularly review and update prompt engineering practices based on new research, tools, and project needs.
+- Solicit feedback from users and developers to improve prompt quality and effectiveness.
+- Document all prompt engineering methodologies and lessons learned for future reference.
+
+**References:**
+- [V7 Labs: The Ultimate Guide to AI Prompt Engineering (2024)](mdc:https:/www.v7labs.com/blog/prompt-engineering-guide)
+- [DigitalOcean: Prompt Engineering Best Practices (2024)](mdc:https:/www.digitalocean.com/resources/articles/prompt-engineering-best-practices)
+- [PromptMixer: 7 Best Practices for AI Prompt Engineering in 2025](mdc:https:/www.promptmixer.dev/blog/7-best-practices-for-ai-prompt-engineering-in-2025)
+- [Ryan Zheng: Prompting Best Practices (2024)](mdc:https:/ryan-zheng.medium.com/prompting-best-practices-6a0ca3e74361)
+- [Agent Assisted Coding Taxonomy (2025)](mdc:https:/towardsdev.com/agent-assisted-coding-taxonomy-f88aa8f54148?gi=d3022441a27c)
+
+## 1. **Build & Code Quality**
+
+- **`npm run build` must always pass.**  
+  - If the build fails, fix all issues before proceeding.
+  - Never commit code that breaks the build or disables TypeScript/ESLint rules.
+- **Strict TypeScript:**  
+  - Use `strict: true` and all strict flags in `tsconfig.json`.
+  - Never use `any`. Use `unknown` or proper interfaces.
+  - Explicitly type all function parameters, return types, and object literals.
+  - Prefer interfaces over types; avoid enums (use unions/maps).
+- **No Mocked or Placeholder Data:**  
+  - All user-facing numbers and metrics must be calculated from real, validated user input.
+  - If a real calculation is not possible, do not display the value.
+  - Never display placeholder, undefined, or stale data.
+- **Calculation Accuracy:**  
+  - All financial calculations must be accurate, research-based, and validated.
+  - Use defensive programming: check for `NaN`, `undefined`, or negative values before display.
+  - Use `Intl.NumberFormat` for all currency formatting.
+  - Provide clear explanations for all values and metrics shown to the user.
+
+## 2. **UX, UI, and Theming**
+
+- **Consistent UX Theme:**  
+  - Use a unified card/grid/container style, color palette, and formatting for all forms and results.
+  - Never mix boxes, cards, or containers inconsistently.
+  - Reference the design system in `src/index.html` and CSS variables for theming.
+- **Mobile-First, Responsive Design:**  
+  - All components must be mobile-first, using CSS Grid/Flexbox and media queries.
+  - Use relative units (`%`, `rem`, `em`) for sizing and spacing.
+  - Ensure touch targets are large enough for mobile users.
+  - Provide horizontal scrolling for wide tables/charts on mobile.
+  - Avoid fixed pixel widths for layout-critical elements.
+  - Use semantic HTML and ARIA attributes for accessibility.
+  - Test on various screen sizes and devices.
+- **Accessibility:**  
+  - Use proper labels, ARIA roles, and semantic HTML.
+  - Ensure color contrast and font sizes meet accessibility standards.
+  - Provide keyboard navigation and focus styles for all interactive elements.
+
+## 3. **Planning, Process, and Documentation**
+
+- **Detailed Planning:**  
+  - Start all major changes with a detailed plan, including tasks and subtasks.
+  - Each task/subtask must be completed and checked off before moving on.
+  - Use checklists and pseudocode to outline steps before coding.
+- **Explanations & Documentation:**  
+  - Every value shown to the user must have an accompanying explanation.
+  - Add/expand JSDoc and inline comments for all new/updated logic.
+  - Document interface properties and complex calculations.
+  - Reference actual code and rules in documentation.
+
+## 4. **Performance, Efficiency, and Testing**
+
+- **Maximize Efficiency & Speed:**  
+  - Use efficient DOM manipulation; avoid unnecessary re-renders.
+  - Lazy load calculation results and components where possible.
+  - Debounce validation and avoid excessive API calls.
+  - Minimize CSS/HTML file sizes; use minification and compression.
+  - Profile and monitor performance regularly.
+- **Testing:**  
+  - Add/expand tests for all new logic and edge cases.
+  - Test for calculation accuracy, input validation, and UI responsiveness.
+  - Use tools like Lighthouse for performance and accessibility audits.
+  - Validate HTML and CSS using W3C validators.
+- **Error Handling:**  
+  - Always wrap async operations in try-catch blocks.
+  - Provide clear, user-friendly error messages (never expose sensitive info).
+  - Implement error boundaries for UI components.
+
+## 5. **Security**
+
+- **Data Security:**  
+  - Validate and sanitize all user inputs, especially financial data.
+  - Never log sensitive financial information or API keys.
+  - Use environment variables for configuration; never hardcode secrets.
+  - Encrypt sensitive data at rest and in transit.
+  - Implement rate limiting for API calls.
+- **API Key Protocol:**  
+  - Real API keys only in `.env` (never committed).
+  - Use `.env.example` for templates with placeholder values.
+  - Rotate API keys regularly in production.
+  - Monitor for accidental key exposure.
+
+## 6. **Code Organization & Naming**
+
+- **File Structure:**  
+  - Organize code into `core/`, `components/`, `data/`, `services/`, `interfaces/`, `utils/`.
+  - Use named exports for classes and interfaces.
+  - Group imports: Node modules → local modules → types.
+- **Naming Conventions:**  
+  - camelCase for variables/functions, PascalCase for classes/interfaces, UPPER_SNAKE_CASE for constants.
+  - CSS classes: kebab-case with BEM methodology.
+  - Prefix sensitive variables with `secure_` or `private_`.
+
+## 7. **Cursor AI-Specific Rules for Max Efficiency**
+
+- **Cursor AI must:**  
+  - Always follow these rules and never cut corners for speed.
+  - Never use `any`, skip tests, or disable linting for convenience.
+  - Always provide a step-by-step plan before coding.
+  - Confirm understanding of requirements before proceeding.
+  - Never leave TODOs, placeholders, or unfinished code.
+  - Always include all required imports and proper naming.
+  - If unsure, ask for clarification rather than guessing.
+  - Prioritize code that is readable, maintainable, and DRY.
+  - Use Zod or similar for runtime type validation of external data.
+  - Always check that the build passes before considering a task complete.
+  - Use concise, clear communication and explanations.
+
+## 8. **Financial Domain-Specific Rules**
+
+- **Benchmarks & Metrics:**  
+  - Use Financial Health Network 2024 standards and 8 key indicators.
+  - Provide granular breakdowns (net worth, savings rate, debt, expenses, investments, insurance, benchmarks, scenarios).
+  - Add actionable insights and explanations for each area.
+  - Handle edge cases: zero income, negative cash flow, missing data.
+  - Validate financial data relationships (assets vs liabilities).
+
+## Financial Analysis & Health Planning: Best Practices (Web Research)
+
+- **Accurate, Real-Time Financial Data:**
+  - Always use up-to-date, validated financial data for all analysis and reporting. In healthcare and other regulated industries, accuracy is non-negotiable and underpins all decision-making.
+  - Leverage technology and data analytics to consolidate, validate, and analyze financial data efficiently.
+  - Automate data collection and reporting where possible to reduce errors and free up staff for higher-value tasks.
+  - Ensure data security and compliance with all relevant regulations (e.g., HIPAA, Stark Law, Anti-Kickback Statute for healthcare).
+  - [Source: Datarails](mdc:https:/www.datarails.com/fpa-for-healthcare)
+
+- **Comprehensive Budgeting & Forecasting:**
+  - Involve all relevant stakeholders (department heads, clinicians, financial leaders) in the budgeting process to ensure all needs and constraints are considered.
+  - Analyze historical financial performance and trends to inform projections.
+  - Update forecasts regularly to reflect changes in the environment and organizational performance.
+  - Develop multiple scenarios to prepare for potential outcomes and mitigate risks.
+  - Use data analytics tools to improve forecast accuracy and identify emerging trends.
+  - [Source: Datarails](mdc:https:/www.datarails.com/fpa-for-healthcare)
+
+- **Revenue Cycle Management (RCM):**
+  - For healthcare and service organizations, optimize the entire billing and collection process from registration to payment.
+  - Automate billing, reduce claim denials, and improve patient collections with easy payment plans and clear communication.
+  - Monitor regulatory changes (e.g., Medicare/Medicaid) and adjust processes accordingly.
+  - [Source: Datarails](mdc:https:/www.datarails.com/fpa-for-healthcare)
+
+- **Cost Control & Resource Allocation:**
+  - Use data-driven methods to allocate resources effectively across departments.
+  - Streamline procurement and negotiate better terms with suppliers.
+  - Identify and eliminate inefficiencies in administrative and clinical processes.
+  - Balance cost control with quality outcomes—never cut costs at the expense of critical services or patient care.
+  - [Source: Datarails](mdc:https:/www.datarails.com/fpa-for-healthcare)
+
+- **Strategic Decision-Making:**
+  - Use financial data to drive operational efficiency, risk management, and resource allocation.
+  - Communicate financial health and long-term outlook to all stakeholders, including staff, board, and external partners.
+  - [Source: Datarails](mdc:https:/www.datarails.com/fpa-for-healthcare)
+
+- **Long-Term Financial Planning:**
+  - Prepare and maintain a long-term financial plan (at least 5 years) that projects revenues, expenses, financial position, and external factors for all key funds and operations.
+  - Review and update the plan annually or as major assumptions change.
+  - Use long-term planning as the foundation for capital planning, budgeting, and revenue forecasting.
+  - Benefits include: diagnosing risks, stimulating strategic thinking, evaluating policy compliance, and communicating with stakeholders (including rating agencies and bond investors).
+  - [Source: GFOA](mdc:https:/www.gfoa.org/materials/long-term-financial-planning)
+
+- **Best Practices for Financial Health Analysis:**
+  - Always provide clear, actionable insights and recommendations based on the analysis.
+  - Use scenario modeling and stress testing to prepare for uncertainty.
+  - Benchmark performance against industry standards and peer organizations.
+  - Document all assumptions, methodologies, and sources for transparency.
+  - Ensure all financial analysis is accessible, understandable, and relevant to the intended audience.
+  - [Source: Datarails](mdc:https:/www.datarails.com/fpa-for-healthcare), [GFOA](mdc:https:/www.gfoa.org/materials/long-term-financial-planning)
+
+## Network Calls Policy
+
+- **No External API/Service Calls:**
+  - For this application, never make network calls to external APIs or services.
+  - All calculations, data processing, and analysis must be performed locally using validated user input and internal logic only.
+  - If a feature or calculation would require an external API, do not implement it or display a message that the feature is unavailable due to policy.
+  - This rule applies to all environments (development, testing, production) and all code (frontend, backend, scripts, etc).
+
 ---
-description: Enforce accurate, meaningful numbers, cohesive design, and detailed planning for all UI and analysis work
-globs: src/components/**/*.ts, src/index.html, src/core/**/*.ts, src/services/**/*.ts
-alwaysApply: true
+
+**References:**  
+- [MDN: Mobile-First & Responsive Design](mdc:https:/developer.mozilla.org/en-US/docs/Web/Progressive_web_apps/Responsive/Mobile_first)  
+- [web.dev: Responsive Design & Interaction](mdc:https:/web.dev/learn/design/interaction)  
+- [Cursor Directory: Responsive Design Rules](mdc:https:/cursor.directory/rules/responsive-design)  
+- [Steve Kinney: Cursor Rules for TypeScript Engineers](mdc:https:/stevekinney.com/writing/cursor-rules-typescript)  
+- [Cursor Community: Best Practices](mdc:https:/forum.cursor.com/t/share-your-rules-for-ai/2377)
+
 ---
 
-- **Accurate, Meaningful Numbers**
-  - **DO:** Ensure all user-facing numbers are calculated from actual user input and validated.
-    ```typescript
-    // ✅ DO
-    const netWorth = assetsTotal - liabilitiesTotal;
-    if (typeof netWorth !== 'number' || isNaN(netWorth)) return 'N/A';
-    ```
-  - **DON'T:** Display placeholder, undefined, or stale data.
-    ```typescript
-    // ❌ DON'T
-    const netWorth = undefined;
-    ```
+**How to Use:**  
+- Place this file in `.cursor/rules/cursor_rules.mdc` and reference it in all development and code review processes.
+- Update and refine as new best practices or project requirements emerge.
 
-- **Cohesive, Unified Design**
-  - **DO:** Use the same card/grid/container styles, color palette, and formatting for all forms and results.
-    ```typescript
-    // ✅ DO
-    // Use EnhancedResultsDisplay for all results
-    display.render(analysisResult);
-    ```
-  - **DON'T:** Use inconsistent layouts or styles between quick and comprehensive analysis.
+## Summaries of Previous Rule Files
 
-- **Detailed Planning**
-  - **DO:** Start all major changes with a detailed plan with tasks and subtasks.
-    ```markdown
-    // ✅ DO
-    ## Plan
-    - Task 1: ...
-      - Subtask 1.1: ...
-    ```
-  - **DON'T:** Make major changes without a plan.
+### financial_analyzer.mdc
+- Emphasized strict TypeScript interface usage for all financial data, with descriptive naming and no use of `any`.
+- Required modular architecture: business logic in `src/core/`, UI in `src/components/`, types in `src/interfaces/`.
+- Mandated validation and sanitization of all user input before calculations, and use of `Intl.NumberFormat` for currency.
+- Required handling of edge cases (zero income, negative cash flow, missing data) in all calculations.
+- Security: never log or expose sensitive financial info, use environment variables for config.
+- UI/UX: multi-step forms with validation, accessibility, and mobile-friendly responsive components.
+- Continuous improvement: update rules as new calculation patterns or security issues are found.
 
-- **Edge Case Handling**
-  - **DO:** Always check for $NaN, undefined, or negative values before displaying financial metrics.
-    ```typescript
-    // ✅ DO
-    if (typeof value !== 'number' || isNaN(value)) return 'N/A';
-    if (value === 0) return '$0';
-    ```
-  - **DON'T:** Display $NaN, undefined, or negative values in the UI.
-    ```typescript
-    // ❌ DON'T
-    return `$${value}`; // if value could be NaN
-    ```
+### self_improve.mdc
+- Outlined triggers for rule improvement (new patterns, repeated bugs, new tools, best practices).
+- Provided a process for analyzing code and updating rules, including when to add, modify, or deprecate rules.
+- Stressed actionable, specific, and up-to-date rules, with examples from actual code.
+- Encouraged continuous improvement, code review monitoring, and documentation updates.
 
-- **Detailed Financial Analysis**
-  - **DO:** Provide granular breakdowns (net worth, savings rate, debt structure, expenses, investments, insurance, benchmarks, scenarios).
-  - **DO:** Add actionable insights and explanations for each area.
+### simulations.mdc
+- Required use of `MonteCarloEngine` and `ScenarioEngine` for all investment/scenario simulations.
+- Mandated research-based parameters, documentation of assumptions, and validation of simulation results with statistical tests.
+- Performance: optimize for batch processing/caching, never expose sensitive simulation data.
+- Continuous improvement as new simulation techniques or models are adopted.
 
-- **Mobile-First & Responsive Design**
-  - **DO:** Use CSS Grid/Flexbox and media queries for all components.
-  - **DO:** Test on various screen sizes and ensure touch targets are large enough.
-  - **DON'T:** Use fixed pixel widths for layout-critical elements.
-  - **DO:** Use relative units (%, rem, em) for sizing and spacing.
-  - **DO:** Ensure touch targets are large enough for mobile users.
-  - **DO:** Use semantic HTML and ARIA attributes for accessibility.
-  - **DO:** Provide horizontal scrolling for wide tables/charts on mobile.
-  - **DO:** Minimize modal/pop-up use on mobile; prefer inline expansion.
-  - **DO:** Ensure all forms and buttons are easily usable on small screens.
-  - **DO:** Use color contrast and font sizes that meet accessibility standards.
+### behavioral_finance.mdc
+- Required use of dedicated engines (e.g., `BiasDetectionEngine`, `PsychologyAnalysisEngine`) for bias/psychology analysis.
+- Behavioral metrics and patterns must be defined in interfaces, with research-based scoring/benchmarks.
+- Visualization: use dedicated chart components, provide actionable recommendations for each bias.
+- Security: never store/transmit raw assessment responses without anonymization, avoid logging sensitive behavioral data.
+- Continuous improvement as new cognitive biases or research findings are integrated.
 
-- **Testing & Documentation**
-  - **DO:** Add/expand tests for all new logic and edge cases.
-  - **DO:** Add/expand JSDoc and inline comments for new/updated logic.
+## Additional Mobile-First & UI/UX Rules from src/.cursor/rules/cursor_rules.mdc
 
-- **Main Points in Bold**
-  - Sub-points with details
-  - Examples and explanations
+- All pages and components must be fully mobile-friendly and responsive, using a mobile-first approach with CSS Grid/Flexbox and media queries.
+- Test on various screen sizes (320px–768px and up); all content must be accessible and readable.
+- Touch targets (buttons, inputs, toggles) must be at least 44x44px and easy to use on mobile.
+- Use relative units (%, rem, em) for sizing and spacing; avoid fixed pixel widths for layout-critical elements.
+- Provide horizontal scrolling for wide tables/charts on mobile.
+- Minimize modal/pop-up use on mobile; prefer inline expansion/collapse.
+- Use semantic HTML and ARIA attributes for accessibility.
+- All forms and buttons must be easily usable on small screens.
+- Use color contrast and font sizes that meet accessibility standards.
+- Reference: Main page (`index.html`) and `EnhancedResultsDisplay` must always be mobile-friendly and serve as examples for all new UI work.
+- All new UI/UX changes must be tested on mobile and desktop before completion. Any PR or commit that breaks mobile-friendliness is not allowed.
 
-- **File References:**
-  - Use `[filename](mdc:path/to/file)` ([filename](mdc:filename)) to reference files
-  - Example: [prisma.mdc](mdc:.cursor/rules/prisma.mdc) for rule references
-  - Example: [schema.prisma](mdc:prisma/schema.prisma) for code references
+- Build Integrity: Always ensure `npm run build` passes with no errors or warnings before considering any change complete. Fix all TypeScript and linter errors as soon as they appear, before proceeding to any new work. Never submit or merge code that causes build failures or warnings.
 
-- **Code Examples:**
-  - Use language-specific code blocks
-  ```typescript
-  // ✅ DO: Show good examples
-  const goodExample = true;
-  
-  // ❌ DON'T: Show anti-patterns
-  const badExample = false;
-  ```
+- Detailed Financial Analysis: Provide granular breakdowns for all financial metrics (net worth, savings rate, debt structure, expenses, investments, insurance, etc.), scenario/stress testing, peer benchmarks, and comparisons to industry standards. Add actionable insights and explanations for each area, including what the numbers mean and recommended next steps. Ensure all analysis is based on validated, up-to-date user input and current research/benchmarks.
 
-- **Rule Content Guidelines:**
-  - Start with high-level overview
-  - Include specific, actionable requirements
-  - Show examples of correct implementation
-  - Reference existing code when possible
-  - Keep rules DRY by referencing other rules
+- Data Integrity & Accuracy: Only display numbers and insights derived from real, validated user input. No placeholders, no unexplained values. Allow $0 and other valid edge cases for all financial fields (e.g., debt, expenses, savings) with no errors or warnings. Validate all calculations and display 'N/A' or a clear message if data is missing or not applicable. Never show $NaN, undefined, or misleading values anywhere in the UI.
 
-- **Rule Maintenance:**
-  - Update rules when new patterns emerge
-  - Add examples from actual codebase
-  - Remove outdated patterns
-  - Cross-reference related rules
+- Financial Health Score & Key Metrics: Clearly explain what the health score means, how it is calculated, and what each key metric represents. Use professional, accessible fonts and layouts for all results and insights. Provide context for all numbers (e.g., 'Your net worth is $X, which is above the median for your age group').
 
-- **Best Practices:**
-  - Use bullet points for clarity
-  - Keep descriptions concise
-  - Include both DO and DON'T examples
-  - Reference actual code over theoretical examples
-  - Use consistent formatting across rules 
+- Insights & Action Plans: Only show personalized, actionable recommendations. If no action is needed, state this clearly. Remove or hide export/save features unless they are meaningful for the user flow. Use clear, concise language and avoid jargon. Add financial adviser-level explanations for each insight.
+
+- UI/UX Cohesion & Clarity: Use a unified, modern design system for all analysis/results sections. All fonts, colors, and layouts must be consistent and accessible. Ensure all sections are mobile-friendly, with responsive layouts and large touch targets. Use clear section headings, logical grouping, and whitespace for readability.
+
+- Section-by-Section Requirements:
+  - Health Score: Show a clear, color-coded score with a short explanation and how it is calculated. Compare to peer benchmarks if available.
+  - Key Insights: List 2-4 most important findings, each with a headline, number, and 1-2 sentence explanation. Use icons or visual cues for positive/negative findings.
+  - Action Plan: Show only if there are actionable steps. Each step must be specific, relevant, and achievable. If no action is needed, show a positive message. Use checklists or step-by-step format for clarity.
+  - Export/Save: Only show if user has completed a full analysis and the feature is meaningful. Otherwise, hide.
+  - Edge Cases: $0 debt, $0 expenses, or $0 savings must be supported and explained. Never show errors for valid $0 values.
+  - Mobile & Accessibility: All sections must be fully responsive, with readable fonts and accessible color contrast. Use ARIA labels and semantic HTML for all interactive elements.
+
+- Testing & Review: Test all changes with $0 and high-value edge cases. Review all UI for clarity, consistency, and professional appearance. Add/expand tests for all new logic and edge cases.
+
+- Transparent Financial Calculations: For every financial metric, show a clear, user-facing breakdown and explanation of how it is calculated, with references to industry standards. Add tooltips or info icons for every metric, and provide expandable/collapsible sections for 'How is this calculated?'.
+
+- Task Completion Integrity: Only claim a task is complete if the actual code, UI, and user experience match the description and requirements. Always verify in the running app.
+
+- Comprehensive Codebase Updates: When fixing a bug or updating a pattern, search and update the entire codebase, not just one file.
+
+- Robust Number Formatting: Always check for NaN, undefined, or invalid values before formatting or displaying numbers. Use 'N/A' or a clear message for missing data. Never allow $NaN, undefined, or broken values to appear in the UI.
+
+## Expanded & Domain-Specific Financial Health Analysis Rules
+
+### 1. Data Integrity & Validation
+- All user input must be validated and sanitized before any calculation or display.
+- No placeholder or default values for financial metrics—display 'N/A' or a clear message if data is missing or not applicable.
+- Edge cases (e.g., zero income, negative cash flow, missing data) must be handled gracefully and explained to the user.
+- Use defensive programming to prevent $NaN, undefined, or misleading values in the UI.
+
+### 2. Granular Financial Metrics
+- **Net Worth:**
+  - Show a breakdown: total assets, total liabilities, and net worth.
+  - Explain the calculation and compare to peer benchmarks (e.g., median net worth by age group).
+  - Reference: [Federal Reserve SCF](mdc:https:/www.federalreserve.gov/econres/scfindex.htm)
+- **Savings Rate:**
+  - Calculate as a percentage of income.
+  - Provide context: "A healthy savings rate is typically 10–20% of gross income."
+  - Reference: [CFPB](mdc:https:/www.consumerfinance.gov/data-research/research-reports/financial-well-being-scale)
+- **Debt-to-Income Ratio:**
+  - Show both total and housing-specific DTI.
+  - Explain industry targets (e.g., <36% total, <28% housing).
+  - Reference: [CFPB](mdc:https:/www.consumerfinance.gov/ask-cfpb/what-is-a-debt-to-income-ratio-en-1791)
+- **Emergency Fund:**
+  - Display months of expenses covered.
+  - Explain the 3–6 month standard and provide recommendations if below target.
+  - Reference: [NerdWallet](mdc:https:/www.nerdwallet.com/article/finance/emergency-fund)
+- **Credit Utilization:**
+  - Show as a percentage of available credit.
+  - Explain the <30% target and its impact on credit health.
+  - Reference: [Experian](mdc:https:/www.experian.com/blogs/ask-experian/credit-education/score-basics/credit-utilization-rate)
+- **Insurance Coverage:**
+  - Indicate if user has adequate health, life, and disability insurance.
+  - Provide recommendations for gaps.
+  - Reference: [Datarails](mdc:https:/www.datarails.com/fpa-for-healthcare)
+
+### 3. Scenario & Stress Testing
+- Allow users to model "what if" scenarios (e.g., job loss, market downturn, major expense).
+- Show impact on cash flow, emergency fund, and long-term goals.
+- Simulate adverse events and show how resilient the user's finances are.
+- Provide actionable steps to improve resilience.
+- Reference: [Datarails](mdc:https:/www.datarails.com/fpa-for-healthcare)
+
+### 4. Benchmarks & Peer Comparisons
+- Compare user metrics to industry standards and peer groups (e.g., by age, income, region).
+- Display percentile rankings where possible (e.g., "Your net worth is in the 60th percentile for your age group").
+- Cite sources for all benchmarks (e.g., Federal Reserve, CFPB, Datarails, GFOA).
+
+### 5. Actionable Insights & Recommendations
+- For every metric, provide a clear, actionable recommendation (e.g., "Increase your emergency fund by $2,000 to reach the 3-month target").
+- Prioritize recommendations based on impact and urgency.
+- Explain the rationale for each recommendation, referencing industry best practices.
+- Use scenario modeling and stress testing to prepare for uncertainty.
+- Reference: [GFOA](mdc:https:/www.gfoa.org/materials/long-term-financial-planning)
+
+### 6. Long-Term Financial Planning
+- Encourage users to set and track long-term goals (e.g., retirement, home purchase, education).
+- Project future financial position using conservative, moderate, and aggressive assumptions.
+- Update projections regularly and allow users to adjust assumptions.
+- Prepare and maintain a long-term financial plan (at least 5 years) that projects revenues, expenses, financial position, and external factors for all key funds and operations.
+- Review and update the plan annually or as major assumptions change.
+- Reference: [GFOA](mdc:https:/www.gfoa.org/materials/long-term-financial-planning)
+
+### 7. Regulatory & Security Compliance
+- Comply with all relevant financial regulations (e.g., data privacy, anti-fraud, HIPAA, Stark Law, Anti-Kickback Statute for healthcare).
+- Never display or store sensitive information insecurely.
+- Document all assumptions, methodologies, and sources for transparency.
+- Reference: [Datarails](mdc:https:/www.datarails.com/fpa-for-healthcare)
+
+### 8. User Education & Transparency
+- Provide tooltips, info icons, and expandable sections for all metrics and calculations.
+- Link to educational resources (e.g., CFPB, GFOA, Datarails) for users who want to learn more.
+- Explain all financial terms in plain language.
+- Document all assumptions, methodologies, and sources for transparency.
+
+### 9. Continuous Improvement
+- Regularly review and update benchmarks, methodologies, and recommendations to reflect the latest research and industry standards.
+- Solicit user feedback to improve clarity, usefulness, and accuracy of insights.
+- Reference: [Datarails](mdc:https:/www.datarails.com/fpa-for-healthcare), [GFOA](mdc:https:/www.gfoa.org/materials/long-term-financial-planning)
+
+---
+
+### Additional Authoritative Sources
+- [Datarails: FP&A for Healthcare – Best Practices & Unique Challenges](mdc:https:/www.datarails.com/fpa-for-healthcare)
+- [GFOA: Long-Term Financial Planning](mdc:https:/www.gfoa.org/materials/long-term-financial-planning)
+- [CFPB: Financial Well-Being](mdc:https:/www.consumerfinance.gov/data-research/research-reports/financial-well-being-scale)
+- [Federal Reserve: Survey of Consumer Finances](mdc:https:/www.federalreserve.gov/econres/scfindex.htm)
+- [NerdWallet: Emergency Fund](mdc:https:/www.nerdwallet.com/article/finance/emergency-fund)
+- [Experian: Credit Utilization Rate](mdc:https:/www.experian.com/blogs/ask-experian/credit-education/score-basics/credit-utilization-rate)
+
+## Modern Financial Analysis & Prediction: Advanced Best Practices (2024+)
+
+### 1. Data Centralization & Real-Time Insights
+- Centralize all financial data for a single source of truth; aggregate from all internal sources, never external APIs.
+- Enable real-time reporting and analytics—ensure all dashboards and reports reflect the most current validated user data.
+- Automate data collection, validation, and reporting to reduce errors and free up resources for higher-value analysis.
+
+### 2. Advanced Analytics & Predictive Modeling
+- Use statistical analysis, scenario modeling, and predictive analytics to extract actionable insights from user data.
+- Implement multi-scenario modeling: allow users to simulate and compare the impact of different financial decisions and market conditions.
+- Support what-if analysis and stress testing for risk management and contingency planning.
+- Use driver-based planning: link forecasts to key operational and financial drivers for more accurate predictions.
+- Incorporate rolling forecasts and continuous planning, not just static annual projections.
+
+### 3. AI & Machine Learning (ML) in Financial Health
+- Where appropriate, leverage local AI/ML models for:
+  - Anomaly detection (e.g., flagging unusual spending or risk patterns)
+  - Predictive analytics (e.g., forecasting cash flow, expenses, or savings)
+  - Personalized recommendations (e.g., tailored action plans based on user behavior)
+- All AI/ML must be explainable, transparent, and run locally—never send data to external services.
+- Document all AI/ML methodologies and provide user-facing explanations for predictions and recommendations.
+
+### 4. Data Visualization & User Experience
+- Use interactive, customizable dashboards for financial metrics, trends, and scenario outcomes.
+- Visualize data with clear, accessible charts and graphs (e.g., Power BI/Tableau-style, but implemented locally).
+- Allow users to drill down into data, compare scenarios, and export reports if meaningful.
+- Prioritize clarity, accessibility, and mobile-first design in all visualizations.
+
+### 5. Performance, Efficiency, and Device Equity
+- Adhere to strict performance budgets:
+  - For mobile: aim for <1.3MiB total transfer and <650KiB JavaScript for first load in 5 seconds on P75 devices/networks.
+  - For desktop: optimize for low-end hardware (<=4GB RAM, <=4 cores, HDDs) and slow networks (7Mbps down, 1.4Mbps up, 94ms RTT).
+- Minimize JavaScript and resource usage; prefer markup- and CSS-heavy approaches for speed and accessibility.
+- Test on a range of real devices, especially low-end Android and older laptops, to ensure equitable access.
+- Use lazy loading, code splitting, and efficient DOM updates to maximize responsiveness.
+
+### 6. Security, Compliance, and Data Governance
+- Encrypt all sensitive financial data at rest and in transit.
+- Implement strict access controls and regular security audits.
+- Ensure compliance with all relevant regulations (e.g., SOC 2, GDPR, HIPAA for healthcare-related data).
+- Use robust data validation, anomaly detection, and audit trails to prevent fraud and ensure data integrity.
+- Never log or expose sensitive user data; use environment variables for all configuration.
+
+### 7. Implementation & Continuous Improvement
+- Use modular, scalable architecture for all analytics and reporting features.
+- Integrate seamlessly with internal systems (never external APIs) for data flow and consistency.
+- Provide comprehensive onboarding, training, and documentation for users and team members.
+- Track key performance indicators (KPIs) for both user outcomes and software effectiveness; iterate based on feedback and new research.
+- Regularly review and update methodologies, benchmarks, and recommendations to reflect the latest industry standards and user needs.
+
+### 8. Future-Proofing & Emerging Trends
+- Monitor and adopt emerging technologies (e.g., blockchain for audit trails, advanced AI/ML for forecasting) as appropriate, ensuring all implementations are secure and privacy-preserving.
+- Plan for scalability and adaptability as user needs and regulatory requirements evolve.
+- Stay informed about global device and network trends; update performance and accessibility targets annually.
+
+### 9. User Empowerment & Education
+- Provide clear, plain-language explanations for all metrics, predictions, and recommendations.
+- Offer tooltips, info icons, and expandable sections for deeper dives into calculations and methodologies.
+- Link to authoritative educational resources for users who want to learn more about financial health and planning.
+
+---
+
+**References:**
+- [Cube Software: Financial Analysis Best Practices 2024](mdc:https:/www.cubesoftware.com/blog/financial-analysis-software)
+- [Netguru: Top Financial Analysis Software 2024](mdc:https:/www.netguru.com/blog/best-financial-analysis-software)
+- [HubiFi: Financial Data Software Guide 2024](mdc:https:/www.hubifi.com/blog/financial-data-software-guide)
+- [Infrequently Noted: Performance Inequality Gap 2024](mdc:https:/infrequently.org/2024/01/performance-inequality-gap-2024)
+- [Datarails: FP&A for Healthcare](mdc:https:/www.datarails.com/fpa-for-healthcare)
+- [GFOA: Long-Term Financial Planning](mdc:https:/www.gfoa.org/materials/long-term-financial-planning)
+
+---
+
+**How to Use:**  
+- Place this file in `.cursor/rules/cursor_rules.mdc` and reference it in all development and code review processes.
+- Update and refine as new best practices or project requirements emerge.
+
+## Summaries of Previous Rule Files
+
+### financial_analyzer.mdc
+- Emphasized strict TypeScript interface usage for all financial data, with descriptive naming and no use of `any`.
+- Required modular architecture: business logic in `src/core/`, UI in `src/components/`, types in `src/interfaces/`.
+- Mandated validation and sanitization of all user input before calculations, and use of `Intl.NumberFormat` for currency.
+- Required handling of edge cases (zero income, negative cash flow, missing data) in all calculations.
+- Security: never log or expose sensitive financial info, use environment variables for config.
+- UI/UX: multi-step forms with validation, accessibility, and mobile-friendly responsive components.
+- Continuous improvement: update rules as new calculation patterns or security issues are found.
+
+### self_improve.mdc
+- Outlined triggers for rule improvement (new patterns, repeated bugs, new tools, best practices).
+- Provided a process for analyzing code and updating rules, including when to add, modify, or deprecate rules.
+- Stressed actionable, specific, and up-to-date rules, with examples from actual code.
+- Encouraged continuous improvement, code review monitoring, and documentation updates.
+
+### simulations.mdc
+- Required use of `MonteCarloEngine` and `ScenarioEngine` for all investment/scenario simulations.
+- Mandated research-based parameters, documentation of assumptions, and validation of simulation results with statistical tests.
+- Performance: optimize for batch processing/caching, never expose sensitive simulation data.
+- Continuous improvement as new simulation techniques or models are adopted.
+
+### behavioral_finance.mdc
+- Required use of dedicated engines (e.g., `BiasDetectionEngine`, `PsychologyAnalysisEngine`) for bias/psychology analysis.
+- Behavioral metrics and patterns must be defined in interfaces, with research-based scoring/benchmarks.
+- Visualization: use dedicated chart components, provide actionable recommendations for each bias.
+- Security: never store/transmit raw assessment responses without anonymization, avoid logging sensitive behavioral data.
+- Continuous improvement as new cognitive biases or research findings are integrated.
+
+## Additional Mobile-First & UI/UX Rules from src/.cursor/rules/cursor_rules.mdc
+
+- All pages and components must be fully mobile-friendly and responsive, using a mobile-first approach with CSS Grid/Flexbox and media queries.
+- Test on various screen sizes (320px–768px and up); all content must be accessible and readable.
+- Touch targets (buttons, inputs, toggles) must be at least 44x44px and easy to use on mobile.
+- Use relative units (%, rem, em) for sizing and spacing; avoid fixed pixel widths for layout-critical elements.
+- Provide horizontal scrolling for wide tables/charts on mobile.
+- Minimize modal/pop-up use on mobile; prefer inline expansion/collapse.
+- Use semantic HTML and ARIA attributes for accessibility.
+- All forms and buttons must be easily usable on small screens.
+- Use color contrast and font sizes that meet accessibility standards.
+- Reference: Main page (`index.html`) and `EnhancedResultsDisplay` must always be mobile-friendly and serve as examples for all new UI work.
+- All new UI/UX changes must be tested on mobile and desktop before completion. Any PR or commit that breaks mobile-friendliness is not allowed.
+
+- Build Integrity: Always ensure `npm run build` passes with no errors or warnings before considering any change complete. Fix all TypeScript and linter errors as soon as they appear, before proceeding to any new work. Never submit or merge code that causes build failures or warnings.
+
+- Detailed Financial Analysis: Provide granular breakdowns for all financial metrics (net worth, savings rate, debt structure, expenses, investments, insurance, etc.), scenario/stress testing, peer benchmarks, and comparisons to industry standards. Add actionable insights and explanations for each area, including what the numbers mean and recommended next steps. Ensure all analysis is based on validated, up-to-date user input and current research/benchmarks.
+
+- Data Integrity & Accuracy: Only display numbers and insights derived from real, validated user input. No placeholders, no unexplained values. Allow $0 and other valid edge cases for all financial fields (e.g., debt, expenses, savings) with no errors or warnings. Validate all calculations and display 'N/A' or a clear message if data is missing or not applicable. Never show $NaN, undefined, or misleading values anywhere in the UI.
+
+- Financial Health Score & Key Metrics: Clearly explain what the health score means, how it is calculated, and what each key metric represents. Use professional, accessible fonts and layouts for all results and insights. Provide context for all numbers (e.g., 'Your net worth is $X, which is above the median for your age group').
+
+- Insights & Action Plans: Only show personalized, actionable recommendations. If no action is needed, state this clearly. Remove or hide export/save features unless they are meaningful for the user flow. Use clear, concise language and avoid jargon. Add financial adviser-level explanations for each insight.
+
+- UI/UX Cohesion & Clarity: Use a unified, modern design system for all analysis/results sections. All fonts, colors, and layouts must be consistent and accessible. Ensure all sections are mobile-friendly, with responsive layouts and large touch targets. Use clear section headings, logical grouping, and whitespace for readability.
+
+- Section-by-Section Requirements:
+  - Health Score: Show a clear, color-coded score with a short explanation and how it is calculated. Compare to peer benchmarks if available.
+  - Key Insights: List 2-4 most important findings, each with a headline, number, and 1-2 sentence explanation. Use icons or visual cues for positive/negative findings.
+  - Action Plan: Show only if there are actionable steps. Each step must be specific, relevant, and achievable. If no action is needed, show a positive message. Use checklists or step-by-step format for clarity.
+  - Export/Save: Only show if user has completed a full analysis and the feature is meaningful. Otherwise, hide.
+  - Edge Cases: $0 debt, $0 expenses, or $0 savings must be supported and explained. Never show errors for valid $0 values.
+  - Mobile & Accessibility: All sections must be fully responsive, with readable fonts and accessible color contrast. Use ARIA labels and semantic HTML for all interactive elements.
+
+- Testing & Review: Test all changes with $0 and high-value edge cases. Review all UI for clarity, consistency, and professional appearance. Add/expand tests for all new logic and edge cases.
+
+- Transparent Financial Calculations: For every financial metric, show a clear, user-facing breakdown and explanation of how it is calculated, with references to industry standards. Add tooltips or info icons for every metric, and provide expandable/collapsible sections for 'How is this calculated?'.
+
+- Task Completion Integrity: Only claim a task is complete if the actual code, UI, and user experience match the description and requirements. Always verify in the running app.
+
+- Comprehensive Codebase Updates: When fixing a bug or updating a pattern, search and update the entire codebase, not just one file.
+
+- Robust Number Formatting: Always check for NaN, undefined, or invalid values before formatting or displaying numbers. Use 'N/A' or a clear message for missing data. Never allow $NaN, undefined, or broken values to appear in the UI.
+
+## Expanded & Domain-Specific Financial Health Analysis Rules
+
+### 1. Data Integrity & Validation
+- All user input must be validated and sanitized before any calculation or display.
+- No placeholder or default values for financial metrics—display 'N/A' or a clear message if data is missing or not applicable.
+- Edge cases (e.g., zero income, negative cash flow, missing data) must be handled gracefully and explained to the user.
+- Use defensive programming to prevent $NaN, undefined, or misleading values in the UI.
+
+### 2. Granular Financial Metrics
+- **Net Worth:**
+  - Show a breakdown: total assets, total liabilities, and net worth.
+  - Explain the calculation and compare to peer benchmarks (e.g., median net worth by age group).
+  - Reference: [Federal Reserve SCF](mdc:https:/www.federalreserve.gov/econres/scfindex.htm)
+- **Savings Rate:**
+  - Calculate as a percentage of income.
+  - Provide context: "A healthy savings rate is typically 10–20% of gross income."
+  - Reference: [CFPB](mdc:https:/www.consumerfinance.gov/data-research/research-reports/financial-well-being-scale)
+- **Debt-to-Income Ratio:**
+  - Show both total and housing-specific DTI.
+  - Explain industry targets (e.g., <36% total, <28% housing).
+  - Reference: [CFPB](mdc:https:/www.consumerfinance.gov/ask-cfpb/what-is-a-debt-to-income-ratio-en-1791)
+- **Emergency Fund:**
+  - Display months of expenses covered.
+  - Explain the 3–6 month standard and provide recommendations if below target.
+  - Reference: [NerdWallet](mdc:https:/www.nerdwallet.com/article/finance/emergency-fund)
+- **Credit Utilization:**
+  - Show as a percentage of available credit.
+  - Explain the <30% target and its impact on credit health.
+  - Reference: [Experian](mdc:https:/www.experian.com/blogs/ask-experian/credit-education/score-basics/credit-utilization-rate)
+- **Insurance Coverage:**
+  - Indicate if user has adequate health, life, and disability insurance.
+  - Provide recommendations for gaps.
+  - Reference: [Datarails](mdc:https:/www.datarails.com/fpa-for-healthcare)
+
+### 3. Scenario & Stress Testing
+- Allow users to model "what if" scenarios (e.g., job loss, market downturn, major expense).
+- Show impact on cash flow, emergency fund, and long-term goals.
+- Simulate adverse events and show how resilient the user's finances are.
+- Provide actionable steps to improve resilience.
+- Reference: [Datarails](mdc:https:/www.datarails.com/fpa-for-healthcare)
+
+### 4. Benchmarks & Peer Comparisons
+- Compare user metrics to industry standards and peer groups (e.g., by age, income, region).
+- Display percentile rankings where possible (e.g., "Your net worth is in the 60th percentile for your age group").
+- Cite sources for all benchmarks (e.g., Federal Reserve, CFPB, Datarails, GFOA).
+
+### 5. Actionable Insights & Recommendations
+- For every metric, provide a clear, actionable recommendation (e.g., "Increase your emergency fund by $2,000 to reach the 3-month target").
+- Prioritize recommendations based on impact and urgency.
+- Explain the rationale for each recommendation, referencing industry best practices.
+- Use scenario modeling and stress testing to prepare for uncertainty.
+- Reference: [GFOA](mdc:https:/www.gfoa.org/materials/long-term-financial-planning)
+
+### 6. Long-Term Financial Planning
+- Encourage users to set and track long-term goals (e.g., retirement, home purchase, education).
+- Project future financial position using conservative, moderate, and aggressive assumptions.
+- Update projections regularly and allow users to adjust assumptions.
+- Prepare and maintain a long-term financial plan (at least 5 years) that projects revenues, expenses, financial position, and external factors for all key funds and operations.
+- Review and update the plan annually or as major assumptions change.
+- Reference: [GFOA](mdc:https:/www.gfoa.org/materials/long-term-financial-planning)
+
+### 7. Regulatory & Security Compliance
+- Comply with all relevant financial regulations (e.g., data privacy, anti-fraud, HIPAA, Stark Law, Anti-Kickback Statute for healthcare).
+- Never display or store sensitive information insecurely.
+- Document all assumptions, methodologies, and sources for transparency.
+- Reference: [Datarails](mdc:https:/www.datarails.com/fpa-for-healthcare)
+
+### 8. User Education & Transparency
+- Provide tooltips, info icons, and expandable sections for all metrics and calculations.
+- Link to educational resources (e.g., CFPB, GFOA, Datarails) for users who want to learn more.
+- Explain all financial terms in plain language.
+- Document all assumptions, methodologies, and sources for transparency.
+
+### 9. Continuous Improvement
+- Regularly review and update benchmarks, methodologies, and recommendations to reflect the latest research and industry standards.
+- Solicit user feedback to improve clarity, usefulness, and accuracy of insights.
+- Reference: [Datarails](mdc:https:/www.datarails.com/fpa-for-healthcare), [GFOA](mdc:https:/www.gfoa.org/materials/long-term-financial-planning)
+
+---
+
+### Additional Authoritative Sources
+- [Datarails: FP&A for Healthcare – Best Practices & Unique Challenges](mdc:https:/www.datarails.com/fpa-for-healthcare)
+- [GFOA: Long-Term Financial Planning](mdc:https:/www.gfoa.org/materials/long-term-financial-planning)
+- [CFPB: Financial Well-Being](mdc:https:/www.consumerfinance.gov/data-research/research-reports/financial-well-being-scale)
+- [Federal Reserve: Survey of Consumer Finances](mdc:https:/www.federalreserve.gov/econres/scfindex.htm)
+- [NerdWallet: Emergency Fund](mdc:https:/www.nerdwallet.com/article/finance/emergency-fund)
+- [Experian: Credit Utilization Rate](mdc:https:/www.experian.com/blogs/ask-experian/credit-education/score-basics/credit-utilization-rate)
+
+## Comprehensive Project Learnings & Codebase Patterns (2024)
+
+- All user-facing and core files must be strictly typed, fully documented with JSDoc, and reference authoritative industry standards for all financial logic and metrics.
+- No mock or synthetic data generators are allowed anywhere in the codebase; only real, validated user input is used for all calculations and analysis.
+- Remove any file or folder not referenced in user-facing logic or the main app. Regular audits are required to keep the codebase lean, secure, and compliant.
+- All UI/UX must use shared CSS modules and unified markup/classes for forms, results, and navigation to ensure a consistent, professional experience across the app.
+- Accessibility, ARIA, and mobile-first responsive design are mandatory for all UI components and pages. All interactive elements must be keyboard accessible and meet touch target guidelines.
+- All calculations, insights, and recommendations must be research-based, fully explained, and transparent to the user, with references to industry standards and sources.
+- Regularly audit for unused files, legacy code, or non-compliant patterns, and update Cursor rules as new best practices or project needs emerge.
+- All test and simulation files must be removed if they reference deleted or legacy modules, to ensure a clean build and maintain codebase integrity.
+- Maintain a single source of truth for all rules, standards, and documentation in `.cursor/rules/cursor_rules.mdc`. All updates and learnings must be reflected here for team-wide consistency.
+
+## Change Planning & Review Requirement (2024)
+
+- All UI/UX or logic changes must begin with a documented plan and user review before implementation. The plan should outline the goals, steps, and expected outcomes, and must be approved or reviewed by the user before any code changes are made. This ensures clarity, alignment, and adherence to best practices for every change.
+
+## UI Refactor & Functionality Preservation (2024)
+
+- When refactoring UI or markup, always preserve required IDs, classes, and attributes used by JavaScript event listeners or logic. Never remove or rename elements referenced in code without updating the logic accordingly.
+- Test all user flows after UI/UX or markup changes to ensure no functionality is broken.
+- Document all such learnings and update Cursor rules to prevent similar issues in the future.
+
+## Expert Web App Refactoring & TypeScript Project Structure (2024+)
+
+- **Incremental Refactoring:** Break large refactors into small, reviewable steps. Start with a proof of concept, gather feedback, and make one change at a time. Avoid "big bang" changes.
+- **Adapter/Strangler Patterns:** Use adapter or "strangler fig" patterns to migrate APIs, components, or logic incrementally. Support both old and new code during migration, then remove the old code when safe.
+- **Component-Driven Architecture:** Structure code around reusable, encapsulated components (UI, logic, data). Use tools and patterns that support composability and versioning.
+- **Type Safety at Boundaries:** Always validate and type-check data at boundaries (user input, APIs, local storage, etc). Use type guards, assertion functions, or runtime validation libraries (e.g., Zod) to ensure safety.
+- **Strict Typing & Utility Types:** Use TypeScript's strict mode, explicit types, utility types (Partial, Pick, Omit, etc), and readonly for immutability. Prefer interfaces for object shapes and type aliases for unions/intersections.
+- **Modular Code Organization:** Organize code into clear modules (core, components, services, interfaces, utils, etc). Use barrel files for re-exports and keep type definitions modular and reusable.
+- **Documentation & Collaboration:** Use JSDoc for all public types and functions. Document refactoring plans, architectural decisions, and migration steps. Encourage feedback and code review at each stage.
+- **Testing & Linting:** Maintain high test coverage (unit, integration, e2e). Use ESLint and Prettier for code quality and formatting. Test all user flows after refactors.
+- **Performance & Optimization:** Use lazy loading, code splitting, and tree shaking. Profile and optimize for both mobile and desktop. Avoid unnecessary re-renders and large bundle sizes.
+- **Continuous Improvement:** Regularly review and update project structure, refactoring patterns, and best practices. Learn from each refactor and document lessons in the rules file.
+
+**References:**
+- [Refactoring a Legacy Frontend App in 2024](mdc:https:/blog.bitsrc.io/refactoring-a-legacy-frontend-app-in-2024-54e45c6081b0)
+- [Mastering TypeScript: Best Practices 2024+](mdc:https:/medium.com/@techsolutionsx/mastering-typescript-the-ultimate-guide-to-best-practices-for-scalable-and-maintainable-code-6f63080ef1ad)
+- [Fully Typed Web Apps (EpicWeb.dev)](mdc:https:/www.epicweb.dev/fully-typed-web-apps)
+- [How to break up a large code refactor (2025)](mdc:https:/viktorstanchev.com/posts/how-to-break-up-a-large-code-refactor)
+- [TypeScript Best Practices 2025](mdc:https:/dev.to/sovannaro/typescript-best-practices-2025-elevate-your-code-quality-1gh3)
+
+## Deep Dive: RecommendationEngine (src/core/RecommendationEngine.ts)
+
+### Purpose & Role
+- Generates personalized, prioritized, and actionable financial recommendations based on the user's analysis results.
+- Called by FinancialCalculationEngine after all metrics and indicators are calculated.
+- Returns an array of Recommendation objects (category, priority, title, description, action steps, timeframe, impact level).
+
+### Architecture & Flow
+- **Entry Point:** `generateRecommendations(analysis, data)`
+  - Inputs: ComprehensiveAnalysisResult (all metrics, indicators, breakdowns), UserFinancialData (validated user input).
+  - Output: Sorted, deduplicated array of up to 10 Recommendation objects.
+- **Logic:**
+  - High Priority: Emergency fund, high debt (DTI > 43%, credit utilization > 50%), negative cash flow.
+  - Medium Priority: Low savings rate (<10%), insurance confidence, excellent credit score, not investing with solid emergency fund.
+  - Low Priority: No/weak budgeting, not automating savings/investments.
+  - Generic Fallback: For any health indicator with status 'critical', 'poor', or 'fair', generic improvement/optimization recommendations are added.
+- **Sorting & Deduplication:**
+  - Recommendations sorted by priority (high, medium, low).
+  - Deduplication by id (Map-based).
+  - Only top 10 recommendations returned.
+
+### Key Internal Methods
+- getEmergencyFundRecommendations
+- getHighDebtRecommendations
+- getNegativeCashFlowRecommendations
+- getSavingsRateRecommendations
+- getInsuranceRecommendations
+- getCreditScoreOptimizationRecommendations
+- getInvestmentRecommendations
+- getBudgetingRecommendations
+- getAutomatedSavingsRecommendations
+- getGenericIndicatorRecommendations
+
+### Data Flow & Interactions
+- Inputs: Receives ComprehensiveAnalysisResult from FinancialCalculationEngine, UserFinancialData from forms.
+- Outputs: Returns Recommendation[] to EnhancedResultsDisplay for UI rendering.
+- Dependencies: Uses formatCurrency from utils/format-utils.ts, Recommendation interface from interfaces/analysis-types.ts.
+
+### Example Call Chain
+1. User submits form (Quick or MultiStep)
+2. App calls FinancialCalculationEngine.analyzeFinancialHealth(userData)
+3. Engine computes metrics/indicators, then calls RecommendationEngine.generateRecommendations(result, userData)
+4. Recommendations are returned and passed to EnhancedResultsDisplay.render(analysisResult)
+5. UI displays actionable recommendations to the user.
+
+### Strengths
+- Comprehensive coverage of urgent and optimization issues.
+- Prioritization ensures most urgent recommendations are surfaced.
+- Personalization based on real user data.
+- Deduplication prevents redundant recommendations.
+
+### Limitations & Opportunities
+- Static, rule-based logic (not adaptive to nuanced scenarios).
+- No scenario-based or peer benchmarking in recommendations.
+- No learning/feedback loop.
+- Limited customization to user goals/behavior.
+- No visual/UX enhancements (text-based only).
+
+### Interactions with Other Files
+| File                                 | Role/Interaction                                      |
+|---------------------------------------|-------------------------------------------------------|
+| core/calculations.ts                  | Calls generateRecommendations after analysis          |
+| interfaces/analysis-types.ts          | Provides types/interfaces for recommendations         |
+| utils/format-utils.ts                 | Used for formatting currency in recommendations       |
+| components/ui/EnhancedResultsDisplay.ts| Displays recommendations in the results UI            |
+| ImprovedApp.ts                        | Orchestrates the flow from form → analysis → results  |
+
+### Enhancement Ideas
+- Add scenario-based recommendations (e.g., job loss, market downturn).
+- Reference peer benchmarks in recommendation text.
+- Use user goals and behavioral data for more tailored action steps.
+- Add a feedback loop (user can mark recommendations as completed or not relevant).
+- Integrate with a knowledge base for deeper, context-aware advice.
+- Add visual cues (icons, progress bars) to recommendations for better UX.
+
+---
+
+## Modular Recommendation Architecture (2024+)
+
+### Rationale
+- As the recommendation logic grew in complexity, it was modularized for maintainability, scalability, and clarity.
+- Quick and Comprehensive analyses have different data availability and logic, but share some core recommendation patterns.
+- Modularization enables robust, testable, and extensible recommendation logic for both minimal and full data sets.
+
+### File Structure
+- `src/core/RecommendationEngine.ts` – Orchestrates recommendation generation, delegates to submodules.
+- `src/core/recommendations/CommonRecommendations.ts` – Logic shared by both Quick and Comprehensive analyses (e.g., emergency fund, DTI, savings rate, negative cash flow, basic insurance, credit score).
+- `src/core/recommendations/QuickRecommendations.ts` – Logic specific to Quick Analysis (minimal data, robust fallbacks, cross-referenced insights).
+- `src/core/recommendations/ComprehensiveRecommendations.ts` – Logic specific to Comprehensive Analysis (full data, advanced logic: investment diversification, insurance adequacy, retirement planning, scenario analysis).
+
+### Best Practices
+- Use **named exports** for all functions (no default exports) for clarity, tree-shaking, and maintainability.
+- Follow ES module and TypeScript import/export best practices ([ref](mdc:https:/medium.com/@robinviktorsson/typescript-and-es-modules-best-practices-for-imports-and-exports-9ce200e75a88)).
+- Each module is strictly typed, fully documented with JSDoc, and only imports what it needs.
+- The RecommendationEngine orchestrates, merges, deduplicates, and prioritizes recommendations from all modules.
+- All new logic is robust to missing data and edge cases, and provides actionable, research-based advice for both minimal and full data sets.
+
+### References
+- [TypeScript and ES Modules: Best Practices for Imports and Exports](mdc:https:/medium.com/@robinviktorsson/typescript-and-es-modules-best-practices-for-imports-and-exports-9ce200e75a88)
+- [TypeScript Handbook: Modules](mdc:https:/www.typescriptlang.org/docs/handbook/2/modules.html)
+- [Mastering Code Refactoring with ReactJS and TypeScript](mdc:https:/www.tothenew.com/blog/mastering-code-refactoring-with-reactjs-and-typescript)
+
+---
+
+## Defensive Programming & Type Guards in Recommendation Logic (2024+)
+
+- All recommendation modules (Common, Quick, Comprehensive) must use defensive programming to validate all inputs before use.
+- Use TypeScript type guards (typeof, custom type guard functions) to ensure all metrics are valid numbers before using them in calculations or recommendations.
+- If a value is not a valid number (e.g., string, undefined, NaN), skip the recommendation or provide a fallback.
+- Add runtime checks at the top of each recommendation function:
+  - Example: `if (typeof savingsRate !== 'number' || isNaN(savingsRate)) return [];`
+- In the RecommendationEngine, always check types before passing values to recommendation functions.
+- Optionally, use a shared utility type guard (e.g., `isValidNumber(val: unknown): val is number`) for clarity and DRYness.
+- This approach prevents runtime errors, ensures robust recommendations, and aligns with TypeScript advanced types and type guard best practices.
+- Reference: [TypeScript Handbook: Advanced Types](mdc:https:/www.typescriptlang.org/docs/handbook/advanced-types.html)
+
+--- 

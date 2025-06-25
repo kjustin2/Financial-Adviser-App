@@ -1,24 +1,43 @@
 /**
  * Comprehensive Financial Health Calculation Engine
  * Based on Financial Health Network 2024 research and industry best practices
+ *
+ * @remarks
+ * - Strictly typed, fully documented, and validated per project rules.
+ * - All calculations use validated user input and handle edge cases.
+ * - No sensitive data is stored or transmitted externally from this module.
  */
 import { UserFinancialData } from '../interfaces/core-types';
 import { ComprehensiveAnalysisResult } from '../interfaces/analysis-types';
+/**
+ * FinancialCalculationEngine
+ * Provides all core financial health calculations and analysis.
+ */
 export declare class FinancialCalculationEngine {
     /**
      * Perform comprehensive financial health analysis
+     * @param data - Validated user financial data
+     * @returns ComprehensiveAnalysisResult with all metrics, indicators, and recommendations
+     * @remarks All calculations are based on Financial Health Network, CFPB, Experian, and other industry standards.
      */
     static analyzeFinancialHealth(data: UserFinancialData): ComprehensiveAnalysisResult;
     /**
-     * Calculate key financial metrics
+     * Calculate key financial metrics (net worth, DTI, savings rate, etc)
+     * @param data - User financial data
+     * @returns Object with all key metrics and breakdowns
+     * @remarks See CFPB, Experian, NerdWallet for metric definitions and targets.
      */
     private static calculateKeyMetrics;
     /**
      * Calculate the 8 core health indicators based on Financial Health Network research
+     * @param data - User financial data
+     * @param keyMetrics - Precomputed key metrics
+     * @returns Array of HealthIndicator objects
      */
     private static calculateHealthIndicators;
     /**
      * Health Indicator 1: Spending vs Income Analysis
+     * @remarks A healthy cash flow ratio is typically above 10-20% (CFPB, Experian).
      */
     private static analyzeSpendingVsIncome;
     /**

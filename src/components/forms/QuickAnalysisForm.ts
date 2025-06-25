@@ -1,14 +1,30 @@
 /**
  * Quick Analysis Form Component
  * Simplified form requiring only essential financial inputs
+ *
+ * @remarks
+ * - Strictly typed, fully documented, and validated per project rules.
+ * - All user input is validated and sanitized before use.
+ * - UI/UX is mobile-first and accessible.
  */
 
 import { UserFinancialData } from '../../interfaces/core-types';
+// Import shared CSS for unified UX
+import '../shared-form-styles.css';
 
+/**
+ * QuickAnalysisForm
+ * Renders and manages the quick financial health form.
+ */
 export class QuickAnalysisForm {
     private container: HTMLElement;
     private onSubmit: (data: UserFinancialData) => void;
 
+    /**
+     * Initializes the form.
+     * @param containerId - The DOM element ID to render the form into.
+     * @param onSubmit - Callback when the form is submitted with valid data.
+     */
     constructor(containerId: string, onSubmit: (data: UserFinancialData) => void) {
         const element = document.getElementById(containerId);
         if (!element) {
@@ -18,14 +34,21 @@ export class QuickAnalysisForm {
         this.onSubmit = onSubmit;
     }
 
+    /**
+     * Renders the form UI.
+     */
     public render(): void {
         this.container.innerHTML = this.generateHTML();
         this.attachEventListeners();
     }
 
+    /**
+     * Generates the HTML for the form.
+     * @returns The HTML string for the form.
+     */
     private generateHTML(): string {
         return `
-            <div class="quick-analysis-form">
+            <div class="form-container">
                 <div class="form-header">
                     <h2>Quick Financial Health Check</h2>
                     <p class="form-description">
@@ -40,8 +63,10 @@ export class QuickAnalysisForm {
                     </div>
                 </div>
 
+                <button class="btn-secondary return-home-btn" aria-label="Return to Home" tabindex="0" onclick="window.confirm('Are you sure you want to return to the home page? Unsaved data will be lost.') && window.location.reload();">Return to Home</button>
+
                 <form id="quickAnalysisForm" class="quick-form">
-                    <div class="form-grid">
+                    <div class="form-fields-grid">
                         <div class="form-field" data-field="income">
                             <label for="monthlyIncome" class="field-label">
                                 <span class="label-text">Monthly Take-Home Income</span>
@@ -237,6 +262,9 @@ export class QuickAnalysisForm {
         `;
     }
 
+    /**
+     * Attaches all event listeners for form interactivity and validation.
+     */
     private attachEventListeners(): void {
         const form = this.container.querySelector('#quickAnalysisForm') as HTMLFormElement;
         if (form) {
@@ -267,6 +295,10 @@ export class QuickAnalysisForm {
         }
     }
 
+    /**
+     * Handles input changes for real-time validation and feedback.
+     * @param _input - The input element that changed.
+     */
     private handleInputChange(_input: HTMLInputElement): void {
         // DO NOT format currency on every input, as it interferes with typing.
         // Formatting is now handled on the 'blur' event.
@@ -281,6 +313,10 @@ export class QuickAnalysisForm {
         this.updateSubmitButton();
     }
 
+    /**
+     * Formats a currency input field on blur.
+     * @param input - The input element to format.
+     */
     private formatCurrencyInput(input: HTMLInputElement): void {
         // First, strip any non-digit characters except for a decimal point
         const value = input.value.replace(/[^0-9.]/g, '');
@@ -289,6 +325,9 @@ export class QuickAnalysisForm {
         input.value = numericValue > 0 ? numericValue.toLocaleString('en-US', { maximumFractionDigits: 0 }) : '0';
     }
 
+    /**
+     * Updates real-time calculations (emergency fund months, debt ratio) as the user types.
+     */
     private updateRealTimeCalculations(): void {
         const income = this.getNumericValue('monthlyIncome');
         const housing = this.getNumericValue('monthlyHousing');
@@ -333,6 +372,11 @@ export class QuickAnalysisForm {
         }
     }
 
+    /**
+     * Gets a numeric value from an input field, ensuring non-negative and valid.
+     * @param fieldName - The name attribute of the input field.
+     * @returns The numeric value or 0 if invalid.
+     */
     private getNumericValue(fieldName: string): number {
         const value = Number((this.container.querySelector(`[name="${fieldName}"]`) as HTMLInputElement)?.value);
         // Allow zero as valid, only block negatives and NaN
@@ -340,6 +384,9 @@ export class QuickAnalysisForm {
         return value;
     }
 
+    /**
+     * Updates the progress bar and text based on completed fields.
+     */
     private updateProgress(): void {
         const form = this.container.querySelector('#quickAnalysisForm') as HTMLFormElement;
         const inputs = form.querySelectorAll('input[required]');
@@ -368,6 +415,9 @@ export class QuickAnalysisForm {
         }
     }
 
+    /**
+     * Enables or disables the submit button based on form validity.
+     */
     private updateSubmitButton(): void {
         const form = this.container.querySelector('#quickAnalysisForm') as HTMLFormElement;
         const button = document.getElementById('analyzeButton') as HTMLButtonElement;
@@ -385,6 +435,10 @@ export class QuickAnalysisForm {
         button.classList.toggle('ready', allValid);
     }
 
+    /**
+     * Validates a single input field and provides feedback.
+     * @param input - The input element to validate.
+     */
     private validateField(input: HTMLInputElement): void {
         const fieldContainer = input.closest('.form-field');
         const feedback = fieldContainer?.querySelector('.input-feedback');
@@ -420,6 +474,9 @@ export class QuickAnalysisForm {
         }
     }
 
+    /**
+     * Attaches tooltips to help icons for accessibility.
+     */
     private attachTooltips(): void {
         const helpIcons = this.container.querySelectorAll('.help-icon');
         helpIcons.forEach(icon => {
@@ -436,6 +493,11 @@ export class QuickAnalysisForm {
         });
     }
 
+    /**
+     * Shows a tooltip for a help icon.
+     * @param element - The help icon element.
+     * @param text - The tooltip text.
+     */
     private showTooltip(element: HTMLElement, text: string): void {
         // Ensure no old tooltips are lingering
         this.hideTooltip();
@@ -455,6 +517,9 @@ export class QuickAnalysisForm {
         tooltip.style.transform = 'translate(-50%, -100%)';
     }
 
+    /**
+     * Hides any visible tooltip.
+     */
     private hideTooltip(): void {
         const tooltip = document.querySelector('.tooltip');
         if (tooltip) {
@@ -462,6 +527,9 @@ export class QuickAnalysisForm {
         }
     }
 
+    /**
+     * Handles form submission, validates all fields, and builds user data.
+     */
     private handleSubmit(): void {
         const form = this.container.querySelector('#quickAnalysisForm') as HTMLFormElement;
         const formData = new FormData(form);
@@ -521,6 +589,9 @@ export class QuickAnalysisForm {
         this.onSubmit(userData);
     }
 
+    /**
+     * Resets the submit button to its default state after validation errors.
+     */
     private resetSubmitButton(): void {
         const button = document.getElementById('analyzeButton') as HTMLButtonElement;
         const btnText = button.querySelector('.btn-text');
@@ -533,6 +604,11 @@ export class QuickAnalysisForm {
         button.disabled = false;
     }
 
+    /**
+     * Builds a strictly-typed UserFinancialData object from form data.
+     * @param formData - The FormData object from the form.
+     * @returns The constructed UserFinancialData object.
+     */
     private buildUserDataFromForm(formData: FormData): UserFinancialData {
         // Get actual user inputs (remove any commas from formatted currency)
         const monthlyIncome = parseFloat((formData.get('monthlyIncome') as string).replace(/[,$]/g, '')) || 0;
@@ -674,6 +750,10 @@ export class QuickAnalysisForm {
         };
     }
 
+    /**
+     * Shows validation errors in the UI.
+     * @param errors - Array of error messages to display.
+     */
     private showValidationErrors(errors: string[]): void {
         const errorContainer = this.container.querySelector('#validationErrors') as HTMLElement;
         if (errorContainer) {

@@ -1,13 +1,27 @@
 /**
  * Enhanced Results Display Component
  * Provides clear, actionable financial analysis results with explanations
+ *
+ * @remarks
+ * - Strictly typed, fully documented, and validated per project rules.
+ * - All displayed values are validated and sanitized before display.
+ * - UI/UX is mobile-first and accessible.
  */
 
 import { ComprehensiveAnalysisResult } from '../../interfaces/analysis-types';
+import '../shared-form-styles.css';
 
+/**
+ * EnhancedResultsDisplay
+ * Renders the financial analysis results in a clear, accessible, and actionable format.
+ */
 export class EnhancedResultsDisplay {
     private container: HTMLElement;
 
+    /**
+     * Initializes the results display component.
+     * @param containerId - The DOM element ID to render the results into.
+     */
     constructor(containerId: string) {
         const element = document.getElementById(containerId);
         if (!element) {
@@ -16,6 +30,10 @@ export class EnhancedResultsDisplay {
         this.container = element;
     }
 
+    /**
+     * Renders the analysis results.
+     * @param analysisResult - The comprehensive analysis result object.
+     */
     public render(analysisResult: ComprehensiveAnalysisResult): void {
         // Defensive: Validate all numbers before display
         if (!analysisResult || typeof analysisResult !== 'object') {
@@ -23,15 +41,8 @@ export class EnhancedResultsDisplay {
             return;
         }
         this.container.innerHTML = '';
-        this.container.className = 'enhanced-results-display';
+        this.container.className = 'form-container enhanced-results-display';
         this.container.setAttribute('aria-label', 'Financial Health Analysis Results');
-        this.container.style.fontFamily = "'Segoe UI', Arial, sans-serif";
-        this.container.style.maxWidth = '700px';
-        this.container.style.margin = '0 auto';
-        this.container.style.padding = '16px';
-        this.container.style.background = '#fff';
-        this.container.style.borderRadius = '12px';
-        this.container.style.boxShadow = '0 2px 8px rgba(0,0,0,0.06)';
         this.container.innerHTML = `
           <section class="results-section" aria-labelledby="score-heading">
             ${this.generateOverallScoreSection(analysisResult)}
@@ -46,11 +57,14 @@ export class EnhancedResultsDisplay {
         this.attachInteractiveElements();
     }
 
+    /**
+     * Generates the overall score section HTML.
+     * @param analysisResult - The analysis result object.
+     * @returns The HTML string for the score section.
+     */
     private generateOverallScoreSection(analysisResult: ComprehensiveAnalysisResult): string {
-        // Defensive: Validate score
-        const score = typeof analysisResult.overallHealthScore === 'number' && !isNaN(analysisResult.overallHealthScore) ? analysisResult.overallHealthScore : 'N/A';
+        const score: string | number = typeof analysisResult.overallHealthScore === 'number' && !isNaN(analysisResult.overallHealthScore) ? analysisResult.overallHealthScore : 'N/A';
         const level = analysisResult.healthLevel;
-        const peer = analysisResult.peerBenchmarks;
         let scoreText = '';
         switch (level) {
             case 'excellent': scoreText = 'Excellent: You are in outstanding financial health.'; break;
@@ -61,23 +75,24 @@ export class EnhancedResultsDisplay {
             default: scoreText = '';
         }
         return `
-          <div class="score-section" style="text-align:center; margin-bottom:24px;">
-            <h2 id="score-heading" style="font-size:2rem; margin-bottom:8px;">Financial Health Score</h2>
+          <div class="score-section form-header" style="text-align:center; margin-bottom:24px;">
+            <h2 id="score-heading">Financial Health Score</h2>
             <div class="score-circle" style="display:inline-block; width:100px; height:100px; border-radius:50%; background:${this.getScoreColor(level)}; color:#fff; font-size:2.2rem; line-height:100px; font-weight:bold;">${score}</div>
-            <div style="margin-top:12px; font-size:1.1rem;">${scoreText}</div>
-            <div style="margin-top:8px; color:#555; font-size:0.95rem;">Score is a weighted average of 8 key indicators. <br>Peer comparison: Net worth percentile: ${peer?.netWorthPercentile ?? 'N/A'} | Savings rate percentile: ${peer?.savingsRatePercentile ?? 'N/A'} | Debt ratio percentile: ${peer?.debtRatioPercentile ?? 'N/A'}</div>
+            <div class="score-explanation">${scoreText}</div>
+            <div class="score-peer" style="display:none;"></div>
           </div>
         `;
     }
 
+    /**
+     * Generates the key insights section HTML.
+     * @param analysisResult - The analysis result object.
+     * @returns The HTML string for the key insights section.
+     */
     private generateKeyInsightsSection(analysisResult: ComprehensiveAnalysisResult): string {
         const km = analysisResult.keyMetrics;
-        // Savings Rate Breakdown
         const savingsRateBreakdown = km.savingsRateBreakdown;
-        // Defensive: Validate all key metrics
-        // Pick 2-4 most important findings
         const insights: Array<{icon:string, headline:string, value:string, explanation:string, positive:boolean, breakdown?:string, breakdownId?:string}> = [];
-        // Emergency Fund
         if (typeof km.emergencyFundMonths === 'number') {
             insights.push({
                 icon: km.emergencyFundMonths >= 3 ? '\ud83d\udcb0' : '\u26a0\ufe0f',
@@ -89,7 +104,6 @@ export class EnhancedResultsDisplay {
                 breakdownId: 'breakdown-emergency-fund'
             });
         }
-        // Debt-to-Income
         if (typeof km.debtToIncomeRatio === 'number' && km.dtiBreakdown) {
             insights.push({
                 icon: km.debtToIncomeRatio === 0 ? '\u2705' : (km.debtToIncomeRatio <= 36 ? '\ud83d\udc4d' : '\u26a0\ufe0f'),
@@ -150,6 +164,11 @@ export class EnhancedResultsDisplay {
         `;
     }
 
+    /**
+     * Generates the action plan section HTML.
+     * @param analysisResult - The analysis result object.
+     * @returns The HTML string for the action plan section.
+     */
     private generateActionPlanSection(analysisResult: ComprehensiveAnalysisResult): string {
         // Defensive: Only show actionable steps if present
         const recs = analysisResult.prioritizedRecommendations || [];
@@ -179,6 +198,9 @@ export class EnhancedResultsDisplay {
         </div>`;
     }
 
+    /**
+     * Attaches interactive elements for accessibility and info toggles.
+     */
     private attachInteractiveElements(): void {
         // Add event listeners for info buttons to toggle breakdowns
         const infoButtons = this.container.querySelectorAll('.info-toggle');
@@ -223,6 +245,11 @@ export class EnhancedResultsDisplay {
         return impactMap[impact] || impact;
     }
 
+    /**
+     * Gets the color for the score circle based on health level.
+     * @param level - The health level string.
+     * @returns The color hex code.
+     */
     private getScoreColor(level: string): string {
         const colorMap: { [key: string]: string } = {
             'excellent': '#10b981',

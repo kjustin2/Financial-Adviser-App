@@ -1,7 +1,17 @@
+/**
+ * Recommendation Engine
+ * Orchestrates modular recommendation logic for both Quick and Comprehensive analyses.
+ *
+ * @remarks
+ * - Delegates to Common, Quick, and Comprehensive recommendation modules.
+ * - Ensures robust, prioritized recommendations for all users.
+ * - Strictly typed, documented, and follows ES module best practices.
+ */
 import { ComprehensiveAnalysisResult, Recommendation } from '../interfaces/analysis-types';
 import { UserFinancialData } from '../interfaces/core-types';
 /**
- * Generates actionable, prioritized recommendations based on the financial analysis.
+ * RecommendationEngine
+ * Provides prioritized, actionable recommendations for financial health improvement.
  */
 export declare class RecommendationEngine {
     /**
@@ -11,15 +21,13 @@ export declare class RecommendationEngine {
      * @returns A sorted and deduplicated array of Recommendation objects.
      */
     static generateRecommendations(analysis: ComprehensiveAnalysisResult, data: UserFinancialData): Recommendation[];
-    private static getEmergencyFundRecommendations;
-    private static getHighDebtRecommendations;
-    private static getNegativeCashFlowRecommendations;
-    private static getSavingsRateRecommendations;
-    private static getInsuranceRecommendations;
-    private static getCreditScoreOptimizationRecommendations;
-    private static getInvestmentRecommendations;
-    private static getBudgetingRecommendations;
-    private static getAutomatedSavingsRecommendations;
-    private static getGenericIndicatorRecommendations;
+    /**
+     * Determines if the data set is from Quick Analysis (minimal fields).
+     */
+    private static isQuickAnalysis;
+    /**
+     * Determines if the data set is from Comprehensive Analysis (full fields).
+     */
+    private static isComprehensiveAnalysis;
 }
 //# sourceMappingURL=RecommendationEngine.d.ts.map

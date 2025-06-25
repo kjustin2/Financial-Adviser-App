@@ -28,10 +28,3 @@ Thumbs.db
 
 # Cursor
 .cursor/*
-!.cursor/rules/
-.cursor/rules/
-!.cursor/rules/financial_analyzer.mdc
-!.cursor/rules/behavioral_finance.mdc
-!.cursor/rules/simulations.mdc
-!.cursor/rules/cursor_rules.mdc
-.cursor/mcp.json
