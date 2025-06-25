@@ -3,7 +3,88 @@ description: Guidelines for creating and maintaining Cursor rules to ensure cons
 globs: .cursor/rules/*.mdc
 alwaysApply: true
 ---
-# Financial Health Analyzer – Unified Cursor Rules
+# Financial Health Analyzer – Unified Cursor Rules (2024+)
+
+---
+
+## 1. Project Architecture & Structure
+- **Strict TypeScript:** All code uses strict typing, no `any`, and interfaces are defined in `src/interfaces/`.
+- **Modular Design:**
+  - Business logic in `src/core/`
+  - UI in `src/components/`
+  - Types/interfaces in `src/interfaces/`
+  - Constants in `src/constants/`
+  - Utilities in `src/utils/`
+- **No Mock Data:** All calculations and UI display are based on real, validated user input—never mock, placeholder, or synthetic data.
+- **Documentation:** All files, classes, and methods are documented with JSDoc and inline comments for complex logic.
+
+---
+
+## 2. Modular Recommendation Engine
+- **File Structure:**
+  - `src/core/RecommendationEngine.ts`: Orchestrates recommendation generation, delegates to submodules.
+  - `src/core/recommendations/CommonRecommendations.ts`: Logic shared by both Quick and Comprehensive analyses.
+  - `src/core/recommendations/QuickRecommendations.ts`: Logic specific to Quick Analysis (minimal data, robust fallbacks, cross-referenced insights).
+  - `src/core/recommendations/ComprehensiveRecommendations.ts`: Logic specific to Comprehensive Analysis (full data, advanced logic: investment diversification, insurance adequacy, retirement planning, scenario analysis).
+- **Best Practices:**
+  - Use named exports for all functions (no default exports).
+  - Each module is strictly typed, fully documented, and only imports what it needs.
+  - Defensive programming: All recommendation functions validate input types and values before use.
+  - The engine merges, deduplicates, and prioritizes recommendations from all modules, returning the top 10.
+  - Quick Analysis users receive robust, actionable recommendations even with minimal data, using cross-referenced and derived metrics.
+
+---
+
+## 3. Defensive Programming & Type Safety
+- **Type Guards:** Use `typeof`, `isNaN`, and custom type guards (e.g., `isValidNumber`) to validate all inputs before calculations or recommendations.
+- **Defensive Checks:** If a value is not a valid number (e.g., string, undefined, NaN), skip the recommendation or provide a fallback.
+- **Import Hygiene:** Only import what is actually used in each file.
+- **Error Handling:** All async operations and user input are wrapped in try-catch or validated before use. User-facing errors are clear and actionable.
+
+---
+
+## 4. UI/UX & Accessibility
+- **Unified, Responsive Design:**
+  - All forms and results use shared CSS modules for consistent layout, buttons, and progress bars.
+  - Mobile-first, accessible, and ARIA-compliant components throughout.
+  - No peer comparison or percentile data is shown in the UI (removed for clarity and privacy).
+- **Forms:**
+  - Quick Analysis: 6 essential fields, instant validation, robust error feedback, and real-time calculations.
+  - Multi-Step Form: Comprehensive, step-by-step, with validation and progress tracking.
+- **Results Display:**
+  - Only actionable, research-based recommendations are shown.
+  - Clear explanations for all metrics and scores.
+  - No placeholders or unexplained values; $0 and valid edge cases are supported and explained.
+
+---
+
+## 5. Continuous Improvement & Best Practices
+- **Iterative Refactoring:** Modularize logic as complexity grows; use adapter/strangler patterns for migration.
+- **Testing:** All new logic is robust to edge cases and validated for calculation accuracy and input handling.
+- **Documentation:** All architectural decisions, patterns, and learnings are documented here for future reference.
+- **References:**
+  - [TypeScript Handbook: Advanced Types](mdc:https:/www.typescriptlang.org/docs/handbook/advanced-types.html)
+  - [TypeScript and ES Modules Best Practices](mdc:https:/medium.com/@robinviktorsson/typescript-and-es-modules-best-practices-for-imports-and-exports-9ce200e75a88)
+  - [Financial Health Network](mdc:https:/www.finhealthnetwork.org)
+  - [CFPB](mdc:https:/www.consumerfinance.gov)
+  - [NerdWallet](mdc:https:/www.nerdwallet.com)
+
+---
+
+## 6. Key Learnings (2024)
+- **Modularization** enables maintainability, testability, and clarity as logic grows.
+- **Defensive programming** is essential for robust, user-facing financial logic—never assume data is valid.
+- **Quick Analysis** can provide deep, actionable insights by cross-referencing and merging minimal data fields.
+- **No peer benchmarks or percentile data** are shown in the UI for privacy and clarity.
+- **Import only what you use**—keeps code clean and avoids linter/build errors.
+- **Cursor rules** are the single source of truth for all standards, patterns, and best practices in this project.
+
+---
+
+## 7. How to Use These Rules
+- Reference this file before any major code change, refactor, or feature addition.
+- All new code must comply with these rules and patterns.
+- Update this file with new learnings, patterns, or best practices as the project evolves.
 
 ## Prompt Engineering Best Practices (2024+)
 
@@ -773,43 +854,49 @@ alwaysApply: true
 
 ---
 
-## Modular Recommendation Architecture (2024+)
+## Modular Recommendation Engine: Architecture & Best Practices (2024+)
 
-### Rationale
-- As the recommendation logic grew in complexity, it was modularized for maintainability, scalability, and clarity.
-- Quick and Comprehensive analyses have different data availability and logic, but share some core recommendation patterns.
-- Modularization enables robust, testable, and extensible recommendation logic for both minimal and full data sets.
+### File Structure & Separation of Concerns
+- Recommendation logic is split into modular files:
+  - `src/core/RecommendationEngine.ts`: Orchestrates recommendation generation, delegates to submodules, sorts and deduplicates results.
+  - `src/core/recommendations/CommonRecommendations.ts`: Logic shared by both Quick and Comprehensive analyses (e.g., emergency fund, DTI, savings rate, negative cash flow, credit score).
+  - `src/core/recommendations/QuickRecommendations.ts`: Logic specific to Quick Analysis (minimal data, robust fallbacks, cross-referenced insights).
+  - `src/core/recommendations/ComprehensiveRecommendations.ts`: Logic specific to Comprehensive Analysis (full data, advanced logic: investment diversification, insurance adequacy, retirement planning, scenario analysis).
 
-### File Structure
-- `src/core/RecommendationEngine.ts` – Orchestrates recommendation generation, delegates to submodules.
-- `src/core/recommendations/CommonRecommendations.ts` – Logic shared by both Quick and Comprehensive analyses (e.g., emergency fund, DTI, savings rate, negative cash flow, basic insurance, credit score).
-- `src/core/recommendations/QuickRecommendations.ts` – Logic specific to Quick Analysis (minimal data, robust fallbacks, cross-referenced insights).
-- `src/core/recommendations/ComprehensiveRecommendations.ts` – Logic specific to Comprehensive Analysis (full data, advanced logic: investment diversification, insurance adequacy, retirement planning, scenario analysis).
+### TypeScript & ES Module Best Practices
+- All modules use strict TypeScript (no `any`, explicit types for all params/returns).
+- Only named exports are used (no default exports) for clarity and tree-shaking.
+- Imports are grouped and only what is actually used is imported in each file.
+- JSDoc and inline comments are required for all exported functions and complex logic.
 
-### Best Practices
-- Use **named exports** for all functions (no default exports) for clarity, tree-shaking, and maintainability.
-- Follow ES module and TypeScript import/export best practices ([ref](mdc:https:/medium.com/@robinviktorsson/typescript-and-es-modules-best-practices-for-imports-and-exports-9ce200e75a88)).
-- Each module is strictly typed, fully documented with JSDoc, and only imports what it needs.
-- The RecommendationEngine orchestrates, merges, deduplicates, and prioritizes recommendations from all modules.
-- All new logic is robust to missing data and edge cases, and provides actionable, research-based advice for both minimal and full data sets.
+### Defensive Programming & Type Guards
+- All recommendation modules must use defensive programming to validate all inputs before use.
+- TypeScript type guards (e.g., `typeof`, custom type guard functions) are used to ensure all metrics are valid numbers before calculations or recommendations.
+- If a value is not a valid number (e.g., string, undefined, NaN), the recommendation function returns an empty array (skips recommendation).
+- Example pattern at the top of each function:
+  ```ts
+  if (typeof savingsRate !== 'number' || isNaN(savingsRate)) return [];
+  ```
+- A utility type guard `isValidNumber(val: unknown): val is number` is provided in `src/utils/format-utils.ts` for DRYness and clarity.
+- Defensive checks are also present in the engine before calling recommendation functions.
 
-### References
-- [TypeScript and ES Modules: Best Practices for Imports and Exports](mdc:https:/medium.com/@robinviktorsson/typescript-and-es-modules-best-practices-for-imports-and-exports-9ce200e75a88)
-- [TypeScript Handbook: Modules](mdc:https:/www.typescriptlang.org/docs/handbook/2/modules.html)
-- [Mastering Code Refactoring with ReactJS and TypeScript](mdc:https:/www.tothenew.com/blog/mastering-code-refactoring-with-reactjs-and-typescript)
+### Recommendation Engine Orchestration
+- The engine merges, deduplicates (by `id`), and sorts recommendations by priority (high, medium, low).
+- Only the top 10 recommendations are returned for clarity and focus.
+- The engine supports both Quick and Comprehensive analysis:
+  - Quick: Minimal data, robust fallbacks, cross-referenced insights.
+  - Comprehensive: Full data, advanced and scenario-based recommendations.
+- Heuristics are used to determine which analysis type is present based on available fields.
 
----
+### Import Hygiene & Linting
+- Only import what is actually used in each file (e.g., `formatCurrency` is only imported where needed).
+- Remove all unused imports to avoid linter and build errors.
 
-## Defensive Programming & Type Guards in Recommendation Logic (2024+)
-
-- All recommendation modules (Common, Quick, Comprehensive) must use defensive programming to validate all inputs before use.
-- Use TypeScript type guards (typeof, custom type guard functions) to ensure all metrics are valid numbers before using them in calculations or recommendations.
-- If a value is not a valid number (e.g., string, undefined, NaN), skip the recommendation or provide a fallback.
-- Add runtime checks at the top of each recommendation function:
-  - Example: `if (typeof savingsRate !== 'number' || isNaN(savingsRate)) return [];`
-- In the RecommendationEngine, always check types before passing values to recommendation functions.
-- Optionally, use a shared utility type guard (e.g., `isValidNumber(val: unknown): val is number`) for clarity and DRYness.
-- This approach prevents runtime errors, ensures robust recommendations, and aligns with TypeScript advanced types and type guard best practices.
-- Reference: [TypeScript Handbook: Advanced Types](mdc:https:/www.typescriptlang.org/docs/handbook/advanced-types.html)
+### Continuous Improvement & Documentation
+- All new logic and patterns are documented in this rules file for onboarding and future refactoring.
+- Reference authoritative TypeScript and ES module best practices:
+  - [TypeScript Handbook: Advanced Types](mdc:https:/www.typescriptlang.org/docs/handbook/advanced-types.html)
+  - [TypeScript and ES Modules: Best Practices for Imports and Exports](mdc:https:/medium.com/@robinviktorsson/typescript-and-es-modules-best-practices-for-imports-and-exports-9ce200e75a88)
+  - [Mastering Modular TypeScript](mdc:https:/javascript.plainenglish.io/mastering-modular-typescript-3e9dd901ee69)
 
 --- 
